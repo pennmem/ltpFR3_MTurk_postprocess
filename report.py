@@ -35,7 +35,7 @@ def ltpFR3_report(stats):
 
     for subj in stats:
         pdf = PdfPages('/Users/jessepazdera/Desktop/' + subj + '.pdf')
-        plt.figure(figsize=(35, 30))
+        plt.figure(figsize=(40, 30))
         plt.suptitle(subj, fontsize=36)
         for key in stat_order:
             if key in stats[subj]:
