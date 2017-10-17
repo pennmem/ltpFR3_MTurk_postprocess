@@ -122,7 +122,7 @@ def process_psiturk_data(data, dict_path):
 
         # For each trial in a subject's session
         for i, t in enumerate(np.unique(pres_trials)):
-            # Get a list of all words presented so far this session (to be able to search for PLIs
+            # Get a list of all words presented so far this session (to be able to search for PLIs)
             presented_so_far = pres_words[np.where(pres_trials <= t)]
             # Get a list of the trials each word was presented on
             when_presented = pres_trials[np.where(pres_trials <= t)]
