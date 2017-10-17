@@ -19,7 +19,7 @@ def ltpFR3_report(stats):
     eli_early (Average extra list intrusions per list among the first three recalls)
     eli_late (Average extra list intrusions per list among recalls after the third)
     reps (Average number of repetitions per list)
-    nback_pli_rate (Ratio of prior list intrusions coming from each list back, up to 6 back)
+    pli_recency (Ratio of prior list intrusions coming from each list back, up to 6 back)
     
     And each entry contains a sub-dictionary with entries labelled 12, 18, and 24, which contain that stat for lists of
     length 12, 18, and 24, respectively. Note that length-18 lists are practice lists only.
@@ -29,19 +29,19 @@ def ltpFR3_report(stats):
     stat_plotters = {'prec': plot_prec, 'spc': plot_spc, 'pfr': plot_pfr, 'psr': plot_psr, 'ptr': plot_ptr,
                       'crp_early': plot_crp_early, 'crp_late': plot_crp_late, 'irt': plot_irt,
                       'pli_early': plot_pli_early, 'pli_late': plot_pli_late, 'eli_early': plot_eli_early,
-                      'eli_late': plot_eli_late, 'reps': plot_reps, 'nback_pli_rate': plot_nback_pli_rate}
+                      'eli_late': plot_eli_late, 'reps': plot_reps, 'pli_recency': plot_pli_recency}
 
-    stat_order = ['prec', 'spc', 'pfr', 'psr', 'ptr', 'crp_early', 'crp_late', 'irt', 'pli_early', 'pli_late', 'nback_pli_rate', 'eli_early', 'eli_late', 'reps']
+    stat_order = ['prec', 'spc', 'pfr', 'psr', 'ptr', 'crp_early', 'crp_late', 'irt', 'pli_early', 'pli_late', 'pli_recency', 'eli_early', 'eli_late', 'reps']
 
     for subj in stats:
-        pdf = PdfPages('/Users/jessepazdera/Desktop/' + subj + '.pdf')
+        pdf = PdfPages('/Users/jessepazdera/Desktop/ltpFR3_reports/' + subj + '.pdf')
         plt.figure(figsize=(40, 30))
         plt.suptitle(subj, fontsize=36)
         for key in stat_order:
             if key in stats[subj]:
                 stat_plotters[key](stats[subj][key])
             else:
-                print 'ALERT! Missing stat %s for subject %s' % (key, subj)
+                print('ALERT! Missing stat %s for subject %s' % (key, subj))
         pdf.savefig()
         pdf.close()
         plt.close()
@@ -182,11 +182,11 @@ def plot_reps(s):
     plt.ylabel('Avg. Repetitions per List')
 
 
-def plot_nback_pli_rate(s):
+def plot_pli_recency(s):
     plt.subplot(4, 3, 9)
     plt.plot(range(1, 7), s[12], '-ko')
     plt.plot(range(1, 7), s[24], '--kD')
-    plt.title('N-Back PLI Rate')
+    plt.title('PLI Recency')
     plt.xlabel('Number of Lists Back')
     plt.ylabel('Ratio of PLIs')
     plt.legend(labels=['Length 12', 'Length 24'])

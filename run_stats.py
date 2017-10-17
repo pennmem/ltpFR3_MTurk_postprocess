@@ -66,7 +66,7 @@ def stats_for_subj(sub, condi, recalls, wasrec, rt, recw, presw, intru):
     :return: 
     """
     stats_to_run = ['prec', 'spc', 'pfr', 'psr', 'ptr', 'crp_early', 'crp_late', 'irt',
-                    'pli_early', 'pli_late', 'eli_early', 'eli_late', 'reps', 'nback_pli_rate']
+                    'pli_early', 'pli_late', 'eli_early', 'eli_late', 'reps', 'pli_recency']
     stats = {stat: {} for stat in stats_to_run}
     #filters = {'000': {'ll': 12, 'pr': 800, 'mod': 'a'}, '001': {'ll': 12, 'pr': 800, 'mod': 'v'}, '010': {'ll': 12, 'pr': 1600, 'mod': 'a'}, '011': {'ll': 12, 'pr': 1600, 'mod': 'v'},
     #           '100': {'ll': 24, 'pr': 800, 'mod': 'a'}, '101': {'ll': 24, 'pr': 800, 'mod': 'v'}, '110': {'ll': 24, 'pr': 1600, 'mod': 'a'}, '111': {'ll': 24, 'pr': 1600, 'mod': 'v'}}
@@ -90,7 +90,7 @@ def stats_for_subj(sub, condi, recalls, wasrec, rt, recw, presw, intru):
         stats['eli_early'][f] = avg_eli(fintru[:, :3], fsub)[0]
         stats['eli_late'][f] = avg_eli(fintru[:, 2:], fsub)[0]
         stats['reps'][f] = avg_reps(frecalls, fsub)[0]
-        stats['nback_pli_rate'][f] = nback_pli(fintru, fsub, 6, frecw)[0]
+        stats['pli_recency'][f] = pli_recency(fintru, fsub, 6, frecw)[0]
 
         # Fix CRPs to have a 0-lag of NaN
         stats['crp_early'][f][3] = np.nan
@@ -183,7 +183,7 @@ def prec(was_recalled, subjects):
     return result
 
 
-def nback_pli(intrusions, subjects, nmax, rec_words):
+def pli_recency(intrusions, subjects, nmax, rec_words):
     """
     Calculate the ratio of PLIs that originated from 1 list back, 2 lists back, etc. up until nmax lists back.
     
