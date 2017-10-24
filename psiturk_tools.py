@@ -131,10 +131,11 @@ def process_psiturk_data(data, dict_path):
 
             # Mark each recall as a correct recall, ELI, PLI, or other and make a recall list for the current trial
             sp = []
-            for recall in recalled_this_list:
-                list_num, position = which_item(recall, t, presented_so_far, when_presented, dictionary)
+            for j, recall in enumerate(recalled_this_list):
+                list_num, position, recall = which_item(recall, t, presented_so_far, when_presented, dictionary)
+                recalled_this_list[j] = recall  # Replace recalled words with their spell-checked versions
                 if list_num is None:
-                    # ELIs and invalid strings get error code of -999 or -9999 listed in their recalls matrix
+                    # ELIs and invalid strings get error code of -999 listed in their recalls matrix
                     sp.append(position)
                 else:
                     # Mark word as recalled
@@ -164,8 +165,9 @@ def which_item(recall, trial, presented, when_presented, dictionary):
     :param presented: The list of words seen by this subject so far, across all trials <= the current trial number
     :param when_presented: A listing of which trial each word was presented in
     :param dictionary: A list of strings that should be considered as possible extra-list intrusions
-    :return: If a correct recall, the serial position of the recall. If a PLI, -n, where n is the number of lists back
-    that the word was presented. If an ELI or invalid string, -999.
+    :return: If a correct recall or PLI, returns the trial number and serial position of the word's presentation, plus
+    the spelling-corrected version of the recall. If an ELI or invalid entry, returns a trial number of None, a serial
+    position of -999, and the spelling-corrected version of the recall.
     """
 
     # Check whether the recall exactly matches a previously presented word
@@ -177,16 +179,16 @@ def which_item(recall, trial, presented, when_presented, dictionary):
         list_num = when_presented[seen_where]
         first_item = np.min(np.where(when_presented == list_num))
         serial_pos = seen_where - first_item + 1
-        return int(list_num), int(serial_pos)
+        return int(list_num), int(serial_pos), recall
 
     # If the recalled word was not presented, but exactly matches any word in the dictionary, mark as an ELI
     in_dict, where_in_dict = self_term_search(recall, dictionary)
     if in_dict:
-        return None, -999
+        return None, -999, recall
 
     # If the recall contains non-letter characters
     if not recall.isalpha():
-        return None, -999
+        return None, -999, recall
 
     # If word is not in the dictionary, find the closest match based on edit distance
     recall = correct_spelling(recall, presented, dictionary)
