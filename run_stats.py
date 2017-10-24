@@ -1,8 +1,9 @@
+import numpy as np
 from pybeh.spc import spc
 from pybeh.pnr import pnr
 from pybeh.crp import crp
 from pybeh.irt import irt
-import numpy as np
+from scipy.stats import sem
 
 
 def run_stats(d):
@@ -47,6 +48,8 @@ def run_stats(d):
         # Run all stats for a single participant and add the resulting stats object to the stats dictionary
         stats[str(subj)] = stats_for_subj(sub, condi, recalls, wasrec, rt, recw, presw, intru)
 
+    stats['average'] = avg_stats(stats)
+
     return stats
 
 
@@ -65,26 +68,29 @@ def stats_for_subj(sub, condi, recalls, wasrec, rt, recw, presw, intru):
     :param intru: A list x items intrusions matrix (see recalls_to_intrusions)
     :return: 
     """
-    stats_to_run = ['prec', 'spc', 'pfr', 'psr', 'ptr', 'crp_early', 'crp_late', 'irt',
+    stats_to_run = ['prec', 'spc', 'pfr', 'psr', 'ptr', 'crp_early', 'crp_late',
                     'pli_early', 'pli_late', 'eli_early', 'eli_late', 'reps', 'pli_recency']
     stats = {stat: {} for stat in stats_to_run}
-    #filters = {'000': {'ll': 12, 'pr': 800, 'mod': 'a'}, '001': {'ll': 12, 'pr': 800, 'mod': 'v'}, '010': {'ll': 12, 'pr': 1600, 'mod': 'a'}, '011': {'ll': 12, 'pr': 1600, 'mod': 'v'},
-    #           '100': {'ll': 24, 'pr': 800, 'mod': 'a'}, '101': {'ll': 24, 'pr': 800, 'mod': 'v'}, '110': {'ll': 24, 'pr': 1600, 'mod': 'a'}, '111': {'ll': 24, 'pr': 1600, 'mod': 'v'}}
 
-    filters = {12: {'ll': 12}, 24: {'ll': 24}, 'a12': {'ll': 12, 'mod': 'a'}, 'a24': {'ll': 24, 'mod': 'a'}, 'v12': {'ll': 12, 'mod': 'v'}, 'v24': {'ll': 24, 'mod': 'v'}, 'f12': {'ll': 12, 'pr': 800}, 'f24': {'ll': 24, 'pr': 800}, 's12': {'ll': 12, 'pr': 1600}, 's24': {'ll': 24, 'pr': 1600}}
+    # filters = {'000': {'ll': 12, 'pr': 800, 'mod': 'a'}, '001': {'ll': 12, 'pr': 800, 'mod': 'v'},
+    #           '010': {'ll': 12, 'pr': 1600, 'mod': 'a'}, '011': {'ll': 12, 'pr': 1600, 'mod': 'v'},
+    #           '100': {'ll': 24, 'pr': 800, 'mod': 'a'}, '101': {'ll': 24, 'pr': 800, 'mod': 'v'},
+    #           '110': {'ll': 24, 'pr': 1600, 'mod': 'a'}, '111': {'ll': 24, 'pr': 1600, 'mod': 'v'}}
+    filters = {'12': {'ll': 12}, '24': {'ll': 24}, 'a12': {'ll': 12, 'mod': 'a'}, 'a24': {'ll': 24, 'mod': 'a'}, 'v12': {'ll': 12, 'mod': 'v'}, 'v24': {'ll': 24, 'mod': 'v'}, 'f12': {'ll': 12, 'pr': 800}, 'f24': {'ll': 24, 'pr': 800}, 's12': {'ll': 12, 'pr': 1600}, 's24': {'ll': 24, 'pr': 1600}}
+
     for f in filters:
         ll = filters[f]['ll']
         fsub, frecalls, fwasrec, frt, frecw, fpresw, fintru = [filter_by_condi(a, condi, **filters[f]) for a in [sub, recalls, wasrec, rt, recw, presw, intru]]
 
         # Calculate stats on all lists within the current condition
-        stats['prec'][f] = prec(fwasrec, fsub)[0]
+        stats['prec'][f] = prec(fwasrec[:, :ll], fsub)[0]
         stats['spc'][f] = spc(frecalls, fsub, ll)[0]
         stats['pfr'][f] = pnr(frecalls, fsub, ll, n=0)[0]
         stats['psr'][f] = pnr(frecalls, fsub, ll, n=1)[0]
         stats['ptr'][f] = pnr(frecalls, fsub, ll, n=2)[0]
         stats['crp_early'][f] = crp(frecalls[:, :3], fsub, ll, lag_num=3)[0]
         stats['crp_late'][f] = crp(frecalls[:, 2:], fsub, ll, lag_num=3)[0]
-        stats['irt'][f] = irt(frt)
+        #stats['irt'][f] = irt(frt)
         stats['pli_early'][f] = avg_pli(fintru[:, :3], fsub, frecw)[0]
         stats['pli_late'][f] = avg_pli(fintru[:, 2:], fsub, frecw)[0]
         stats['eli_early'][f] = avg_eli(fintru[:, :3], fsub)[0]
@@ -97,6 +103,30 @@ def stats_for_subj(sub, condi, recalls, wasrec, rt, recw, presw, intru):
         stats['crp_late'][f][3] = np.nan
 
     return stats
+
+
+def avg_stats(s):
+    stats_to_run = ['prec', 'spc', 'pfr', 'psr', 'ptr', 'crp_early', 'crp_late',
+                    'pli_early', 'pli_late', 'eli_early', 'eli_late', 'reps', 'pli_recency']
+    filters = ['12', '24', 'a12', 'a24', 'v12', 'v24', 'f12', 'f24', 's12', 's24']
+
+    avs = {}
+    for stat in stats_to_run:
+        avs[stat] = {}
+        for f in filters:
+            score = None
+            for subj in s:
+                if score is None:
+                    score = np.array(s[subj][stat][f])
+                else:
+                    try:
+                        score += np.array(s[subj][stat][f])
+                    except ValueError:
+                        pass
+            score = score / len(s.keys())
+            avs[stat][f] = score
+
+    return avs
 
 
 def filter_by_condi(a, condi, ll=None, pr=None, mod=None, dd=None):
@@ -161,26 +191,23 @@ def recalls_to_intrusions(rec):
     return intru
 
 
-def prec(was_recalled, subjects):
+def prec(recalled, subjects):
     """
     Calculate the overall probability of recall for each subject, given a lists x items matrix where 0s indicate
     words that were not subsequently recalled and 1s indicate words that were subsequently recalled. Item (i, j)
     should indicate whether the jth word presented in list i was recalled.
     
-    :param was_recalled: A lists x items matrix, indicating whether each presented word was subsequently recalled
+    :param recalled: A lists x items matrix, indicating whether each presented word was subsequently recalled
     :param subjects: A list of subject codes, indicating which subject produced each row of was_recalled
     :return: An array containing the overall probability of recall for each unique participant
     """
-    if len(was_recalled) == 0:
+    if len(recalled) == 0:
         return np.array([]), np.array([])
-    subjects = np.array(subjects)
     usub = np.unique(subjects)
-    result = np.zeros(len(usub))
-    stderr = np.zeros(len(usub))
-    for i, s in enumerate(usub):
-        result[i] = float(len(np.where(was_recalled[np.where(subjects == s)] == 1)[0])) / len(np.where(np.logical_not(np.isnan(was_recalled[np.where(subjects == s)])))[0])
+    result = np.array([recalled[subjects == subj].mean() for subj in usub])
+    stderr = np.array([sem(recalled[subjects == subj], nan_policy='omit') for subj in usub])
 
-    return result
+    return result, stderr
 
 
 def pli_recency(intrusions, subjects, nmax, rec_words):
