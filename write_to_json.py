@@ -3,7 +3,14 @@ import numpy as np
 
 
 def write_to_json(data, stats, behmat_json, stat_json):
-    # Convert numpy arrays to lists
+    """
+    Converts all numpy arrays in data and stats to lists, then writes both objects to JSON files.
+
+    :param data: A dictionary containing all ltpFR3 behavioral data matrices.
+    :param stats: A dictionary containing all ltpFR3 behavioral performance stats.
+    :param behmat_json: The path where data will be written.
+    :param stat_json: The path where stats will be written
+    """
     for subj in data:
         for field in data[subj]:
             if isinstance(data[subj][field], np.ndarray):
