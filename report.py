@@ -32,7 +32,7 @@ def ltpFR3_report(stats):
                       'eli_late': plot_eli_late, 'reps': plot_reps, 'pli_recency': plot_pli_recency}
 
     for subj in stats:
-        pdf = PdfPages('/Users/jessepazdera/Desktop/ltpFR3_reports/' + subj + '.pdf')
+        pdf = PdfPages('/data/eeg/scalp/ltp/ltpFR3_MTurk/reports/' + subj + '.pdf')
         plt.figure(figsize=(40, 30))
         plt.suptitle(subj, fontsize=36)
         for key in stat_plotters:
