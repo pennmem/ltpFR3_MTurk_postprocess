@@ -36,9 +36,9 @@ def ltpFR3_report(stats):
                      'rec_per_trial': plot_rec_perlist, 'math_per_trial': plot_math_perlist}
 
     for subj in stats:
-        pdf = PdfPages('/data/eeg/scalp/ltp/ltpFR3_MTurk/reports/' + subj + '.pdf')
+        pdf = PdfPages('/data/eeg/scalp/ltp/ltpFR3_MTurk/reports/' + subj[:7] + '.pdf')
         plt.figure(figsize=(30, 30))
-        plt.suptitle(subj, fontsize=36)
+        plt.suptitle(subj[:7], fontsize=36)
         for key in stat_plotters:
             if key in stats[subj]:
                 stat_plotters[key](stats[subj][key])
