@@ -38,22 +38,23 @@ def run_stats(d):
         # Extract subject, condition, recall, etc info from raw data to create recalls matrices, etc
         sub = np.array([subj for i in list_iterator])
         condi = [(d[subj]['list_len'][i], d[subj]['pres_rate'][i], str(d[subj]['pres_mod'][i]), d[subj]['dist_dur'][i]) for i in list_iterator]
-        recalls = pad_into_array([d[subj]['recalls'][i] for i in list_iterator]).astype(int)
-        wasrec = np.array([d[subj]['was_recalled'][i] for i in list_iterator])
-        rt = pad_into_array([d[subj]['rt'][i] for i in list_iterator])
-        recw = pad_into_array([d[subj]['rec_words'][i] for i in list_iterator])
-        presw = pad_into_array([d[subj]['pres_words'][i] for i in list_iterator])
+        recalls = pad_into_array(d[subj]['recalls']).astype(int)
+        wasrec = np.array(d[subj]['was_recalled'])
+        rt = pad_into_array(d[subj]['rt'])
+        recw = pad_into_array(d[subj]['rec_words'])
+        presw = pad_into_array(d[subj]['pres_words'])
         intru = recalls_to_intrusions(recalls)
+        math = pad_into_array(d[subj]['math_correct']).astype(bool)
 
         # Run all stats for a single participant and add the resulting stats object to the stats dictionary
-        stats[str(subj)] = stats_for_subj(sub, condi, recalls, wasrec, rt, recw, presw, intru)
+        stats[str(subj)] = stats_for_subj(sub, condi, recalls, wasrec, rt, recw, presw, intru, math)
 
     stats['average'] = avg_stats(stats)
 
     return stats
 
 
-def stats_for_subj(sub, condi, recalls, wasrec, rt, recw, presw, intru):
+def stats_for_subj(sub, condi, recalls, wasrec, rt, recw, presw, intru, math):
     """
     Create a stats dictionary for a single participant.
     
@@ -102,6 +103,9 @@ def stats_for_subj(sub, condi, recalls, wasrec, rt, recw, presw, intru):
         stats['crp_early'][f][3] = np.nan
         stats['crp_late'][f][3] = np.nan
 
+    stats['rec_per_trial'] = np.nanmean(wasrec, axis=1)
+    stats['math_per_trial'] = np.sum(math, axis=1)
+
     return stats
 
 
@@ -119,10 +123,7 @@ def avg_stats(s):
                 if score is None:
                     score = np.array(s[subj][stat][f])
                 else:
-                    try:
-                        score += np.array(s[subj][stat][f])
-                    except ValueError:
-                        pass
+                    score += np.array(s[subj][stat][f])
             score = score / len(s.keys())
             avs[stat][f] = score
 
