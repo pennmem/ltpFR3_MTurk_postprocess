@@ -81,6 +81,7 @@ def process_psiturk_data(data, dict_path):
     recalls_filter = data.type == 'FREE_RECALL'
     study_filter_aud = data.type == 'PRES_AUD'
     study_filter_vis = data.type == 'PRES_VIS'
+    distractor_filter = data.type == 'DISTRACTOR'
 
     # For each subject
     subjects = data.uniqueid.unique()
@@ -94,6 +95,7 @@ def process_psiturk_data(data, dict_path):
         d[s]['pres_rate'] = []
         d[s]['pres_mod'] = []
         d[s]['dist_dur'] = []
+        d[s]['math_correct'] = []
 
         # Get all presentation and recall events from the current subject
         s_filter = data.uniqueid == s
@@ -103,6 +105,16 @@ def process_psiturk_data(data, dict_path):
         pres_words = np.array([str(x[1]) for x in s_pres])
         rec_trials = np.array([x[0] for x in s_recalls])
         rec_words = np.array([[str(y) for y in x[1]] for x in s_recalls])
+        # Get distractor problems and responses, then total the number of correct answers on each trial
+        s_dist = data.loc[s_filter & distractor_filter, ['num1', 'num2', 'num3', 'responses']].as_matrix()
+        for trial_data in s_dist:
+            valid = np.where([ans.strip().isnumeric() for ans in trial_data[3]])
+            n1 = np.array(trial_data[0])[valid].astype(int)
+            n2 = np.array(trial_data[1])[valid].astype(int)
+            n3 = np.array(trial_data[2])[valid].astype(int)
+            resp = np.array(trial_data[3])[valid].astype(int)
+            correct = n1 + n2 + n3 == resp
+            d[s]['math_correct'].append(correct.tolist())
 
         # Add presented words to the data structure
         d[s]['pres_words'] = [[word for i, word in enumerate(pres_words) if pres_trials[i] == trial] for trial in np.unique(pres_trials)]
