@@ -40,7 +40,7 @@ def load_psiturk_data(db_url=None, table_name=None, data_column_name='datastring
 
     # parse each participant's datastring as json object
     # and take the 'data' sub-object
-    data = [json.loads(part)['data'] for part in data]
+    data = [json.loads(part)['data'] for part in data if part != '']
 
     # insert uniqueid field into trialdata in case it wasn't added
     # in experiment:
@@ -99,7 +99,7 @@ def process_psiturk_data(data, dict_path):
 
         # Get all presentation and recall events from the current subject
         s_filter = data.uniqueid == s
-        s_pres = data.loc[s_filter & study_filter_aud | study_filter_vis, ['trial', 'word', 'conditions']].as_matrix()
+        s_pres = data.loc[s_filter & (study_filter_aud | study_filter_vis), ['trial', 'word', 'conditions']].as_matrix()
         s_recalls = data.loc[s_filter & recalls_filter, ['trial', 'recwords', 'conditions', 'rt']].as_matrix()
         pres_trials = np.array([x[0] for x in s_pres])
         pres_words = np.array([str(x[1]) for x in s_pres])
