@@ -5,7 +5,11 @@ import json
 def lookup_and_acceptance_tool():
     """
     Load worker ID/subject ID map JSON file and enter ID numbers when prompted to print the subject/worker ID that
-    corresponds to them. Requires administrator privileges to access IDs.
+    corresponds to them. As a shortcut, you can enter just the integer of a participant's number, e.g. 42 to look up
+    MT0042. Also checks whether that participant's submission was accepted or rejected, and asks whether you wish to
+    accept or reject any new participant's submission.
+
+    Requires administrator privileges to access IDs.
     """
     ID_MAP = '/data/eeg/scalp/ltp/admin_docs/MTurk/ltpFR3_IDs.json'
     ACCEPTED_REJECTED = '/data/eeg/scalp/ltp/ltpFR3_MTurk/acceptance.json'
@@ -36,6 +40,8 @@ def lookup_and_acceptance_tool():
         inp = input('Please enter an ID or leave blank to exit: ')
         if inp == '':
             break
+        if inp.isnumeric() and len(inp) <= 4:
+            inp = 'MT%04d' % int(inp)
 
         # Lookup input ID
         if inp not in idmap:
