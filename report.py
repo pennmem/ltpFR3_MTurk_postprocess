@@ -236,82 +236,92 @@ def plot_pli_recency(s):
 
 def plot_pli_early(s):
     plt.subplot(9, 3, 14)
-    plt.bar([1, 2, 3, 4], [s['s12'], s['s24'], s['f12'], s['f24']], align='center', color='#D5D5D5')
+    plt.bar([1, 2, 3, 4], [s['s12'], s['s24'], s['f12'], s['f24']], align='center', color='k', fill=False)
     plt.xticks([1, 2, 3, 4], ['Slow/12', 'Slow/24', 'Fast/12', 'Fast/24'])
     plt.title('PLI (Early)')
     plt.xlabel('List Length')
     plt.ylabel('Avg. PLIs per List')
+    plt.ylim(0, 3)
 
     plt.subplot(9, 3, 17)
-    plt.bar([1, 2, 3, 4], [s['a12'], s['a24'], s['v12'], s['v24']], align='center', color='#D5D5D5')
+    plt.bar([1, 2, 3, 4], [s['a12'], s['a24'], s['v12'], s['v24']], align='center', color='k', fill=False)
     plt.xticks([1, 2, 3, 4], ['Auditory/12', 'Auditory/24', 'Visual/12', 'Visual/24'])
     plt.title('PLI (Early)')
     plt.xlabel('List Length')
     plt.ylabel('Avg. PLIs per List')
+    plt.ylim(0, 3)
 
 
 def plot_pli_late(s):
     plt.subplot(9, 3, 15)
-    plt.bar([1, 2, 3, 4], [s['s12'], s['s24'], s['f12'], s['f24']], align='center', color='#D5D5D5')
+    plt.bar([1, 2, 3, 4], [s['s12'], s['s24'], s['f12'], s['f24']], align='center', color='k', fill=False)
     plt.xticks([1, 2, 3, 4], ['Slow/12', 'Slow/24', 'Fast/12', 'Fast/24'])
     plt.title('PLI (Late)')
     plt.xlabel('List Length')
     plt.ylabel('Avg. PLIs per List')
+    plt.ylim(0, 3)
 
     plt.subplot(9, 3, 18)
-    plt.bar([1, 2, 3, 4], [s['a12'], s['a24'], s['v12'], s['v24']], align='center', color='#D5D5D5')
+    plt.bar([1, 2, 3, 4], [s['a12'], s['a24'], s['v12'], s['v24']], align='center', color='k', fill=False)
     plt.xticks([1, 2, 3, 4], ['Auditory/12', 'Auditory/24', 'Visual/12', 'Visual/24'])
     plt.title('PLI (Late)')
     plt.xlabel('List Length')
     plt.ylabel('Avg. PLIs per List')
+    plt.ylim(0, 3)
 
 
 def plot_eli_early(s):
     plt.subplot(9, 3, 19)
-    plt.bar([1, 2, 3, 4], [s['s12'], s['s24'], s['f12'], s['f24']], align='center', color='#D5D5D5')
+    plt.bar([1, 2, 3, 4], [s['s12'], s['s24'], s['f12'], s['f24']], align='center', color='k', fill=False)
     plt.xticks([1, 2, 3, 4], ['Slow/12', 'Slow/24', 'Fast/12', 'Fast/24'])
     plt.title('ELI (Early)')
     plt.xlabel('List Length')
     plt.ylabel('Avg. ELIs per List')
+    plt.ylim(0, 3)
 
     plt.subplot(9, 3, 22)
-    plt.bar([1, 2, 3, 4], [s['a12'], s['a24'], s['v12'], s['v24']], align='center', color='#D5D5D5')
+    plt.bar([1, 2, 3, 4], [s['a12'], s['a24'], s['v12'], s['v24']], align='center', color='k', fill=False)
     plt.xticks([1, 2, 3, 4], ['Auditory/12', 'Auditory/24', 'Visual/12', 'Visual/24'])
     plt.title('ELI (Early)')
     plt.xlabel('List Length')
     plt.ylabel('Avg. ELIs per List')
+    plt.ylim(0, 3)
 
 
 def plot_eli_late(s):
     plt.subplot(9, 3, 20)
-    plt.bar([1, 2, 3, 4], [s['s12'], s['s24'], s['f12'], s['f24']], align='center', color='#D5D5D5')
+    plt.bar([1, 2, 3, 4], [s['s12'], s['s24'], s['f12'], s['f24']], align='center', color='k', fill=False)
     plt.xticks([1, 2, 3, 4], ['Slow/12', 'Slow/24', 'Fast/12', 'Fast/24'])
     plt.title('ELI (Late)')
     plt.xlabel('List Length')
     plt.ylabel('Avg. ELIs per List')
+    plt.ylim(0, 3)
 
     plt.subplot(9, 3, 23)
-    plt.bar([1, 2, 3, 4], [s['a12'], s['a24'], s['v12'], s['v24']], align='center', color='#D5D5D5')
+    plt.bar([1, 2, 3, 4], [s['a12'], s['a24'], s['v12'], s['v24']], align='center', color='k', fill=False)
     plt.xticks([1, 2, 3, 4], ['Auditory/12', 'Auditory/24', 'Visual/12', 'Visual/24'])
     plt.title('ELI (Late)')
     plt.xlabel('List Length')
     plt.ylabel('Avg. ELIs per List')
+    plt.ylim(0, 3)
 
 
 def plot_reps(s):
     plt.subplot(9, 3, 21)
-    plt.bar([1, 2, 3, 4], [s['s12'], s['s24'], s['f12'], s['f24']], align='center', color='#D5D5D5')
+    plt.bar([1, 2, 3, 4], [s['s12'], s['s24'], s['f12'], s['f24']], align='center', color='k', fill=False)
     plt.xticks([1, 2, 3, 4], ['Slow/12', 'Slow/24', 'Fast/12', 'Fast/24'])
     plt.title('Repetitions')
     plt.xlabel('List Length')
     plt.ylabel('Avg. Repetitions per List')
+    plt.ylim(0, 3)
 
     plt.subplot(9, 3, 24)
-    plt.bar([1, 2, 3, 4], [s['a12'], s['a24'], s['v12'], s['v24']], align='center', color='#D5D5D5')
+    plt.bar([1, 2, 3, 4], [s['a12'], s['a24'], s['v12'], s['v24']], align='center', color='k', fill=False)
     plt.xticks([1, 2, 3, 4], ['Auditory/12', 'Auditory/24', 'Visual/12', 'Visual/24'])
     plt.title('Repetitions')
     plt.xlabel('List Length')
     plt.ylabel('Avg. Repetitions per List')
+    plt.ylim(0, 3)
 
 
 def plot_rec_perlist(s):
