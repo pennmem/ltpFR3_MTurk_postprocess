@@ -32,9 +32,10 @@ def lookup_and_acceptance_tool():
     # UI Loop
     #
     ##########
-    inp = None
-    while inp != '':
+    while True:
         inp = input('Please enter an ID or leave blank to exit: ')
+        if inp == '':
+            break
 
         # Lookup input ID
         if inp not in idmap:
@@ -59,16 +60,20 @@ def lookup_and_acceptance_tool():
             continue
 
         # If the participant has not yet been accepted or rejected, prompt user to mark as accepted or rejected
-        accept = None
-        while accept not in ('1', '0', ''):
+        while True:
             accept = input('Enter 1 to ACCEPT, 0 to REJECT, or leave blank to POSTPONE: ')
             if accept == '0':
                 acceptance[inp] = 0
+                break
             elif accept == '1':
                 acceptance[inp] = 1
-            elif accept != '':
+                break
+            elif accept == '':
+                break
+            else:
                 print('Invalid input!')
 
+    # Save acceptance record
     with open(ACCEPTED_REJECTED, 'w') as f:
         json.dump(acceptance, f)
 
