@@ -74,8 +74,10 @@ def lookup_and_acceptance_tool():
                 print('Invalid input!')
 
     # Save acceptance record
+    print('Saving...')
     with open(ACCEPTED_REJECTED, 'w') as f:
         json.dump(acceptance, f)
+    print('Done.')
 
 
 if __name__ == "__main__":
