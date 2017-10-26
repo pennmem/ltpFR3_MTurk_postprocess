@@ -6,7 +6,7 @@ def lookup_and_acceptance_tool():
     """
     Load worker ID/subject ID map JSON file and enter ID numbers when prompted to print the subject/worker ID that
     corresponds to them. As a shortcut, you can enter just the integer of a participant's number, e.g. 42 to look up
-    MT0042. Also checks whether that participant's submission was accepted or rejected, and asks whether you wish to
+    MTK0042. Also checks whether that participant's submission was accepted or rejected, and asks whether you wish to
     accept or reject any new participant's submission.
 
     Requires administrator privileges to access IDs.
@@ -41,7 +41,7 @@ def lookup_and_acceptance_tool():
         if inp == '':
             break
         if inp.isnumeric() and len(inp) <= 4:
-            inp = 'MT%04d' % int(inp)
+            inp = 'MTK%04d' % int(inp)
 
         # Lookup input ID
         if inp not in idmap:
@@ -49,10 +49,10 @@ def lookup_and_acceptance_tool():
             continue
         print(idmap[inp])
 
-        # Determine the subject ID (should be of the form "MT####"). We only use subject IDs in the acceptance record.
-        if inp.startswith('MT') and len(inp) == 7:
+        # Determine the subject ID (should be of the form "MTK####"). We only use subject IDs in the acceptance record.
+        if inp.startswith('MTK') and len(inp) == 7:
             subjid = inp
-        elif idmap[inp].startswith('MT') and len(inp) == 7:
+        elif idmap[inp].startswith('MTK') and len(inp) == 7:
             subjid = idmap[inp]
         else:
             continue
