@@ -26,8 +26,18 @@ def load_psiturk_data(db_url=None, table_name=None, data_column_name='datastring
     rows = s.execute()
 
     data = []
-    # status codes of subjects who completed experiment
-    statuses = [3, 4, 5, 7]
+    """
+    Status codes are as follows:
+    NOT_ACCEPTED = 0
+    ALLOCATED = 1
+    STARTED = 2
+    COMPLETED = 3
+    SUBMITTED = 4
+    CREDITED = 5
+    QUITEARLY = 6
+    BONUSED = 7
+    """
+    statuses = [3, 4, 5, 7]  # Status codes of subjects who have completed the study
     # if you have workers you wish to exclude, add them here
     exclude = []
     for row in rows:
