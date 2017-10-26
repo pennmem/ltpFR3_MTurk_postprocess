@@ -71,3 +71,7 @@ def lookup_and_acceptance_tool():
 
     with open(ACCEPTED_REJECTED, 'w') as f:
         json.dump(acceptance, f)
+
+
+if __name__ == "__main__":
+    lookup_and_acceptance_tool()
