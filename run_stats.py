@@ -118,14 +118,11 @@ def avg_stats(s):
     for stat in stats_to_run:
         avs[stat] = {}
         for f in filters:
-            score = None
+            scores = []
             for subj in s:
-                if score is None:
-                    score = np.array(s[subj][stat][f])
-                else:
-                    score += np.array(s[subj][stat][f])
-            score = score / len(s.keys())
-            avs[stat][f] = score
+                scores.append(s[subj][stat][f])
+            scores = np.array(scores)
+            avs[stat][f] = np.nanmean(scores, axis=0)
 
     return avs
 
