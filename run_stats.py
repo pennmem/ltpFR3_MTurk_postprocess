@@ -113,6 +113,7 @@ def avg_stats(s):
     stats_to_run = ['prec', 'spc', 'pfr', 'psr', 'ptr', 'crp_early', 'crp_late',
                     'pli_early', 'pli_late', 'eli_early', 'eli_late', 'reps', 'pli_recency']
     filters = ['12', '24', 'a12', 'a24', 'v12', 'v24', 'f12', 'f24', 's12', 's24']
+    excluded = ['MTK0019']
 
     avs = {}
     for stat in stats_to_run:
@@ -120,7 +121,8 @@ def avg_stats(s):
         for f in filters:
             scores = []
             for subj in s:
-                scores.append(s[subj][stat][f])
+                if s not in excluded:
+                    scores.append(s[subj][stat][f])
             scores = np.array(scores)
             avs[stat][f] = np.nanmean(scores, axis=0)
 
