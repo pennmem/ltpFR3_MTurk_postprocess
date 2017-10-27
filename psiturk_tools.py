@@ -102,7 +102,6 @@ def process_psiturk_data(data, dict_path):
         d[s] = {}
         d[s]['serialpos'] = []
         d[s]['rec_words'] = []
-        d[s]['ffr_rec_words'] = []
         d[s]['pres_words'] = []
         d[s]['list_len'] = []
         d[s]['pres_rate'] = []
@@ -179,13 +178,14 @@ def process_psiturk_data(data, dict_path):
             d[s]['recalled'][i, d[s]['list_len'][i]:] = np.nan
 
         # Process FFR data
-        try:
+        d[s]['ffr_rt'] = []
+        d[s]['ffr_rec_words'] = []
+        if len(s_ffr) == 1 and len(s_ffr[0]) == 2:
             d[s]['ffr_rt'] = s_ffr[0][1]
-        except Exception as e:
-            pass
-        for i, recall in enumerate(s_ffr[0][0]):
-            _, _, recall = which_item(recall, t+1, pres_words, pres_trials, dictionary)
-            d[s]['ffr_rec_words'].append(recall)
+            for i, recall in enumerate(s_ffr[0][0]):
+                _, _, recall = which_item(recall, t+1, pres_words, pres_trials, dictionary)
+                d[s]['ffr_rec_words'].append(recall)
+
 
     return d
 
