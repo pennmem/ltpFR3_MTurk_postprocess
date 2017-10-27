@@ -69,8 +69,7 @@ def stats_for_subj(sub, condi, recalls, wasrec, rt, recw, presw, intru, math):
     :param intru: A list x items intrusions matrix (see recalls_to_intrusions)
     :return: 
     """
-    stats_to_run = ['prec', 'spc', 'pfr', 'psr', 'ptr', 'crp_early', 'crp_late',
-                    'pli_early', 'pli_late', 'eli_early', 'eli_late', 'reps', 'pli_recency']
+    stats_to_run = ['prec', 'spc', 'pfr', 'psr', 'ptr', 'crp_early', 'crp_late', 'plis', 'elis', 'reps', 'pli_recency']
     stats = {stat: {} for stat in stats_to_run}
 
     # filters = {'000': {'ll': 12, 'pr': 800, 'mod': 'a'}, '001': {'ll': 12, 'pr': 800, 'mod': 'v'},
