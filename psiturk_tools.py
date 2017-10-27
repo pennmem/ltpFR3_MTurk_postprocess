@@ -92,14 +92,16 @@ def process_psiturk_data(data, dict_path):
     study_filter_aud = data.type == 'PRES_AUD'
     study_filter_vis = data.type == 'PRES_VIS'
     distractor_filter = data.type == 'DISTRACTOR'
+    ffr_filter = data.type == 'FFR'
 
     # For each subject
     subjects = data.uniqueid.unique()
     for s in subjects:
         # Initialize data entries for subject
         d[s] = {}
-        d[s]['recalls'] = []
+        d[s]['serialpos'] = []
         d[s]['rec_words'] = []
+        d[s]['ffr_rec_words'] = []
         d[s]['pres_words'] = []
         d[s]['list_len'] = []
         d[s]['pres_rate'] = []
@@ -111,6 +113,7 @@ def process_psiturk_data(data, dict_path):
         s_filter = data.uniqueid == s
         s_pres = data.loc[s_filter & (study_filter_aud | study_filter_vis), ['trial', 'word', 'conditions']].as_matrix()
         s_recalls = data.loc[s_filter & recalls_filter, ['trial', 'recwords', 'conditions', 'rt']].as_matrix()
+        s_ffr = data.loc[s_filter & ffr_filter, ['recwords', 'rt']].as_matrix()
         pres_trials = np.array([x[0] for x in s_pres])
         pres_words = np.array([str(x[1]) for x in s_pres])
         rec_trials = np.array([x[0] for x in s_recalls])
@@ -137,7 +140,7 @@ def process_psiturk_data(data, dict_path):
         d[s]['dist_dur'] = [x[3] for x in conditions]
 
         # Create empty was_recalled matrix
-        d[s]['was_recalled'] = np.zeros((len(d[s]['pres_words']), np.max(d[s]['list_len'])))
+        d[s]['recalled'] = np.zeros((len(d[s]['pres_words']), np.max(d[s]['list_len'])))
 
         # Add recall timing matrix to the data structure
         d[s]['rt'] = [x[3] for x in s_recalls]
@@ -161,7 +164,7 @@ def process_psiturk_data(data, dict_path):
                     sp.append(position)
                 else:
                     # Mark word as recalled
-                    d[s]['was_recalled'][list_num, position-1] = 1
+                    d[s]['recalled'][list_num, position-1] = 1
                     # PLIs get serial position of -n, where n is the number of lists back the word was presented
                     if list_num != t:
                         sp.append(list_num - t)
@@ -170,9 +173,16 @@ def process_psiturk_data(data, dict_path):
                         sp.append(position)
 
             # Add the current trial's recalls as a row in the participant's recalls matrix
-            d[s]['recalls'].append(sp)
+            d[s]['serialpos'].append(sp)
             d[s]['rec_words'].append(recalled_this_list)
-            d[s]['was_recalled'][i, d[s]['list_len'][i]:] = np.nan
+            d[s]['recalled'][i, d[s]['list_len'][i]:] = np.nan
+
+        # Process FFR data
+        d[s]['ffr_rt'] = [x[1] for x in s_ffr][0]
+        for i, recall in enumerate([x[0] for x in s_ffr][0]):
+            _, _, recall = which_item(recall, t+1, pres_words, pres_trials, dictionary)
+            d[s]['ffr_rec_words'].append(recall)
+        pass
 
     return d
 

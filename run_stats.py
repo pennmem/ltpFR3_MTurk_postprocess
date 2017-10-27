@@ -38,8 +38,8 @@ def run_stats(d):
         # Extract subject, condition, recall, etc info from raw data to create recalls matrices, etc
         sub = np.array([subj for i in list_iterator])
         condi = [(d[subj]['list_len'][i], d[subj]['pres_rate'][i], str(d[subj]['pres_mod'][i]), d[subj]['dist_dur'][i]) for i in list_iterator]
-        recalls = pad_into_array(d[subj]['recalls']).astype(int)
-        wasrec = np.array(d[subj]['was_recalled'])
+        recalls = pad_into_array(d[subj]['serialpos']).astype(int)
+        wasrec = np.array(d[subj]['recalled'])
         rt = pad_into_array(d[subj]['rt'])
         recw = pad_into_array(d[subj]['rec_words'])
         presw = pad_into_array(d[subj]['pres_words'])
