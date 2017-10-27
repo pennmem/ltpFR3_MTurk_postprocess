@@ -42,7 +42,7 @@ def load_psiturk_data(db_url=None, table_name=None, data_column_name='datastring
     exclude = []
     for row in rows:
         # only use subjects who completed experiment and aren't excluded
-        if row['status'] in statuses and row['uniqueid'] not in exclude:
+        if row['status'] in statuses and row['workerid'] not in exclude:
             data.append(row[data_column_name])
 
     # Now we have all participant datastrings in a list.
@@ -96,7 +96,8 @@ def process_psiturk_data(data, dict_path):
 
     # For each subject
     subjects = data.uniqueid.unique()
-    for s in subjects:
+    for subj in subjects:
+        s = subj[:7]
         # Initialize data entries for subject
         d[s] = {}
         d[s]['serialpos'] = []
@@ -110,7 +111,7 @@ def process_psiturk_data(data, dict_path):
         d[s]['math_correct'] = []
 
         # Get all presentation and recall events from the current subject
-        s_filter = data.uniqueid == s
+        s_filter = data.uniqueid == subj
         s_pres = data.loc[s_filter & (study_filter_aud | study_filter_vis), ['trial', 'word', 'conditions']].as_matrix()
         s_recalls = data.loc[s_filter & recalls_filter, ['trial', 'recwords', 'conditions', 'rt']].as_matrix()
         s_ffr = data.loc[s_filter & ffr_filter, ['recwords', 'rt']].as_matrix()
@@ -182,7 +183,6 @@ def process_psiturk_data(data, dict_path):
         for i, recall in enumerate([x[0] for x in s_ffr][0]):
             _, _, recall = which_item(recall, t+1, pres_words, pres_trials, dictionary)
             d[s]['ffr_rec_words'].append(recall)
-        pass
 
     return d
 

@@ -36,9 +36,9 @@ def ltpFR3_report(stats):
                      'rec_per_trial': plot_rec_perlist, 'math_per_trial': plot_math_perlist}
 
     for subj in stats:
-        pdf = PdfPages('/data/eeg/scalp/ltp/ltpFR3_MTurk/reports/' + subj[:7] + '.pdf')
+        pdf = PdfPages('/data/eeg/scalp/ltp/ltpFR3_MTurk/reports/' + subj + '.pdf')
         plt.figure(figsize=(30, 30))
-        plt.suptitle(subj[:7], fontsize=36)
+        plt.suptitle(subj, fontsize=36)
         for key in stat_plotters:
             if key in stats[subj]:
                 stat_plotters[key](stats[subj][key])
@@ -60,7 +60,6 @@ def plot_spc(s):
     plt.xlabel('Serial Position')
     plt.ylabel('Probability of Recall')
     plt.legend(labels=['Slow/12', 'Slow/24', 'Fast/12', 'Fast/24'])
-    plt.xlim(1, 24)
     plt.ylim(-.05, 1.05)
     plt.xticks(range(1, 25, 2), range(1, 25, 2))
 
@@ -73,7 +72,6 @@ def plot_spc(s):
     plt.xlabel('Serial Position')
     plt.ylabel('Probability of Recall')
     plt.legend(labels=['Auditory/12', 'Auditory/24', 'Visual/12', 'Visual/24'])
-    plt.xlim(1, 24)
     plt.ylim(-.05, 1.05)
     plt.xticks(range(1, 25, 2), range(1, 25, 2))
 
@@ -136,7 +134,6 @@ def plot_pfr(s):
     plt.xlabel('Serial Position')
     plt.ylabel('Probability of First Recall')
     plt.legend(labels=['Slow/12', 'Slow/24', 'Fast/12', 'Fast/24'])
-    plt.xlim(1, 24)
     plt.ylim(-.05, 1.05)
     plt.xticks(range(1, 25, 2), range(1, 25, 2))
 
@@ -149,7 +146,6 @@ def plot_pfr(s):
     plt.xlabel('Serial Position')
     plt.ylabel('Probability of First Recall')
     plt.legend(labels=['Auditory/12', 'Auditory/24', 'Visual/12', 'Visual/24'])
-    plt.xlim(1, 24)
     plt.ylim(-.05, 1.05)
     plt.xticks(range(1, 25, 2), range(1, 25, 2))
 
@@ -164,7 +160,6 @@ def plot_psr(s):
     plt.xlabel('Serial Position')
     plt.ylabel('Probability of Second Recall')
     plt.legend(labels=['Slow/12', 'Slow/24', 'Fast/12', 'Fast/24'])
-    plt.xlim(1, 24)
     plt.ylim(-.05, 1.05)
     plt.xticks(range(1, 25, 2), range(1, 25, 2))
 
@@ -177,7 +172,6 @@ def plot_psr(s):
     plt.xlabel('Serial Position')
     plt.ylabel('Probability of Second Recall')
     plt.legend(labels=['Auditory/12', 'Auditory/24', 'Visual/12', 'Visual/24'])
-    plt.xlim(1, 24)
     plt.ylim(-.05, 1.05)
     plt.xticks(range(1, 25, 2), range(1, 25, 2))
 
@@ -192,7 +186,6 @@ def plot_ptr(s):
     plt.xlabel('Serial Position')
     plt.ylabel('Probability of Third Recall')
     plt.legend(labels=['Slow/12', 'Slow/24', 'Fast/12', 'Fast/24'])
-    plt.xlim(1, 24)
     plt.ylim(-.05, 1.05)
     plt.xticks(range(1, 25, 2), range(1, 25, 2))
 
@@ -205,7 +198,6 @@ def plot_ptr(s):
     plt.xlabel('Serial Position')
     plt.ylabel('Probability of Third Recall')
     plt.legend(labels=['Auditory/12', 'Auditory/24', 'Visual/12', 'Visual/24'])
-    plt.xlim(1, 24)
     plt.ylim(-.05, 1.05)
     plt.xticks(range(1, 25, 2), range(1, 25, 2))
 
