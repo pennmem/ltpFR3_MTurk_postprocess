@@ -33,7 +33,7 @@ def run_stats(d):
     stats = dict()
 
     for subj in d:
-        list_iterator = range(len(d[subj]['recalls']))
+        list_iterator = range(len(d[subj]['serialpos']))
 
         # Extract subject, condition, recall, etc info from raw data to create recalls matrices, etc
         sub = np.array([subj for i in list_iterator])
@@ -77,7 +77,9 @@ def stats_for_subj(sub, condi, recalls, wasrec, rt, recw, presw, intru, math):
     #           '010': {'ll': 12, 'pr': 1600, 'mod': 'a'}, '011': {'ll': 12, 'pr': 1600, 'mod': 'v'},
     #           '100': {'ll': 24, 'pr': 800, 'mod': 'a'}, '101': {'ll': 24, 'pr': 800, 'mod': 'v'},
     #           '110': {'ll': 24, 'pr': 1600, 'mod': 'a'}, '111': {'ll': 24, 'pr': 1600, 'mod': 'v'}}
-    filters = {'12': {'ll': 12}, '24': {'ll': 24}, 'a12': {'ll': 12, 'mod': 'a'}, 'a24': {'ll': 24, 'mod': 'a'}, 'v12': {'ll': 12, 'mod': 'v'}, 'v24': {'ll': 24, 'mod': 'v'}, 'f12': {'ll': 12, 'pr': 800}, 'f24': {'ll': 24, 'pr': 800}, 's12': {'ll': 12, 'pr': 1600}, 's24': {'ll': 24, 'pr': 1600}}
+    filters = {'12': {'ll': 12}, '24': {'ll': 24}, 'a12': {'ll': 12, 'mod': 'a'}, 'a24': {'ll': 24, 'mod': 'a'},
+               'v12': {'ll': 12, 'mod': 'v'}, 'v24': {'ll': 24, 'mod': 'v'}, 'f12': {'ll': 12, 'pr': 800},
+               'f24': {'ll': 24, 'pr': 800}, 's12': {'ll': 12, 'pr': 1600}, 's24': {'ll': 24, 'pr': 1600}}
 
     for f in filters:
         ll = filters[f]['ll']
@@ -92,10 +94,8 @@ def stats_for_subj(sub, condi, recalls, wasrec, rt, recw, presw, intru, math):
         stats['crp_early'][f] = crp(frecalls[:, :3], fsub, ll, lag_num=3)[0]
         stats['crp_late'][f] = crp(frecalls[:, 2:], fsub, ll, lag_num=3)[0]
         #stats['irt'][f] = irt(frt)
-        stats['pli_early'][f] = avg_pli(fintru[:, :3], fsub, frecw)[0]
-        stats['pli_late'][f] = avg_pli(fintru[:, 2:], fsub, frecw)[0]
-        stats['eli_early'][f] = avg_eli(fintru[:, :3], fsub)[0]
-        stats['eli_late'][f] = avg_eli(fintru[:, 2:], fsub)[0]
+        stats['plis'][f] = avg_pli(fintru, fsub, frecw)[0]
+        stats['elis'][f] = avg_eli(fintru, fsub)[0]
         stats['reps'][f] = avg_reps(frecalls, fsub)[0]
         stats['pli_recency'][f] = pli_recency(fintru, fsub, 6, frecw)[0]
 
