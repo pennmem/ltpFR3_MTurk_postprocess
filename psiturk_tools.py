@@ -179,8 +179,11 @@ def process_psiturk_data(data, dict_path):
             d[s]['recalled'][i, d[s]['list_len'][i]:] = np.nan
 
         # Process FFR data
-        d[s]['ffr_rt'] = [x[1] for x in s_ffr][0]
-        for i, recall in enumerate([x[0] for x in s_ffr][0]):
+        try:
+            d[s]['ffr_rt'] = s_ffr[0][1]
+        except Exception as e:
+            pass
+        for i, recall in enumerate(s_ffr[0][0]):
             _, _, recall = which_item(recall, t+1, pres_words, pres_trials, dictionary)
             d[s]['ffr_rec_words'].append(recall)
 
