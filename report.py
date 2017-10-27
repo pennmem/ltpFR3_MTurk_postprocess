@@ -30,9 +30,7 @@ def ltpFR3_report(stats):
     :param stats: A dictionary containing the behavioral stats calculated by run_stats.
     """
     stat_plotters = {'prec': plot_prec, 'spc': plot_spc, 'pfr': plot_pfr, 'psr': plot_psr, 'ptr': plot_ptr,
-                      'crp_early': plot_crp_early, 'crp_late': plot_crp_late,
-                      'pli_early': plot_pli_early, 'pli_late': plot_pli_late, 'eli_early': plot_eli_early,
-                      'eli_late': plot_eli_late, 'reps': plot_reps, 'pli_recency': plot_pli_recency,
+                      'crp_early': plot_crp_early, 'crp_late': plot_crp_late, 'pli_recency': plot_pli_recency,
                      'rec_per_trial': plot_rec_perlist, 'math_per_trial': plot_math_perlist}
 
     for subj in stats:
@@ -44,6 +42,7 @@ def ltpFR3_report(stats):
                 stat_plotters[key](stats[subj][key])
             else:
                 print('ALERT! Missing stat %s for subject %s' % (key, subj))
+        plot_intrusions(stats[subj]['plis'], stats[subj]['elis'], stats[subj]['reps'])
         plt.tight_layout(rect=[0, 0.03, 1, 0.95])
         pdf.savefig()
         pdf.close()
@@ -51,7 +50,7 @@ def ltpFR3_report(stats):
 
 
 def plot_spc(s):
-    plt.subplot(9, 3, 1)
+    plt.subplot(7, 3, 1)
     plt.plot(range(1, 13), s['s12'], 'k^--', markerfacecolor='white')
     plt.plot(range(1, 25), s['s24'], 'ko--', markerfacecolor='white')
     plt.plot(range(1, 13), s['f12'], 'k^-')
@@ -63,7 +62,7 @@ def plot_spc(s):
     plt.ylim(-.05, 1.05)
     plt.xticks(range(1, 25, 2), range(1, 25, 2))
 
-    plt.subplot(9, 3, 4)
+    plt.subplot(7, 3, 4)
     plt.plot(range(1, 13), s['a12'], 'k^--', markerfacecolor='white')
     plt.plot(range(1, 25), s['a24'], 'ko--', markerfacecolor='white')
     plt.plot(range(1, 13), s['v12'], 'k^-')
@@ -77,7 +76,7 @@ def plot_spc(s):
 
 
 def plot_crp_early(s):
-    plt.subplot(9, 3, 2)
+    plt.subplot(7, 3, 2)
     plt.plot(range(-3, 4), s['s12'], 'k^--', markerfacecolor='white')
     plt.plot(range(-3, 4), s['s24'], 'ko--', markerfacecolor='white')
     plt.plot(range(-3, 4), s['f12'], 'k^-')
@@ -88,7 +87,7 @@ def plot_crp_early(s):
     plt.legend(labels=['Slow/12', 'Slow/24', 'Fast/12', 'Fast/24'])
     plt.ylim(-.05, 1.05)
 
-    plt.subplot(9, 3, 5)
+    plt.subplot(7, 3, 5)
     plt.plot(range(-3, 4), s['a12'], 'k^--', markerfacecolor='white')
     plt.plot(range(-3, 4), s['a24'], 'ko--', markerfacecolor='white')
     plt.plot(range(-3, 4), s['v12'], 'k^-')
@@ -101,7 +100,7 @@ def plot_crp_early(s):
 
 
 def plot_crp_late(s):
-    plt.subplot(9, 3, 3)
+    plt.subplot(7, 3, 3)
     plt.plot(range(-3, 4), s['s12'], 'k^--', markerfacecolor='white')
     plt.plot(range(-3, 4), s['s24'], 'ko--', markerfacecolor='white')
     plt.plot(range(-3, 4), s['f12'], 'k^-')
@@ -112,7 +111,7 @@ def plot_crp_late(s):
     plt.legend(labels=['Slow/12', 'Slow/24', 'Fast/12', 'Fast/24'])
     plt.ylim(-.05, 1.05)
 
-    plt.subplot(9, 3, 6)
+    plt.subplot(7, 3, 6)
     plt.plot(range(-3, 4), s['a12'], 'k^--', markerfacecolor='white')
     plt.plot(range(-3, 4), s['a24'], 'ko--', markerfacecolor='white')
     plt.plot(range(-3, 4), s['v12'], 'k^-')
@@ -125,7 +124,7 @@ def plot_crp_late(s):
 
 
 def plot_pfr(s):
-    plt.subplot(9, 3, 7)
+    plt.subplot(7, 3, 7)
     plt.plot(range(1, 13), s['s12'], 'k^--', markerfacecolor='white')
     plt.plot(range(1, 25), s['s24'], 'ko--', markerfacecolor='white')
     plt.plot(range(1, 13), s['f12'], 'k^-')
@@ -137,7 +136,7 @@ def plot_pfr(s):
     plt.ylim(-.05, 1.05)
     plt.xticks(range(1, 25, 2), range(1, 25, 2))
 
-    plt.subplot(9, 3, 10)
+    plt.subplot(7, 3, 10)
     plt.plot(range(1, 13), s['a12'], 'k^--', markerfacecolor='white')
     plt.plot(range(1, 25), s['a24'], 'ko--', markerfacecolor='white')
     plt.plot(range(1, 13), s['v12'], 'k^-')
@@ -151,7 +150,7 @@ def plot_pfr(s):
 
 
 def plot_psr(s):
-    plt.subplot(9, 3, 8)
+    plt.subplot(7, 3, 8)
     plt.plot(range(1, 13), s['s12'], 'k^--', markerfacecolor='white')
     plt.plot(range(1, 25), s['s24'], 'ko--', markerfacecolor='white')
     plt.plot(range(1, 13), s['f12'], 'k^-')
@@ -163,7 +162,7 @@ def plot_psr(s):
     plt.ylim(-.05, 1.05)
     plt.xticks(range(1, 25, 2), range(1, 25, 2))
 
-    plt.subplot(9, 3, 11)
+    plt.subplot(7, 3, 11)
     plt.plot(range(1, 13), s['a12'], 'k^--', markerfacecolor='white')
     plt.plot(range(1, 25), s['a24'], 'ko--', markerfacecolor='white')
     plt.plot(range(1, 13), s['v12'], 'k^-')
@@ -177,7 +176,7 @@ def plot_psr(s):
 
 
 def plot_ptr(s):
-    plt.subplot(9, 3, 9)
+    plt.subplot(7, 3, 9)
     plt.plot(range(1, 13), s['s12'], 'k^--', markerfacecolor='white')
     plt.plot(range(1, 25), s['s24'], 'ko--', markerfacecolor='white')
     plt.plot(range(1, 13), s['f12'], 'k^-')
@@ -189,7 +188,7 @@ def plot_ptr(s):
     plt.ylim(-.05, 1.05)
     plt.xticks(range(1, 25, 2), range(1, 25, 2))
 
-    plt.subplot(9, 3, 12)
+    plt.subplot(7, 3, 12)
     plt.plot(range(1, 13), s['a12'], 'k^--', markerfacecolor='white')
     plt.plot(range(1, 25), s['a24'], 'ko--', markerfacecolor='white')
     plt.plot(range(1, 13), s['v12'], 'k^-')
@@ -203,7 +202,7 @@ def plot_ptr(s):
 
 
 def plot_pli_recency(s):
-    plt.subplot(9, 3, 13)
+    plt.subplot(7, 3, 13)
     plt.plot(range(1, 7), s['s12'], 'k^--', markerfacecolor='white')
     plt.plot(range(1, 7), s['s24'], 'ko--', markerfacecolor='white')
     plt.plot(range(1, 7), s['f12'], 'k^-')
@@ -214,7 +213,7 @@ def plot_pli_recency(s):
     plt.legend(labels=['Slow/12', 'Slow/24', 'Fast/12', 'Fast/24'])
     plt.ylim(-.05, 1.05)
 
-    plt.subplot(9, 3, 16)
+    plt.subplot(7, 3, 16)
     plt.plot(range(1, 7), s['a12'], 'k^--', markerfacecolor='white')
     plt.plot(range(1, 7), s['a24'], 'ko--', markerfacecolor='white')
     plt.plot(range(1, 7), s['v12'], 'k^-')
@@ -226,98 +225,19 @@ def plot_pli_recency(s):
     plt.ylim(-.05, 1.05)
 
 
-def plot_pli_early(s):
-    plt.subplot(9, 3, 14)
-    plt.bar([1, 2, 3, 4], [s['s12'], s['s24'], s['f12'], s['f24']], align='center', color='k', fill=False)
-    plt.xticks([1, 2, 3, 4], ['Slow/12', 'Slow/24', 'Fast/12', 'Fast/24'])
-    plt.title('PLI (Early)')
-    plt.xlabel('List Length')
-    plt.ylabel('Avg. PLIs per List')
-    plt.ylim(0, 3)
-
-    plt.subplot(9, 3, 17)
-    plt.bar([1, 2, 3, 4], [s['a12'], s['a24'], s['v12'], s['v24']], align='center', color='k', fill=False)
-    plt.xticks([1, 2, 3, 4], ['Auditory/12', 'Auditory/24', 'Visual/12', 'Visual/24'])
-    plt.title('PLI (Early)')
-    plt.xlabel('List Length')
-    plt.ylabel('Avg. PLIs per List')
-    plt.ylim(0, 3)
-
-
-def plot_pli_late(s):
-    plt.subplot(9, 3, 15)
-    plt.bar([1, 2, 3, 4], [s['s12'], s['s24'], s['f12'], s['f24']], align='center', color='k', fill=False)
-    plt.xticks([1, 2, 3, 4], ['Slow/12', 'Slow/24', 'Fast/12', 'Fast/24'])
-    plt.title('PLI (Late)')
-    plt.xlabel('List Length')
-    plt.ylabel('Avg. PLIs per List')
-    plt.ylim(0, 3)
-
-    plt.subplot(9, 3, 18)
-    plt.bar([1, 2, 3, 4], [s['a12'], s['a24'], s['v12'], s['v24']], align='center', color='k', fill=False)
-    plt.xticks([1, 2, 3, 4], ['Auditory/12', 'Auditory/24', 'Visual/12', 'Visual/24'])
-    plt.title('PLI (Late)')
-    plt.xlabel('List Length')
-    plt.ylabel('Avg. PLIs per List')
-    plt.ylim(0, 3)
-
-
-def plot_eli_early(s):
-    plt.subplot(9, 3, 19)
-    plt.bar([1, 2, 3, 4], [s['s12'], s['s24'], s['f12'], s['f24']], align='center', color='k', fill=False)
-    plt.xticks([1, 2, 3, 4], ['Slow/12', 'Slow/24', 'Fast/12', 'Fast/24'])
-    plt.title('ELI (Early)')
-    plt.xlabel('List Length')
-    plt.ylabel('Avg. ELIs per List')
-    plt.ylim(0, 3)
-
-    plt.subplot(9, 3, 22)
-    plt.bar([1, 2, 3, 4], [s['a12'], s['a24'], s['v12'], s['v24']], align='center', color='k', fill=False)
-    plt.xticks([1, 2, 3, 4], ['Auditory/12', 'Auditory/24', 'Visual/12', 'Visual/24'])
-    plt.title('ELI (Early)')
-    plt.xlabel('List Length')
-    plt.ylabel('Avg. ELIs per List')
-    plt.ylim(0, 3)
-
-
-def plot_eli_late(s):
-    plt.subplot(9, 3, 20)
-    plt.bar([1, 2, 3, 4], [s['s12'], s['s24'], s['f12'], s['f24']], align='center', color='k', fill=False)
-    plt.xticks([1, 2, 3, 4], ['Slow/12', 'Slow/24', 'Fast/12', 'Fast/24'])
-    plt.title('ELI (Late)')
-    plt.xlabel('List Length')
-    plt.ylabel('Avg. ELIs per List')
-    plt.ylim(0, 3)
-
-    plt.subplot(9, 3, 23)
-    plt.bar([1, 2, 3, 4], [s['a12'], s['a24'], s['v12'], s['v24']], align='center', color='k', fill=False)
-    plt.xticks([1, 2, 3, 4], ['Auditory/12', 'Auditory/24', 'Visual/12', 'Visual/24'])
-    plt.title('ELI (Late)')
-    plt.xlabel('List Length')
-    plt.ylabel('Avg. ELIs per List')
-    plt.ylim(0, 3)
-
-
-def plot_reps(s):
-    plt.subplot(9, 3, 21)
-    plt.bar([1, 2, 3, 4], [s['s12'], s['s24'], s['f12'], s['f24']], align='center', color='k', fill=False)
-    plt.xticks([1, 2, 3, 4], ['Slow/12', 'Slow/24', 'Fast/12', 'Fast/24'])
-    plt.title('Repetitions')
-    plt.xlabel('List Length')
-    plt.ylabel('Avg. Repetitions per List')
-    plt.ylim(0, 3)
-
-    plt.subplot(9, 3, 24)
-    plt.bar([1, 2, 3, 4], [s['a12'], s['a24'], s['v12'], s['v24']], align='center', color='k', fill=False)
-    plt.xticks([1, 2, 3, 4], ['Auditory/12', 'Auditory/24', 'Visual/12', 'Visual/24'])
-    plt.title('Repetitions')
-    plt.xlabel('List Length')
-    plt.ylabel('Avg. Repetitions per List')
-    plt.ylim(0, 3)
+def plot_intrusions(plis, elis, reps):
+    plis = (plis['12'] + plis['24']) / 2
+    elis = (elis['12'] + elis['24']) / 2
+    reps = (reps['12'] + reps['24']) / 2
+    plt.subplot(7, 3, 14)
+    plt.bar([1, 2, 3], [plis, elis, reps], align='center', color='k', fill=False)
+    plt.xticks([1, 2, 3], ['PLI', 'ELI', 'Rep'])
+    plt.title('Intrusions')
+    plt.ylabel('Intrusions Per List')
 
 
 def plot_rec_perlist(s):
-    plt.subplot(9, 3, 25)
+    plt.subplot(7, 3, 19)
     plt.plot(range(1, 19), s, 'ko-')
     plt.title('Recall Performance Check')
     plt.xlabel('Trial Number')
@@ -327,7 +247,7 @@ def plot_rec_perlist(s):
 
 
 def plot_math_perlist(s):
-    plt.subplot(9, 3, 27)
+    plt.subplot(7, 3, 21)
     plt.plot(range(1, 19), s, 'ko-')
     plt.title('Math Performance Check')
     plt.xlabel('Trial Number')
