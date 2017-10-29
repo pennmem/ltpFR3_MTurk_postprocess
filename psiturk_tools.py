@@ -189,7 +189,7 @@ def process_psiturk_data(data, dict_path):
                 d[s]['ffr_rec_words'].append(recall)
 
         if max([len(x) for x in d[s]['pres_words']]) > 24:
-            print('%s SUBJECT RESTART DETECTED!! EXLCUDING!')
+            print('%s SUBJECT RESTART DETECTED!! EXLCUDING!' % s)
             d.pop(s)
 
     return d
