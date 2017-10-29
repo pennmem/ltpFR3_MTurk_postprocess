@@ -1,6 +1,7 @@
 from sqlalchemy import create_engine, MetaData, Table
 import json
 import numpy as np
+import os
 import pandas as pd
 from pyxdameraulevenshtein import damerau_levenshtein_distance_ndarray
 
@@ -42,7 +43,7 @@ def load_psiturk_data(db_url=None, table_name=None, data_column_name='datastring
     exclude = []
     for row in rows:
         # only use subjects who completed experiment and aren't excluded
-        if row['status'] in statuses and row['workerid'] not in exclude:
+        if row['status'] in statuses and row['workerid'] not in exclude and not os.path.exists('/data/eeg/scalp/ltp/ltpFR3_MTurk/reports/%s.pdf' % row['workerid']):
             data.append(row[data_column_name])
 
     # Now we have all participant datastrings in a list.
@@ -186,6 +187,9 @@ def process_psiturk_data(data, dict_path):
                 _, _, recall = which_item(recall, t+1, pres_words, pres_trials, dictionary)
                 d[s]['ffr_rec_words'].append(recall)
 
+        if np.shape(d[s]['pres_words'])[1] == 48:
+            print('%s SUBJECT RESTART DETECTED!! EXLCUDING!')
+            d.pop(s)
 
     return d
 
