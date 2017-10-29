@@ -154,7 +154,7 @@ def process_psiturk_data(data, dict_path):
             # Get a list of the trials each word was presented on
             when_presented = pres_trials[np.where(pres_trials <= t)]
             # Get an array of the words recalled this trial
-            recalled_this_list = rec_words[np.where(rec_trials == t)][0]
+            recalled_this_list = rec_words[np.where(rec_trials == t)][0] if len(rec_words[np.where(rec_trials == t)]) > 0 else []
 
             # Mark each recall as a correct recall, ELI, PLI, or other and make a recall list for the current trial
             sp = []
