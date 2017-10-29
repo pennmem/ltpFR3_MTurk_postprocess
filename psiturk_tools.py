@@ -43,7 +43,7 @@ def load_psiturk_data(db_url=None, table_name=None, data_column_name='datastring
     exclude = []
     for row in rows:
         # only use subjects who completed experiment and aren't excluded
-        if row['status'] in statuses and row['workerid'] not in exclude and not os.path.exists('/data/eeg/scalp/ltp/ltpFR3_MTurk/reports/%s.pdf' % row['workerid']):
+        if row['status'] in statuses and row['workerid'] not in exclude:  # and not os.path.exists('/data/eeg/scalp/ltp/ltpFR3_MTurk/reports/%s.pdf' % row['workerid']):
             data.append(row[data_column_name])
 
     # Now we have all participant datastrings in a list.
