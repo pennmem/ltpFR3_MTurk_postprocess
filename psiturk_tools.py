@@ -99,6 +99,7 @@ def process_psiturk_data(data, dict_path):
     subjects = data.uniqueid.unique()
     for subj in subjects:
         s = subj[:7]
+        print(s)
         # Initialize data entries for subject
         d[s] = {}
         d[s]['serialpos'] = []
