@@ -188,7 +188,7 @@ def process_psiturk_data(data, dict_path):
                 _, _, recall = which_item(recall, t+1, pres_words, pres_trials, dictionary)
                 d[s]['ffr_rec_words'].append(recall)
 
-        if np.shape(d[s]['pres_words'])[1] == 48:
+        if max([len(x) for x in d[s]['pres_words']]) > 24:
             print('%s SUBJECT RESTART DETECTED!! EXLCUDING!')
             d.pop(s)
 
