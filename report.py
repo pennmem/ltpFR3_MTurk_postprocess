@@ -260,48 +260,54 @@ def plot_elis(s, err=None):
     plt.subplot(7, 3, 15)
     if err is None:
         plt.plot([1, 2], [s['sv12'], s['fv12']], 'ko-')
-        plt.plot([1, 2], [s['sa12'], s['fa12']], 'ko-', markerfacecolor='white')
-        plt.plot([4, 5], [s['sv24'], s['fv24']], 'ko-')
-        plt.plot([4, 5], [s['sa24'], s['fa24']], 'ko-', markerfacecolor='white')
+        plt.plot([1, 2], [s['sa12'], s['fa12']], 'ko--', markerfacecolor='white')
+        plt.plot([3, 4], [s['sv24'], s['fv24']], 'ko-')
+        plt.plot([3, 4], [s['sa24'], s['fa24']], 'ko--', markerfacecolor='white')
     else:
         plt.errorbar([1, 2], [s['sv12'], s['fv12']], yerr=[err['sv12'], err['fv12']], fmt='ko-')
-        plt.errorbar([1, 2], [s['sa12'], s['fa12']], yerr=[err['sa12'], err['fa12']], fmt='ko-', markerfacecolor='white')
-        plt.errorbar([4, 5], [s['sv24'], s['fv24']], yerr=[err['sv24'], err['fv24']], fmt='ko-')
-        plt.errorbar([4, 5], [s['sa24'], s['fa24']], yerr=[err['sa24'], err['fa24']], fmt='ko-', markerfacecolor='white')
+        plt.errorbar([1, 2], [s['sa12'], s['fa12']], yerr=[err['sa12'], err['fa12']], fmt='ko--', markerfacecolor='white')
+        plt.errorbar([3, 4], [s['sv24'], s['fv24']], yerr=[err['sv24'], err['fv24']], fmt='ko-')
+        plt.errorbar([3, 4], [s['sa24'], s['fa24']], yerr=[err['sa24'], err['fa24']], fmt='ko--', markerfacecolor='white')
     plt.title('ELIs')
     plt.ylabel('ELIs Per List')
+    plt.xticks([1, 2, 3, 4], ('12/Slow', '12/Fast', '24/Slow', '24/Fast'))
+    plt.legend(labels=['Visual', 'Auditory'])
 
 
 def plot_plis(s, err=None):
     plt.subplot(7, 3, 17)
     if err is None:
         plt.plot([1, 2], [s['sv12'], s['fv12']], 'ko-')
-        plt.plot([1, 2], [s['sa12'], s['fa12']], 'ko-', markerfacecolor='white')
+        plt.plot([1, 2], [s['sa12'], s['fa12']], 'ko--', markerfacecolor='white')
         plt.plot([4, 5], [s['sv24'], s['fv24']], 'ko-')
-        plt.plot([4, 5], [s['sa24'], s['fa24']], 'ko-', markerfacecolor='white')
+        plt.plot([4, 5], [s['sa24'], s['fa24']], 'ko--', markerfacecolor='white')
     else:
         plt.errorbar([1, 2], [s['sv12'], s['fv12']], yerr=[err['sv12'], err['fv12']], fmt='ko-')
-        plt.errorbar([1, 2], [s['sa12'], s['fa12']], yerr=[err['sa12'], err['fa12']], fmt='ko-', markerfacecolor='white')
-        plt.errorbar([4, 5], [s['sv24'], s['fv24']], yerr=[err['sv24'], err['fv24']], fmt='ko-')
-        plt.errorbar([4, 5], [s['sa24'], s['fa24']], yerr=[err['sa24'], err['fa24']], fmt='ko-', markerfacecolor='white')
+        plt.errorbar([1, 2], [s['sa12'], s['fa12']], yerr=[err['sa12'], err['fa12']], fmt='ko--', markerfacecolor='white')
+        plt.errorbar([3, 4], [s['sv24'], s['fv24']], yerr=[err['sv24'], err['fv24']], fmt='ko-')
+        plt.errorbar([3, 4], [s['sa24'], s['fa24']], yerr=[err['sa24'], err['fa24']], fmt='ko--', markerfacecolor='white')
     plt.title('PLIs')
     plt.ylabel('PLIs Per List')
+    plt.xticks([1, 2, 3, 4], ('12/Slow', '12/Fast', '24/Slow', '24/Fast'))
+    plt.legend(labels=['Visual', 'Auditory'])
 
 
 def plot_reps(s, err=None):
     plt.subplot(7, 3, 18)
     if err is None:
         plt.plot([1, 2], [s['sv12'], s['fv12']], 'ko-')
-        plt.plot([1, 2], [s['sa12'], s['fa12']], 'ko-', markerfacecolor='white')
-        plt.plot([4, 5], [s['sv24'], s['fv24']], 'ko-')
-        plt.plot([4, 5], [s['sa24'], s['fa24']], 'ko-', markerfacecolor='white')
+        plt.plot([1, 2], [s['sa12'], s['fa12']], 'ko--', markerfacecolor='white')
+        plt.plot([3, 4], [s['sv24'], s['fv24']], 'ko-')
+        plt.plot([3, 4], [s['sa24'], s['fa24']], 'ko--', markerfacecolor='white')
     else:
         plt.errorbar([1, 2], [s['sv12'], s['fv12']], yerr=[err['sv12'], err['fv12']], fmt='ko-')
-        plt.errorbar([1, 2], [s['sa12'], s['fa12']], yerr=[err['sa12'], err['fa12']], fmt='ko-', markerfacecolor='white')
-        plt.errorbar([4, 5], [s['sv24'], s['fv24']], yerr=[err['sv24'], err['fv24']], fmt='ko-')
-        plt.errorbar([4, 5], [s['sa24'], s['fa24']], yerr=[err['sa24'], err['fa24']], fmt='ko-', markerfacecolor='white')
+        plt.errorbar([1, 2], [s['sa12'], s['fa12']], yerr=[err['sa12'], err['fa12']], fmt='ko--', markerfacecolor='white')
+        plt.errorbar([3, 4], [s['sv24'], s['fv24']], yerr=[err['sv24'], err['fv24']], fmt='ko-')
+        plt.errorbar([3, 4], [s['sa24'], s['fa24']], yerr=[err['sa24'], err['fa24']], fmt='ko--', markerfacecolor='white')
     plt.title('Repetitions')
     plt.ylabel('Reps Per List')
+    plt.xticks([1, 2, 3, 4], ('12/Slow', '12/Fast', '24/Slow', '24/Fast'))
+    plt.legend(labels=['Visual', 'Auditory'])
 
 
 def plot_rec_perlist(s):
