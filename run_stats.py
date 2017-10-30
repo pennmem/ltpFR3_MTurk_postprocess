@@ -49,7 +49,8 @@ def run_stats(d):
         # Run all stats for a single participant and add the resulting stats object to the stats dictionary
         stats[str(subj)] = stats_for_subj(sub, condi, recalls, wasrec, rt, recw, presw, intru, math)
 
-    stats['average'] = avg_stats(stats)
+    stats['all'] = {}
+    stats['all']['mean'], stats['all']['sem'] = avg_stats(stats)
 
     return stats
 
@@ -76,9 +77,11 @@ def stats_for_subj(sub, condi, recalls, wasrec, rt, recw, presw, intru, math):
     #           '010': {'ll': 12, 'pr': 1600, 'mod': 'a'}, '011': {'ll': 12, 'pr': 1600, 'mod': 'v'},
     #           '100': {'ll': 24, 'pr': 800, 'mod': 'a'}, '101': {'ll': 24, 'pr': 800, 'mod': 'v'},
     #           '110': {'ll': 24, 'pr': 1600, 'mod': 'a'}, '111': {'ll': 24, 'pr': 1600, 'mod': 'v'}}
-    filters = {'12': {'ll': 12}, '24': {'ll': 24}, 'a12': {'ll': 12, 'mod': 'a'}, 'a24': {'ll': 24, 'mod': 'a'},
-               'v12': {'ll': 12, 'mod': 'v'}, 'v24': {'ll': 24, 'mod': 'v'}, 'f12': {'ll': 12, 'pr': 800},
-               'f24': {'ll': 24, 'pr': 800}, 's12': {'ll': 12, 'pr': 1600}, 's24': {'ll': 24, 'pr': 1600}}
+    filters = {'all': {'ll': None, 'pr': None, 'mod': None, 'dd': None},
+               'a12': {'ll': 12, 'mod': 'a'}, 'a24': {'ll': 24, 'mod': 'a'},
+               'v12': {'ll': 12, 'mod': 'v'}, 'v24': {'ll': 24, 'mod': 'v'},
+               'f12': {'ll': 12, 'pr': 800}, 'f24': {'ll': 24, 'pr': 800},
+               's12': {'ll': 12, 'pr': 1600}, 's24': {'ll': 24, 'pr': 1600}}
 
     for f in filters:
         ll = filters[f]['ll']
@@ -114,6 +117,7 @@ def avg_stats(s):
     excluded = ['MTK0019']
 
     avs = {}
+    stderr = {}
     for stat in stats_to_run:
         avs[stat] = {}
         for f in filters:
@@ -123,8 +127,9 @@ def avg_stats(s):
                     scores.append(s[subj][stat][f])
             scores = np.array(scores)
             avs[stat][f] = np.nanmean(scores, axis=0)
+            stderr[stat][f] = sem(scores, axis=0, nan_policy='omit')
 
-    return avs
+    return avs, stderr
 
 
 def filter_by_condi(a, condi, ll=None, pr=None, mod=None, dd=None):
