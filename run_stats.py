@@ -2,7 +2,6 @@ import numpy as np
 from pybeh.spc import spc
 from pybeh.pnr import pnr
 from pybeh.crp import crp
-from pybeh.irt import irt
 from scipy.stats import sem
 
 
@@ -81,7 +80,11 @@ def stats_for_subj(sub, condi, recalls, wasrec, rt, recw, presw, intru, math):
                'a12': {'ll': 12, 'mod': 'a'}, 'a24': {'ll': 24, 'mod': 'a'},
                'v12': {'ll': 12, 'mod': 'v'}, 'v24': {'ll': 24, 'mod': 'v'},
                'f12': {'ll': 12, 'pr': 800}, 'f24': {'ll': 24, 'pr': 800},
-               's12': {'ll': 12, 'pr': 1600}, 's24': {'ll': 24, 'pr': 1600}}
+               's12': {'ll': 12, 'pr': 1600}, 's24': {'ll': 24, 'pr': 1600},
+               'sa12': {'ll': 12, 'pr': 1600, 'mod': 'a'}, 'sa24': {'ll': 24, 'pr': 1600, 'mod': 'a'},
+               'sv12': {'ll': 12, 'pr': 1600, 'mod': 'v'}, 'sv24': {'ll': 24, 'pr': 1600, 'mod': 'v'},
+               'fa12': {'ll': 12, 'pr': 800, 'mod': 'a'}, 'fa24': {'ll': 24, 'pr': 800, 'mod': 'a'},
+               'fv12': {'ll': 12, 'pr': 800, 'mod': 'v'}, 'fv24': {'ll': 24, 'pr': 800, 'mod': 'v'}}
 
     for f in filters:
         ll = filters[f]['ll']
@@ -95,7 +98,6 @@ def stats_for_subj(sub, condi, recalls, wasrec, rt, recw, presw, intru, math):
         stats['ptr'][f] = pnr(frecalls, fsub, ll, n=2)[0]
         stats['crp_early'][f] = crp(frecalls[:, :3], fsub, ll, lag_num=3)[0]
         stats['crp_late'][f] = crp(frecalls[:, 2:], fsub, ll, lag_num=3)[0]
-        #stats['irt'][f] = irt(frt)
         stats['plis'][f] = avg_pli(fintru, fsub, frecw)[0]
         stats['elis'][f] = avg_eli(fintru, fsub)[0]
         stats['reps'][f] = avg_reps(frecalls, fsub)[0]
