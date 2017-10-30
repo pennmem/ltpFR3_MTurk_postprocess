@@ -20,6 +20,15 @@ def write_to_json(data, stats, behmat_json, stat_json):
         json.dump(data, f)
 
     for subj in stats:
+        if subj == 'all':
+            for stat in stats['all']['mean']:
+                for f in stats['all']['mean'][stat]:
+                    if isinstance(stats['all']['mean'][stat][f], np.ndarray):
+                        stats['all']['mean'][stat][f] = stats['all']['mean'][stat][f].tolist()
+            for stat in stats['all']['sem']:
+                for f in stats['all']['sem'][stat]:
+                    if isinstance(stats['all']['sem'][stat][f], np.ndarray):
+                        stats['all']['sem'][stat][f] = stats['all']['sem'][stat][f].tolist()
         for stat in stats[subj]:
             if stat in ('rec_per_trial', 'math_per_trial'):
                 stats[subj][stat] = stats[subj][stat].tolist()

@@ -29,7 +29,7 @@ def ltpFR3_report(stats):
     
     :param stats: A dictionary containing the behavioral stats calculated by run_stats.
     """
-    stat_plotters = {'prec': plot_prec, 'spc': plot_spc, 'pfr': plot_pfr, 'psr': plot_psr, 'ptr': plot_ptr,
+    stat_plotters = {'spc': plot_spc, 'pfr': plot_pfr, 'psr': plot_psr, 'ptr': plot_ptr,
                      'crp_early': plot_crp_early, 'crp_late': plot_crp_late, 'pli_recency': plot_pli_recency,
                      'elis': plot_elis, 'plis': plot_plis, 'reps': plot_reps, 'rec_per_trial': plot_rec_perlist,
                      'math_per_trial': plot_math_perlist}
@@ -324,9 +324,8 @@ def plot_math_perlist(s):
     plt.ylim(-.5, 20.5)
 
 
-def plot_prec(s):
-    pass
-
-
-def plot_irt(s):
-    pass
+if __name__ == "__main__":
+    import json
+    with open('/Users/jessepazdera/Desktop/ltpFR3_stats.json') as f:
+        stats = json.load(f)
+    ltpFR3_report(stats)

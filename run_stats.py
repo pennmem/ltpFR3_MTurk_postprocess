@@ -29,8 +29,19 @@ def run_stats(d):
     :param d: A data structure created by psiturk_tools.process_psiturk_data()
     :return: A dictionary containing a subdictionary for each participant. Each subdictionary contains all behavioral stats for that single participant.
     """
-    stats = dict()
+    stats_to_run = ['prec', 'spc', 'pfr', 'psr', 'ptr', 'crp_early', 'crp_late', 'plis', 'elis', 'reps', 'pli_recency']
 
+    filters = {'all': {'ll': None, 'pr': None, 'mod': None, 'dd': None},
+               'a12': {'ll': 12, 'mod': 'a'}, 'a24': {'ll': 24, 'mod': 'a'},
+               'v12': {'ll': 12, 'mod': 'v'}, 'v24': {'ll': 24, 'mod': 'v'},
+               'f12': {'ll': 12, 'pr': 800}, 'f24': {'ll': 24, 'pr': 800},
+               's12': {'ll': 12, 'pr': 1600}, 's24': {'ll': 24, 'pr': 1600},
+               'sa12': {'ll': 12, 'pr': 1600, 'mod': 'a'}, 'sa24': {'ll': 24, 'pr': 1600, 'mod': 'a'},
+               'sv12': {'ll': 12, 'pr': 1600, 'mod': 'v'}, 'sv24': {'ll': 24, 'pr': 1600, 'mod': 'v'},
+               'fa12': {'ll': 12, 'pr': 800, 'mod': 'a'}, 'fa24': {'ll': 24, 'pr': 800, 'mod': 'a'},
+               'fv12': {'ll': 12, 'pr': 800, 'mod': 'v'}, 'fv24': {'ll': 24, 'pr': 800, 'mod': 'v'}}
+
+    stats = dict()
     for subj in d:
         list_iterator = range(len(d[subj]['serialpos']))
 
@@ -46,15 +57,15 @@ def run_stats(d):
         math = pad_into_array(d[subj]['math_correct']).astype(bool)
 
         # Run all stats for a single participant and add the resulting stats object to the stats dictionary
-        stats[str(subj)] = stats_for_subj(sub, condi, recalls, wasrec, rt, recw, presw, intru, math)
+        stats[str(subj)] = stats_for_subj(sub, condi, recalls, wasrec, rt, recw, presw, intru, math, stats_to_run, filters)
 
     stats['all'] = {}
-    stats['all']['mean'], stats['all']['sem'] = avg_stats(stats)
+    stats['all']['mean'], stats['all']['sem'] = avg_stats(stats, stats_to_run, filters.keys())
 
     return stats
 
 
-def stats_for_subj(sub, condi, recalls, wasrec, rt, recw, presw, intru, math):
+def stats_for_subj(sub, condi, recalls, wasrec, rt, recw, presw, intru, math, stats_to_run, filters):
     """
     Create a stats dictionary for a single participant.
     
@@ -69,23 +80,7 @@ def stats_for_subj(sub, condi, recalls, wasrec, rt, recw, presw, intru, math):
     :param intru: A list x items intrusions matrix (see recalls_to_intrusions)
     :return: 
     """
-    stats_to_run = ['prec', 'spc', 'pfr', 'psr', 'ptr', 'crp_early', 'crp_late', 'plis', 'elis', 'reps', 'pli_recency']
     stats = {stat: {} for stat in stats_to_run}
-
-    # filters = {'000': {'ll': 12, 'pr': 800, 'mod': 'a'}, '001': {'ll': 12, 'pr': 800, 'mod': 'v'},
-    #           '010': {'ll': 12, 'pr': 1600, 'mod': 'a'}, '011': {'ll': 12, 'pr': 1600, 'mod': 'v'},
-    #           '100': {'ll': 24, 'pr': 800, 'mod': 'a'}, '101': {'ll': 24, 'pr': 800, 'mod': 'v'},
-    #           '110': {'ll': 24, 'pr': 1600, 'mod': 'a'}, '111': {'ll': 24, 'pr': 1600, 'mod': 'v'}}
-    filters = {'all': {'ll': None, 'pr': None, 'mod': None, 'dd': None},
-               'a12': {'ll': 12, 'mod': 'a'}, 'a24': {'ll': 24, 'mod': 'a'},
-               'v12': {'ll': 12, 'mod': 'v'}, 'v24': {'ll': 24, 'mod': 'v'},
-               'f12': {'ll': 12, 'pr': 800}, 'f24': {'ll': 24, 'pr': 800},
-               's12': {'ll': 12, 'pr': 1600}, 's24': {'ll': 24, 'pr': 1600},
-               'sa12': {'ll': 12, 'pr': 1600, 'mod': 'a'}, 'sa24': {'ll': 24, 'pr': 1600, 'mod': 'a'},
-               'sv12': {'ll': 12, 'pr': 1600, 'mod': 'v'}, 'sv24': {'ll': 24, 'pr': 1600, 'mod': 'v'},
-               'fa12': {'ll': 12, 'pr': 800, 'mod': 'a'}, 'fa24': {'ll': 24, 'pr': 800, 'mod': 'a'},
-               'fv12': {'ll': 12, 'pr': 800, 'mod': 'v'}, 'fv24': {'ll': 24, 'pr': 800, 'mod': 'v'}}
-
     for f in filters:
         ll = filters[f]['ll']
         fsub, frecalls, fwasrec, frt, frecw, fpresw, fintru = [filter_by_condi(a, condi, **filters[f]) for a in [sub, recalls, wasrec, rt, recw, presw, intru]]
@@ -112,19 +107,20 @@ def stats_for_subj(sub, condi, recalls, wasrec, rt, recw, presw, intru, math):
     return stats
 
 
-def avg_stats(s):
-    stats_to_run = ['prec', 'spc', 'pfr', 'psr', 'ptr', 'crp_early', 'crp_late', 'plis', 'elis', 'reps', 'pli_recency']
-    filters = ['12', '24', 'a12', 'a24', 'v12', 'v24', 'f12', 'f24', 's12', 's24']
-    excluded = ['MTK0019']
+def avg_stats(s, stats_to_run, filters):
+    EXCLUDED = ['all', 'MTK0019']
 
     avs = {}
     stderr = {}
     for stat in stats_to_run:
         avs[stat] = {}
+        stderr[stat] = {}
         for f in filters:
+            if f == 'all' and stat not in ('plis', 'elis', 'reps', 'pli_recency'):  # Only do intrusion stats for "all" filter
+                continue
             scores = []
             for subj in s:
-                if s not in excluded:
+                if subj not in EXCLUDED:
                     scores.append(s[subj][stat][f])
             scores = np.array(scores)
             avs[stat][f] = np.nanmean(scores, axis=0)
@@ -326,3 +322,30 @@ def avg_reps(rec_itemnos, subjects):
                 count += repetitions.sum()
         result[subject_index] = count / lists if lists > 0 else np.nan
     return result
+
+
+if __name__ == "__main__":
+    import json
+    with open('/Users/jessepazdera/Desktop/ltpFR3_data.json') as f:
+        data = json.load(f)
+    stats = run_stats(data)
+    for subj in stats:
+        if subj == 'all':
+            for stat in stats['all']['mean']:
+                for f in stats['all']['mean'][stat]:
+                    if isinstance(stats['all']['mean'][stat][f], np.ndarray):
+                        stats['all']['mean'][stat][f] = stats['all']['mean'][stat][f].tolist()
+            for stat in stats['all']['sem']:
+                for f in stats['all']['sem'][stat]:
+                    if isinstance(stats['all']['sem'][stat][f], np.ndarray):
+                        stats['all']['sem'][stat][f] = stats['all']['sem'][stat][f].tolist()
+        for stat in stats[subj]:
+            if stat in ('rec_per_trial', 'math_per_trial'):
+                stats[subj][stat] = stats[subj][stat].tolist()
+            else:
+                for f in stats[subj][stat]:
+                    if isinstance(stats[subj][stat][f], np.ndarray):
+                        stats[subj][stat][f] = stats[subj][stat][f].tolist()
+
+    with open('/Users/jessepazdera/Desktop/ltpFR3_stats.json', 'w') as f:
+        json.dump(stats, f)
