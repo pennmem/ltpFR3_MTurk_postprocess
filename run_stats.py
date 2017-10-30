@@ -91,21 +91,20 @@ def stats_for_subj(sub, condi, recalls, wasrec, rt, recw, presw, intru, math):
         fsub, frecalls, fwasrec, frt, frecw, fpresw, fintru = [filter_by_condi(a, condi, **filters[f]) for a in [sub, recalls, wasrec, rt, recw, presw, intru]]
 
         # Calculate stats on all lists within the current condition
-        stats['prec'][f] = prec(fwasrec[:, :ll], fsub)[0]
-        stats['spc'][f] = spc(frecalls, fsub, ll)[0]
-        stats['pfr'][f] = pnr(frecalls, fsub, ll, n=0)[0]
-        stats['psr'][f] = pnr(frecalls, fsub, ll, n=1)[0]
-        stats['ptr'][f] = pnr(frecalls, fsub, ll, n=2)[0]
-        stats['crp_early'][f] = crp(frecalls[:, :3], fsub, ll, lag_num=3)[0]
-        stats['crp_late'][f] = crp(frecalls[:, 2:], fsub, ll, lag_num=3)[0]
+        if ll is not None:
+            stats['prec'][f] = prec(fwasrec[:, :ll], fsub)[0]
+            stats['spc'][f] = spc(frecalls, fsub, ll)[0]
+            stats['pfr'][f] = pnr(frecalls, fsub, ll, n=0)[0]
+            stats['psr'][f] = pnr(frecalls, fsub, ll, n=1)[0]
+            stats['ptr'][f] = pnr(frecalls, fsub, ll, n=2)[0]
+            stats['crp_early'][f] = crp(frecalls[:, :3], fsub, ll, lag_num=3)[0]
+            stats['crp_late'][f] = crp(frecalls[:, 2:], fsub, ll, lag_num=3)[0]
+            stats['crp_early'][f][3] = np.nan  # Fix CRPs to have a 0-lag of NaN
+            stats['crp_late'][f][3] = np.nan  # Fix CRPs to have a 0-lag of NaN
         stats['plis'][f] = avg_pli(fintru, fsub, frecw)[0]
         stats['elis'][f] = avg_eli(fintru, fsub)[0]
         stats['reps'][f] = avg_reps(frecalls, fsub)[0]
         stats['pli_recency'][f] = pli_recency(fintru, fsub, 6, frecw)[0]
-
-        # Fix CRPs to have a 0-lag of NaN
-        stats['crp_early'][f][3] = np.nan
-        stats['crp_late'][f][3] = np.nan
 
     stats['rec_per_trial'] = np.nanmean(wasrec, axis=1)
     stats['math_per_trial'] = np.sum(math, axis=1)
