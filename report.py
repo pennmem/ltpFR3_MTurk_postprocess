@@ -36,13 +36,26 @@ def ltpFR3_report(stats):
     for subj in stats:
         pdf = PdfPages('/data/eeg/scalp/ltp/ltpFR3_MTurk/reports/' + subj + '.pdf')
         plt.figure(figsize=(30, 30))
-        plt.suptitle(subj, fontsize=36)
-        for key in stat_plotters:
-            if key in stats[subj]:
-                stat_plotters[key](stats[subj][key])
-            else:
-                print('ALERT! Missing stat %s for subject %s' % (key, subj))
-        plot_intrusions(stats[subj]['plis'], stats[subj]['elis'], stats[subj]['reps'])
+        if subj == 'all':
+            plt.suptitle('All', fontsize=36)
+            for key in stat_plotters:
+                if key in stats['all']['mean']:
+                    stat_plotters[key](stats['all']['mean'][key])
+            plot_intrusions(stats['all']['mean']['plis'], stats['all']['mean']['elis'], stats['all']['mean']['reps'],
+                            stats['all']['sem']['plis'], stats['all']['sem']['elis'], stats['all']['sem']['reps'])
+
+        else:
+            plt.suptitle(subj, fontsize=36)
+            for key in stat_plotters:
+
+                if key in stats[subj]:
+                    stat_plotters[key](stats[subj][key])
+                else:
+                    print('ALERT! Missing stat %s for subject %s' % (key, subj))
+            plot_intrusions(stats[subj]['plis'], stats[subj]['elis'], stats[subj]['reps'])
+
+
+
         plt.tight_layout(rect=[0, 0.03, 1, 0.95])
         pdf.savefig()
         pdf.close()
@@ -225,12 +238,16 @@ def plot_pli_recency(s):
     plt.ylim(-.05, 1.05)
 
 
-def plot_intrusions(plis, elis, reps):
-    plis = (plis['12'] + plis['24']) / 2
-    elis = (elis['12'] + elis['24']) / 2
-    reps = (reps['12'] + reps['24']) / 2
+def plot_intrusions(plis, elis, reps, pli_err=None, eli_err=None, rep_err=None):
     plt.subplot(7, 3, 14)
-    plt.bar([1, 2, 3], [plis, elis, reps], align='center', color='k', fill=False)
+    if None in (pli_err, eli_err, rep_err):
+        plt.bar([1, 2, 3], [plis['all'], elis['all'], reps['all']], align='center', color='k', fill=False)
+    else:
+        pli_err = 1.96 * pli_err['all']
+        eli_err = 1.96 * eli_err['all']
+        rep_err = 1.96 * rep_err['all']
+        plt.bar([1, 2, 3], [plis['all'], elis['all'], reps['all']], yerr=[pli_err, eli_err, rep_err], align='center',
+                color='k', fill=False)
     plt.xticks([1, 2, 3], ['PLI', 'ELI', 'Rep'])
     plt.title('Intrusions')
     plt.ylabel('Intrusions Per List')
