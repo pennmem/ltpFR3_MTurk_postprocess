@@ -30,8 +30,9 @@ def ltpFR3_report(stats):
     :param stats: A dictionary containing the behavioral stats calculated by run_stats.
     """
     stat_plotters = {'prec': plot_prec, 'spc': plot_spc, 'pfr': plot_pfr, 'psr': plot_psr, 'ptr': plot_ptr,
-                      'crp_early': plot_crp_early, 'crp_late': plot_crp_late, 'pli_recency': plot_pli_recency,
-                     'rec_per_trial': plot_rec_perlist, 'math_per_trial': plot_math_perlist}
+                     'crp_early': plot_crp_early, 'crp_late': plot_crp_late, 'pli_recency': plot_pli_recency,
+                     'elis': plot_elis, 'plis': plot_plis, 'reps': plot_reps, 'rec_per_trial': plot_rec_perlist,
+                     'math_per_trial': plot_math_perlist}
 
     for subj in stats:
         pdf = PdfPages('/data/eeg/scalp/ltp/ltpFR3_MTurk/reports/' + subj + '.pdf')
@@ -43,7 +44,9 @@ def ltpFR3_report(stats):
                     stat_plotters[key](stats['all']['mean'][key])
             plot_intrusions(stats['all']['mean']['plis'], stats['all']['mean']['elis'], stats['all']['mean']['reps'],
                             stats['all']['sem']['plis'], stats['all']['sem']['elis'], stats['all']['sem']['reps'])
-
+            plot_elis(stats['all']['mean']['elis'], stats['all']['sem']['elis'])
+            plot_plis(stats['all']['mean']['plis'], stats['all']['sem']['plis'])
+            plot_reps(stats['all']['mean']['reps'], stats['all']['sem']['reps'])
         else:
             plt.suptitle(subj, fontsize=36)
             for key in stat_plotters:
@@ -53,9 +56,9 @@ def ltpFR3_report(stats):
                 else:
                     print('ALERT! Missing stat %s for subject %s' % (key, subj))
             plot_intrusions(stats[subj]['plis'], stats[subj]['elis'], stats[subj]['reps'])
-
-
-
+            plot_elis(stats[subj]['elis'])
+            plot_plis(stats[subj]['plis'])
+            plot_reps(stats[subj]['reps'])
         plt.tight_layout(rect=[0, 0.03, 1, 0.95])
         pdf.savefig()
         pdf.close()
@@ -251,6 +254,54 @@ def plot_intrusions(plis, elis, reps, pli_err=None, eli_err=None, rep_err=None):
     plt.xticks([1, 2, 3], ['PLI', 'ELI', 'Rep'])
     plt.title('Intrusions')
     plt.ylabel('Intrusions Per List')
+
+
+def plot_elis(s, err=None):
+    plt.subplot(7, 3, 15)
+    if err is None:
+        plt.plot([1, 2], [s['sv12'], s['fv12']], 'ko-')
+        plt.plot([1, 2], [s['sa12'], s['fa12']], 'ko-', markerfacecolor='white')
+        plt.plot([4, 5], [s['sv24'], s['fv24']], 'ko-')
+        plt.plot([4, 5], [s['sa24'], s['fa24']], 'ko-', markerfacecolor='white')
+    else:
+        plt.errorbar([1, 2], [s['sv12'], s['fv12']], yerr=[err['sv12'], err['fv12']], fmt='ko-')
+        plt.errorbar([1, 2], [s['sa12'], s['fa12']], yerr=[err['sa12'], err['fa12']], fmt='ko-', markerfacecolor='white')
+        plt.errorbar([4, 5], [s['sv24'], s['fv24']], yerr=[err['sv24'], err['fv24']], fmt='ko-')
+        plt.errorbar([4, 5], [s['sa24'], s['fa24']], yerr=[err['sa24'], err['fa24']], fmt='ko-', markerfacecolor='white')
+    plt.title('ELIs')
+    plt.ylabel('ELIs Per List')
+
+
+def plot_plis(s, err=None):
+    plt.subplot(7, 3, 17)
+    if err is None:
+        plt.plot([1, 2], [s['sv12'], s['fv12']], 'ko-')
+        plt.plot([1, 2], [s['sa12'], s['fa12']], 'ko-', markerfacecolor='white')
+        plt.plot([4, 5], [s['sv24'], s['fv24']], 'ko-')
+        plt.plot([4, 5], [s['sa24'], s['fa24']], 'ko-', markerfacecolor='white')
+    else:
+        plt.errorbar([1, 2], [s['sv12'], s['fv12']], yerr=[err['sv12'], err['fv12']], fmt='ko-')
+        plt.errorbar([1, 2], [s['sa12'], s['fa12']], yerr=[err['sa12'], err['fa12']], fmt='ko-', markerfacecolor='white')
+        plt.errorbar([4, 5], [s['sv24'], s['fv24']], yerr=[err['sv24'], err['fv24']], fmt='ko-')
+        plt.errorbar([4, 5], [s['sa24'], s['fa24']], yerr=[err['sa24'], err['fa24']], fmt='ko-', markerfacecolor='white')
+    plt.title('PLIs')
+    plt.ylabel('PLIs Per List')
+
+
+def plot_reps(s, err=None):
+    plt.subplot(7, 3, 18)
+    if err is None:
+        plt.plot([1, 2], [s['sv12'], s['fv12']], 'ko-')
+        plt.plot([1, 2], [s['sa12'], s['fa12']], 'ko-', markerfacecolor='white')
+        plt.plot([4, 5], [s['sv24'], s['fv24']], 'ko-')
+        plt.plot([4, 5], [s['sa24'], s['fa24']], 'ko-', markerfacecolor='white')
+    else:
+        plt.errorbar([1, 2], [s['sv12'], s['fv12']], yerr=[err['sv12'], err['fv12']], fmt='ko-')
+        plt.errorbar([1, 2], [s['sa12'], s['fa12']], yerr=[err['sa12'], err['fa12']], fmt='ko-', markerfacecolor='white')
+        plt.errorbar([4, 5], [s['sv24'], s['fv24']], yerr=[err['sv24'], err['fv24']], fmt='ko-')
+        plt.errorbar([4, 5], [s['sa24'], s['fa24']], yerr=[err['sa24'], err['fa24']], fmt='ko-', markerfacecolor='white')
+    plt.title('Repetitions')
+    plt.ylabel('Reps Per List')
 
 
 def plot_rec_perlist(s):
