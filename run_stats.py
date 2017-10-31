@@ -108,7 +108,7 @@ def stats_for_subj(sub, condi, recalls, wasrec, rt, recw, presw, intru, math, st
 
 
 def avg_stats(s, stats_to_run, filters):
-    EXCLUDED = ['all', 'MTK0019']
+    EXCLUDED = ['all', 'MTK0019', 'MTK0181']
 
     avs = {}
     stderr = {}
