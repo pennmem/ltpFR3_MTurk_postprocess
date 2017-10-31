@@ -279,8 +279,8 @@ def plot_plis(s, err=None):
     if err is None:
         plt.plot([1, 2], [s['sv12'], s['fv12']], 'ko-')
         plt.plot([1, 2], [s['sa12'], s['fa12']], 'ko--', markerfacecolor='white')
-        plt.plot([4, 5], [s['sv24'], s['fv24']], 'ko-')
-        plt.plot([4, 5], [s['sa24'], s['fa24']], 'ko--', markerfacecolor='white')
+        plt.plot([3, 4], [s['sv24'], s['fv24']], 'ko-')
+        plt.plot([3, 4], [s['sa24'], s['fa24']], 'ko--', markerfacecolor='white')
     else:
         plt.errorbar([1, 2], [s['sv12'], s['fv12']], yerr=[err['sv12'], err['fv12']], fmt='ko-')
         plt.errorbar([1, 2], [s['sa12'], s['fa12']], yerr=[err['sa12'], err['fa12']], fmt='ko--', markerfacecolor='white')
