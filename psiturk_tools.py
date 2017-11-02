@@ -1,7 +1,6 @@
 from sqlalchemy import create_engine, MetaData, Table
 import json
 import numpy as np
-import os
 import pandas as pd
 from pyxdameraulevenshtein import damerau_levenshtein_distance_ndarray
 
