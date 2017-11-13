@@ -1,7 +1,6 @@
 from sqlalchemy import create_engine, MetaData, Table
 import json
 import numpy as np
-import os
 import pandas as pd
 from glob import glob
 from write_to_json import write_data_to_json
