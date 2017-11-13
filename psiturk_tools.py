@@ -87,8 +87,8 @@ def process_psiturk_data(event_dir, behmat_dir, dict_path, force=False):
         with open(json_file, 'r') as f:
             data = json.load(f)
         s = data['workerId']
-        data = [record['trialdata'] for part in data for record in part]
-        data = pd.DataFrame(data['data'])
+        data = [record['trialdata'] for record in data['data']]
+        data = pd.DataFrame(data)
         print(s)
 
         # Initialize data entries for subject
@@ -189,6 +189,15 @@ def process_psiturk_data(event_dir, behmat_dir, dict_path, force=False):
         if max([len(x) for x in d['pres_words']]) > 24:
             print('%s SUBJECT RESTART DETECTED!! EXLCUDING!' % s)
         else:
+            # Zero-pad recall-related arrays, create intrusions matrix, and create subject array, then save to JSON
+            d['subject'] = np.array([s for row in d['serialpos']])
+            d['serialpos'] = pad_into_array(d['serialpos']).astype(int)
+            d['recalled'] = np.array(d['recalled'])
+            d['rt'] = pad_into_array(d['rt'])
+            d['rec_words'] = pad_into_array(d['rec_words'])
+            d['pres_words'] = pad_into_array(d['pres_words'])
+            d['intrusions'] = recalls_to_intrusions(d['serialpos'])
+            d['math_correct'] = pad_into_array(d['math_correct']).astype(bool)
             write_data_to_json(d, outfile)
 
 
@@ -255,3 +264,50 @@ def correct_spelling(recall, presented, dictionary):
         corrected_recall = dictionary[np.argmin(dist_to_dict)]
     recall = corrected_recall
     return recall
+
+
+def pad_into_array(l):
+    """
+    Turn an array of uneven lists into a numpy matrix by padding shorter lists with zeros. Modified version of a
+    function by user Divakar on Stack Overflow, here:
+    http://stackoverflow.com/questions/32037893/numpy-fix-array-with-rows-of-different-lengths-by-filling-the-empty-elements-wi
+
+    :param l: A list of lists
+    :return: A numpy array made from l, where all rows have been made the same length via padding
+    """
+    l = np.array(l)
+    # Get lengths of each row of data
+    lens = np.array([len(i) for i in l])
+
+    # If l was empty, we can simply return the empty numpy array we just created
+    if len(lens) == 0:
+        return lens
+
+    # Mask of valid places in each row
+    mask = np.arange(lens.max()) < lens[:, None]
+
+    # Setup output array and put elements from data into masked positions
+    out = np.zeros(mask.shape, dtype=l.dtype)
+    out[mask] = np.concatenate(l)
+
+    return out
+
+
+def recalls_to_intrusions(rec):
+    """
+    Convert a recalls matrix to an intrusions matrix. In the recalls matrix, ELIs should be denoted by -999 and PLIs
+    should be denoted by -n, where n is the number of lists back the word was originally presented. All positive numbers
+    are assumed to be correct recalls. The resulting intrusions matrix denotes correct recalls by 0, ELIs by -1, and
+    PLIs by n, where n is the number of lists back the word was originally presented.
+
+    :param rec: A lists x items recalls matrix, which is assumed to be a numpy array
+    :return: A lists x items intrusions matrix
+    """
+    intru = rec.copy()
+    # Set correct recalls to 0
+    intru[np.where(intru > 0)] = 0
+    # Convert negative numbers for PLIs to positive numbers
+    intru *= -1
+    # Convert ELIs to -1
+    intru[np.where(intru == 999)] = -1
+    return intru

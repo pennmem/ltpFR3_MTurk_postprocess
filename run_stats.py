@@ -47,17 +47,16 @@ def run_stats(data_dir, stat_dir, force=False):
         with open(data_file, 'r') as f:
             d = json.load(f)
 
-        # Extract subject, condition, recall, etc info from raw data to create recalls matrices, etc
-        list_iterator = range(len(d['serialpos']))
-        sub = np.array([subj for i in list_iterator])
-        condi = [(d['list_len'][i], d['pres_rate'][i], str(d['pres_mod'][i]), d['dist_dur'][i]) for i in list_iterator]
-        recalls = pad_into_array(d['serialpos']).astype(int)
+        # Extract behavioral matrices from JSON object and convert to numpy arrays
+        sub = np.array(d['subject'])
+        condi = [(d['list_len'][i], d['pres_rate'][i], str(d['pres_mod'][i]), d['dist_dur'][i]) for i in range(len(d['serialpos']))]
+        recalls = np.array(d['serialpos'])
         wasrec = np.array(d['recalled'])
-        rt = pad_into_array(d['rt'])
-        recw = pad_into_array(d['rec_words'])
-        presw = pad_into_array(d['pres_words'])
-        intru = recalls_to_intrusions(recalls)
-        math = pad_into_array(d['math_correct']).astype(bool)
+        rt = np.array(d['rt'])
+        recw = np.array(d['rec_words'])
+        presw = np.array(d['pres_words'])
+        intru = np.array(d['intrusions'])
+        math = np.array(d['math_correct'])
 
         # Run all stats for a single participant and add the resulting stats object to the stats dictionary
         stats = stats_for_subj(sub, condi, recalls, wasrec, rt, recw, presw, intru, math, stats_to_run, filters)
@@ -66,7 +65,7 @@ def run_stats(data_dir, stat_dir, force=False):
     # Calculate average stats. First we need to load the stats from all participants.
     stats = {}
     for stat_file in glob(os.path.join(stat_dir, '*.json')):
-        subj = os.path.splitext(os.path.basename(data_file))[0]
+        subj = os.path.splitext(os.path.basename(stat_file))[0]
         if subj != 'average':
             with open(stat_file, 'r') as f:
                 stats[subj] = json.load(f)
@@ -74,7 +73,7 @@ def run_stats(data_dir, stat_dir, force=False):
     # Now we calculate the average stats and save to a JSON file
     outfile = os.path.join(stat_dir, 'all.json')
     avg_stats = {}
-    avg_stats['mean'], avg_stats['sem'] = avg_stats(stats, stats_to_run, filters.keys())
+    avg_stats['mean'], avg_stats['sem'] = calculate_avg_stats(stats, stats_to_run, filters.keys())
     write_stats_to_json(avg_stats, outfile, average_stats=True)
 
 
@@ -120,7 +119,7 @@ def stats_for_subj(sub, condi, recalls, wasrec, rt, recw, presw, intru, math, st
     return stats
 
 
-def avg_stats(s, stats_to_run, filters):
+def calculate_avg_stats(s, stats_to_run, filters):
     EXCLUDED = ['all', 'MTK0019', 'MTK0181']
 
     avs = {}
@@ -155,53 +154,6 @@ def filter_by_condi(a, condi, ll=None, pr=None, mod=None, dd=None):
     """
     ind = [i for i in range(len(condi)) if ((ll is None or condi[i][0] == ll) and (pr is None or condi[i][1] == pr) and (mod is None or condi[i][2] == mod) and (dd is None or condi[i][3] == dd))]
     return a[ind]
-
-
-def pad_into_array(l):
-    """
-    Turn an array of uneven lists into a numpy matrix by padding shorter lists with zeros. Modified version of a
-    function by user Divakar on Stack Overflow, here:
-    http://stackoverflow.com/questions/32037893/numpy-fix-array-with-rows-of-different-lengths-by-filling-the-empty-elements-wi
-
-    :param l: A list of lists
-    :return: A numpy array made from l, where all rows have been made the same length via padding
-    """
-    l = np.array(l)
-    # Get lengths of each row of data
-    lens = np.array([len(i) for i in l])
-
-    # If l was empty, we can simply return the empty numpy array we just created
-    if len(lens) == 0:
-        return lens
-
-    # Mask of valid places in each row
-    mask = np.arange(lens.max()) < lens[:, None]
-
-    # Setup output array and put elements from data into masked positions
-    out = np.zeros(mask.shape, dtype=l.dtype)
-    out[mask] = np.concatenate(l)
-
-    return out
-
-
-def recalls_to_intrusions(rec):
-    """
-    Convert a recalls matrix to an intrusions matrix. In the recalls matrix, ELIs should be denoted by -999 and PLIs
-    should be denoted by -n, where n is the number of lists back the word was originally presented. All positive numbers
-    are assumed to be correct recalls. The resulting intrusions matrix denotes correct recalls by 0, ELIs by -1, and 
-    PLIs by n, where n is the number of lists back the word was originally presented.
-    
-    :param rec: A lists x items recalls matrix, which is assumed to be a numpy array
-    :return: A lists x items intrusions matrix
-    """
-    intru = rec.copy()
-    # Set correct recalls to 0
-    intru[np.where(intru > 0)] = 0
-    # Convert negative numbers for PLIs to positive numbers
-    intru *= -1
-    # Convert ELIs to -1
-    intru[np.where(intru == 999)] = -1
-    return intru
 
 
 def prec(recalled, subjects):
