@@ -1,65 +1,74 @@
+import os
 import matplotlib
 matplotlib.use('agg')
 import matplotlib.pyplot as plt
+from glob import glob
 from matplotlib.backends.backend_pdf import PdfPages
 
 
-def ltpFR3_report(stats):
+def ltpFR3_report(stat_dir, report_dir, force=False):
     """
-    Generates a report from the input stats dictionary. The expected entries in the dictionary are:
-    
-    prec (Probability of recall)
+    Generates a report for each participant using their stats JSON file. The expected entries in the dictionary are:
+
     spc (Serial position curve)
     pfr (Probability of first recall)
     psr (Probability of second recall)
     ptr (Probability of third recall)
     crp_early (Conditional response probability among first three recalls)
     crp_late (Conditional response probability among recalls after the third)
-    pli_early (Average prior list intrusions per list among the first three recalls)
-    pli_late (Average prior list intrusions per list among recalls after the third)
-    eli_early (Average extra list intrusions per list among the first three recalls)
-    eli_late (Average extra list intrusions per list among recalls after the third)
+    plis (Average prior list intrusions per list)
+    elis (Average extra list intrusions per list)
     reps (Average number of repetitions per list)
     pli_recency (Ratio of prior list intrusions coming from each list back, up to 6 back)
     rec_per_trial (Array indicating how many words the participant correctly recalled on each trial)
     math_per_trial (Matrix indicating which math problems were answered correctly/incorrectly on each trial)
     
-    And each entry contains a sub-dictionary with entries labelled 12, 18, and 24, which contain that stat for lists of
-    length 12, 18, and 24, respectively. Note that length-18 lists are practice lists only.
+    And each entry contains a sub-dictionary with entries labelled with condition names, which contain that stat for
+    lists of that condition only.
     
-    :param stats: A dictionary containing the behavioral stats calculated by run_stats.
+    :param stat_dir: The path to the directory where stats files are stored.
+    :param report_dir: The path to the directory where new reports will be saved.
+    :param force: If False, only create reports for participants who do not have them (plus the average report). If
+    True, create reports for all participants. (Default == False)
     """
     stat_plotters = {'spc': plot_spc, 'pfr': plot_pfr, 'psr': plot_psr, 'ptr': plot_ptr,
                      'crp_early': plot_crp_early, 'crp_late': plot_crp_late, 'pli_recency': plot_pli_recency,
                      'elis': plot_elis, 'plis': plot_plis, 'reps': plot_reps, 'rec_per_trial': plot_rec_perlist,
                      'math_per_trial': plot_math_perlist}
 
-    for subj in stats:
-        pdf = PdfPages('/data/eeg/scalp/ltp/ltpFR3_MTurk/reports/' + subj + '.pdf')
-        #pdf = PdfPages('/Users/jessepazdera/Desktop/' + subj + '.pdf')
+    for stat_file in glob(os.path.join(stat_dir, '*.json')):
+        subj = os.path.splitext(os.path.basename(stat_file))[0]  # Get subject ID from file name
+        outfile = os.path.join(report_dir, '%s.pdf' % subj)  # Define file path for stat file
+        if subj != 'all' and os.path.exists(outfile) and not force:  # Skip participants who already have reports
+            continue
+
+        with open(stat_file, 'r') as f:
+            stats = json.load(f)
+
+        pdf = PdfPages(outfile)
         plt.figure(figsize=(30, 30))
         if subj == 'all':
             plt.suptitle('All', fontsize=36)
             for key in stat_plotters:
-                if key in stats['all']['mean']:
-                    stat_plotters[key](stats['all']['mean'][key])
-            plot_intrusions(stats['all']['mean']['plis'], stats['all']['mean']['elis'], stats['all']['mean']['reps'],
-                            stats['all']['sem']['plis'], stats['all']['sem']['elis'], stats['all']['sem']['reps'])
-            plot_elis(stats['all']['mean']['elis'], stats['all']['sem']['elis'])
-            plot_plis(stats['all']['mean']['plis'], stats['all']['sem']['plis'])
-            plot_reps(stats['all']['mean']['reps'], stats['all']['sem']['reps'])
+                if key in stats['mean']:
+                    stat_plotters[key](stats['mean'][key])
+            plot_intrusions(stats['mean']['plis'], stats['mean']['elis'], stats['mean']['reps'],
+                            stats['sem']['plis'], stats['sem']['elis'], stats['sem']['reps'])
+            plot_elis(stats['mean']['elis'], stats['sem']['elis'])
+            plot_plis(stats['mean']['plis'], stats['sem']['plis'])
+            plot_reps(stats['mean']['reps'], stats['sem']['reps'])
         else:
             plt.suptitle(subj, fontsize=36)
             for key in stat_plotters:
 
-                if key in stats[subj]:
-                    stat_plotters[key](stats[subj][key])
+                if key in stats:
+                    stat_plotters[key](stats[key])
                 else:
                     print('ALERT! Missing stat %s for subject %s' % (key, subj))
-            plot_intrusions(stats[subj]['plis'], stats[subj]['elis'], stats[subj]['reps'])
-            plot_elis(stats[subj]['elis'])
-            plot_plis(stats[subj]['plis'])
-            plot_reps(stats[subj]['reps'])
+            plot_intrusions(stats['plis'], stats['elis'], stats['reps'])
+            plot_elis(stats['elis'])
+            plot_plis(stats['plis'])
+            plot_reps(stats['reps'])
         plt.tight_layout(rect=[0, 0.03, 1, 0.95])
         pdf.savefig()
         pdf.close()

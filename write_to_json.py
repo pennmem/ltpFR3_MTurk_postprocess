@@ -2,40 +2,45 @@ import json
 import numpy as np
 
 
-def write_to_json(data, stats, behmat_json, stat_json):
+def write_data_to_json(data, outfile):
     """
-    Converts all numpy arrays in data and stats to lists, then writes both objects to JSON files.
-
-    :param data: A dictionary containing all ltpFR3 behavioral data matrices.
-    :param stats: A dictionary containing all ltpFR3 behavioral performance stats.
-    :param behmat_json: The path where data will be written.
-    :param stat_json: The path where stats will be written
+    Makes a behavioral matrix dictionary JSON-serializable, then saves it to a JSON file.
+    :param data: A behavioral matrix dictionary for one participant.
+    :param outfile: The file path where the data will be saved.
     """
-    for subj in data:
-        for field in data[subj]:
-            if isinstance(data[subj][field], np.ndarray):
-                data[subj][field] = data[subj][field].tolist()
+    for field in data:
+        if isinstance(data[field], np.ndarray):
+            data[field] = data[field].tolist()
 
-    with open(behmat_json, 'w') as f:
+    with open(outfile, 'w') as f:
         json.dump(data, f)
 
-    for subj in stats:
-        if subj == 'all':
-            for stat in stats['all']['mean']:
-                for f in stats['all']['mean'][stat]:
-                    if isinstance(stats['all']['mean'][stat][f], np.ndarray):
-                        stats['all']['mean'][stat][f] = stats['all']['mean'][stat][f].tolist()
-            for stat in stats['all']['sem']:
-                for f in stats['all']['sem'][stat]:
-                    if isinstance(stats['all']['sem'][stat][f], np.ndarray):
-                        stats['all']['sem'][stat][f] = stats['all']['sem'][stat][f].tolist()
-        for stat in stats[subj]:
-            if stat in ('rec_per_trial', 'math_per_trial'):
-                stats[subj][stat] = stats[subj][stat].tolist()
-            else:
-                for f in stats[subj][stat]:
-                    if isinstance(stats[subj][stat][f], np.ndarray):
-                        stats[subj][stat][f] = stats[subj][stat][f].tolist()
 
-    with open(stat_json, 'w') as f:
+def write_stats_to_json(stats, outfile, average_stats=False):
+    """
+    Makes a stats dictionary JSON-serializable, then saves it to a JSON file.
+    :param stats: A stats dictionary for one participant (or the average stats dictionary).
+    :param outfile: The file path where the data will be saved.
+    :param average_stats: If True, assume that stats dictionary contains one entry with means for each condition and one
+    entry for standard errors for each condition. (Default == False)
+    """
+    if average_stats:
+        for stat in stats['mean']:
+            for f in stats['mean'][stat]:
+                if isinstance(stats['mean'][stat][f], np.ndarray):
+                    stats['mean'][stat][f] = stats['mean'][stat][f].tolist()
+        for stat in stats['sem']:
+            for f in stats['sem'][stat]:
+                if isinstance(stats['sem'][stat][f], np.ndarray):
+                    stats['sem'][stat][f] = stats['sem'][stat][f].tolist()
+    else:
+        for stat in stats:
+            if stat in ('rec_per_trial', 'math_per_trial'):
+                stats[stat] = stats[stat].tolist()
+            else:
+                for f in stats[stat]:
+                    if isinstance(stats[stat][f], np.ndarray):
+                        stats[stat][f] = stats[stat][f].tolist()
+
+    with open(outfile, 'w') as f:
         json.dump(stats, f)

@@ -1,33 +1,29 @@
+import os
 import numpy as np
+from glob import glob
 from pybeh.spc import spc
 from pybeh.pnr import pnr
 from pybeh.crp import crp
 from scipy.stats import sem
+from write_to_json import write_stats_to_json
 
 
-def run_stats(d):
+def run_stats(data_dir, stat_dir, force=False):
     """
     Use the data extracted from a psiTurk database to generate behavioral stats for each participant. Creates a stat
-    data structure with the following format:
-    
-    stats = {
-    subj1: { stat1: {condition1: value, condition2: value, ...}, 
-            stat2: {condition1: value, condition2: value, ...}, 
-            stat3: {condition1: value, condition2: value, ...}, 
-            ... },
-    subj2: { stat1: {condition1: value, condition2: value, ...}, 
-            stat2: {condition1: value, condition2: value, ...}, 
-            stat3: {condition1: value, condition2: value, ...}, 
-            ... },
-    subj3: { stat1: {condition1: value, condition2: value, ...}, 
-            stat2: {condition1: value, condition2: value, ...}, 
-            stat3: {condition1: value, condition2: value, ...}, 
-            ... }, 
+    data structure with the following format for each participant, then saves it to a JSON file:
+
+    {
+    stat1: {condition1: value, condition2: value, ...},
+    stat2: {condition1: value, condition2: value, ...},
+    stat3: {condition1: value, condition2: value, ...},
     ...
     }
     
-    :param d: A data structure created by psiturk_tools.process_psiturk_data()
-    :return: A dictionary containing a subdictionary for each participant. Each subdictionary contains all behavioral stats for that single participant.
+    :param data_dir: The path to the directory where behavioral matrix data files are stored.
+    :param report_dir: The path to the directory where new stats files will be saved.
+    :param force: If False, only calculate stats for participants who do not already have a stats file (plus the average
+     stat file). If True, calculate stats for all participants. (Default == False)
     """
     stats_to_run = ['prec', 'spc', 'pfr', 'psr', 'ptr', 'crp_early', 'crp_late', 'plis', 'elis', 'reps', 'pli_recency']
 
@@ -41,28 +37,45 @@ def run_stats(d):
                'fa12': {'ll': 12, 'pr': 800, 'mod': 'a'}, 'fa24': {'ll': 24, 'pr': 800, 'mod': 'a'},
                'fv12': {'ll': 12, 'pr': 800, 'mod': 'v'}, 'fv24': {'ll': 24, 'pr': 800, 'mod': 'v'}}
 
-    stats = dict()
-    for subj in d:
-        list_iterator = range(len(d[subj]['serialpos']))
+    # Calculate stats for new participants
+    for data_file in glob(os.path.join(data_dir, '*.json')):
+        subj = os.path.splitext(os.path.basename(data_file))[0]  # Get subject ID from file name
+        outfile = os.path.join(stat_dir, '%s.json' % subj)  # Define file path for stat file
+        if os.path.exists(outfile) and not force:  # Skip participants who already had stats calculated
+            continue
+
+        with open(data_file, 'r') as f:
+            d = json.load(f)
 
         # Extract subject, condition, recall, etc info from raw data to create recalls matrices, etc
+        list_iterator = range(len(d['serialpos']))
         sub = np.array([subj for i in list_iterator])
-        condi = [(d[subj]['list_len'][i], d[subj]['pres_rate'][i], str(d[subj]['pres_mod'][i]), d[subj]['dist_dur'][i]) for i in list_iterator]
-        recalls = pad_into_array(d[subj]['serialpos']).astype(int)
-        wasrec = np.array(d[subj]['recalled'])
-        rt = pad_into_array(d[subj]['rt'])
-        recw = pad_into_array(d[subj]['rec_words'])
-        presw = pad_into_array(d[subj]['pres_words'])
+        condi = [(d['list_len'][i], d['pres_rate'][i], str(d['pres_mod'][i]), d['dist_dur'][i]) for i in list_iterator]
+        recalls = pad_into_array(d['serialpos']).astype(int)
+        wasrec = np.array(d['recalled'])
+        rt = pad_into_array(d['rt'])
+        recw = pad_into_array(d['rec_words'])
+        presw = pad_into_array(d['pres_words'])
         intru = recalls_to_intrusions(recalls)
-        math = pad_into_array(d[subj]['math_correct']).astype(bool)
+        math = pad_into_array(d['math_correct']).astype(bool)
 
         # Run all stats for a single participant and add the resulting stats object to the stats dictionary
-        stats[str(subj)] = stats_for_subj(sub, condi, recalls, wasrec, rt, recw, presw, intru, math, stats_to_run, filters)
+        stats = stats_for_subj(sub, condi, recalls, wasrec, rt, recw, presw, intru, math, stats_to_run, filters)
+        write_stats_to_json(stats, outfile)
 
-    stats['all'] = {}
-    stats['all']['mean'], stats['all']['sem'] = avg_stats(stats, stats_to_run, filters.keys())
+    # Calculate average stats. First we need to load the stats from all participants.
+    stats = {}
+    for stat_file in glob(os.path.join(stat_dir, '*.json')):
+        subj = os.path.splitext(os.path.basename(data_file))[0]
+        if subj != 'average':
+            with open(stat_file, 'r') as f:
+                stats[subj] = json.load(f)
 
-    return stats
+    # Now we calculate the average stats and save to a JSON file
+    outfile = os.path.join(stat_dir, 'all.json')
+    avg_stats = {}
+    avg_stats['mean'], avg_stats['sem'] = avg_stats(stats, stats_to_run, filters.keys())
+    write_stats_to_json(avg_stats, outfile, average_stats=True)
 
 
 def stats_for_subj(sub, condi, recalls, wasrec, rt, recw, presw, intru, math, stats_to_run, filters):

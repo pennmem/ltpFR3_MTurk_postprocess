@@ -3,30 +3,25 @@ import json
 import numpy as np
 import os
 import pandas as pd
+from glob import glob
+from write_to_json import write_data_to_json
 from pyxdameraulevenshtein import damerau_levenshtein_distance_ndarray
 
 
-def load_psiturk_data(db_url=None, table_name=None, data_column_name='datastring'):
+def load_psiturk_data(db_url, table_name, event_dir, data_column_name='datastring', force=False):
     """
-    Loads the data from a psiTurk experiment. Adapted from the official psiTurk docs.
+    Extracts the data from each participant in a psiTurk study, then writes as a JSON file for each participant.
 
     :param db_url: The location of the database as a string. If using mySQL, must include username and password, e.g.
     'mysql://user:password@127.0.0.1:3306/mturk_db'
     :param table_name: The name of the experiment's table within the database, e.g. 'ltpFR3'
+    :param event_dir: The path to the directory where raw event data will be written into JSON files.
     :param data_column_name: The name of the column in which psiTurk has stored the actual experiment event data. By
     default, psiTurk labels this column as 'datastring'
-    :return: A pandas data frame with the data from column data_column_name, in table table_name, within database db_url
+    :param force: If False, only write JSON files for participants that don't already have a JSON file. If True, create
+    JSON files for all participants. (Default == False)
     """
-    # boilerplate sqlalchemy setup
-    engine = create_engine(db_url)
-    metadata = MetaData()
-    metadata.bind = engine
-    table = Table(table_name, metadata, autoload=True)
-    # make a query and loop through
-    s = table.select()
-    rows = s.execute()
 
-    data = []
     """
     Status codes are as follows:
     NOT_ACCEPTED = 0
@@ -39,89 +34,92 @@ def load_psiturk_data(db_url=None, table_name=None, data_column_name='datastring
     BONUSED = 7
     """
     statuses = [3, 4, 5, 7]  # Status codes of subjects who have completed the study
-    # if you have workers you wish to exclude, add them here
-    exclude = []
+    exclude = []  # Manually exclude workers by adding their subject IDs here
+
+    # Use sqlalchemy to load rows from specified table in the specified database
+    engine = create_engine(db_url)
+    metadata = MetaData()
+    metadata.bind = engine
+    table = Table(table_name, metadata, autoload=True)
+    s = table.select()
+    rows = s.execute()
+
+    data = []
     for row in rows:
         # only use subjects who completed experiment and aren't excluded
         if row['status'] in statuses and row['workerid'] not in exclude:  # and not os.path.exists('/data/eeg/scalp/ltp/ltpFR3_MTurk/reports/%s.pdf' % row['workerid']):
             data.append(row[data_column_name])
 
-    # Now we have all participant datastrings in a list.
-    # Let's make it a bit easier to work with:
-
-    # parse each participant's datastring as json object
-    # and take the 'data' sub-object
-    data = [json.loads(part)['data'] for part in data if part != '']
-
-    # insert uniqueid field into trialdata in case it wasn't added
-    # in experiment:
-    for part in data:
-        for record in part:
-            record['trialdata']['uniqueid'] = record['uniqueid']
-
-    # flatten nested list so we just have a list of the trialdata recorded
-    # each time psiturk.recordTrialData(trialdata) was called.
-    data = [record['trialdata'] for part in data for record in part]
-
-    # Put all subjects' trial data into a dataframe object from the
-    # 'pandas' python library: one option among many for analysis
-    data_frame = pd.DataFrame(data)
-    return data_frame
+    # Parse each subject's data as a JSON object, then save a copy into a JSON file for easy access later
+    data = [json.loads(subj_data) for subj_data in data if subj_data != '']
+    for entry in data:
+        datafile_path = os.path.join(event_dir, '%s.json' % entry['workerId'])
+        if force or not os.path.exists(datafile_path):
+            with open(datafile_path, 'w') as f:
+                json.dump(entry, f)
 
 
-def process_psiturk_data(data, dict_path):
+def process_psiturk_data(event_dir, behmat_dir, dict_path, force=False):
     """
     Post-process the raw psiTurk data extracted by load_psiturk_data. This involves creating recalls and presentation
-    matrices, extracting list conditions, etc.
+    matrices, extracting list conditions, etc. The matrices created are saved to a JSON file for each participant.
 
-    :param data: The raw data frame built by load_psiturk_data out of the psiTurk server's SQL database.
-    :param dict_path: The path to the text file (e.g. Webster's Dictionary) that will be used for spellchecking and
-    looking up ELIs
-    :return: A data dictionary, with one key for each participant. Each participant's number maps to a dictionary
-    containing their recalls matrix, info on the conditions of each list, etc.
+    :param event_dir: The path to the directory where raw event data JSON files are stored.
+    :param behmat_dir: The path to the directory where new behavioral matrix data files will be stored.
+    :param dict_path: The path to the text file containing the English dictionary to use for spell-checking.
+    :param force: If False, only process data from participants who do not already have a behavioral matrix file. If
+    True, process data from all participants. (Default == False)
     """
-
-    d = {}
-
-    # Load the Webster's dictionary file, remove spaces, and make all words lowercase
+    # Load the English dictionary file, remove spaces, and make all words lowercase
     with open(dict_path, 'r') as df:
         dictionary = df.readlines()
     dictionary = [word.lower().strip() for word in dictionary if ' ' not in word]
 
-    # Set filters for recall and presentation events
-    recalls_filter = data.type == 'FREE_RECALL'
-    study_filter_aud = data.type == 'PRES_AUD'
-    study_filter_vis = data.type == 'PRES_VIS'
-    distractor_filter = data.type == 'DISTRACTOR'
-    ffr_filter = data.type == 'FFR'
+    # Process each participant's raw data into a JSON file of behavioral matrices
+    for json_file in glob(os.path.join(event_dir, '*.json')):
 
-    # For each subject
-    subjects = data.uniqueid.unique()
-    for subj in subjects:
-        s = subj[:7]
+        s = os.path.splitext(os.path.basename(json_file))[0]  # Get subject ID from file name
+        outfile = os.path.join(behmat_dir, '%s.json' % s)  # Define file path for behavioral matrix file
+        if os.path.exists(outfile) and not force:  # Skip participants who have already been post-processed
+            continue
+
+        # Get participant's data as data frame
+        with open(json_file, 'r') as f:
+            data = json.load(f)
+        s = data['workerId']
+        data = [record['trialdata'] for part in data for record in part]
+        data = pd.DataFrame(data['data'])
         print(s)
+
         # Initialize data entries for subject
-        d[s] = {}
-        d[s]['serialpos'] = []
-        d[s]['rec_words'] = []
-        d[s]['pres_words'] = []
-        d[s]['list_len'] = []
-        d[s]['pres_rate'] = []
-        d[s]['pres_mod'] = []
-        d[s]['dist_dur'] = []
-        d[s]['math_correct'] = []
+        d = {}
+        d['serialpos'] = []
+        d['rec_words'] = []
+        d['pres_words'] = []
+        d['list_len'] = []
+        d['pres_rate'] = []
+        d['pres_mod'] = []
+        d['dist_dur'] = []
+        d['math_correct'] = []
+
+        # Set filters for recall and presentation events
+        recalls_filter = data.type == 'FREE_RECALL'
+        study_filter_aud = data.type == 'PRES_AUD'
+        study_filter_vis = data.type == 'PRES_VIS'
+        distractor_filter = data.type == 'DISTRACTOR'
+        ffr_filter = data.type == 'FFR'
 
         # Get all presentation and recall events from the current subject
-        s_filter = data.uniqueid == subj
-        s_pres = data.loc[s_filter & (study_filter_aud | study_filter_vis), ['trial', 'word', 'conditions']].as_matrix()
-        s_recalls = data.loc[s_filter & recalls_filter, ['trial', 'recwords', 'conditions', 'rt']].as_matrix()
-        s_ffr = data.loc[s_filter & ffr_filter, ['recwords', 'rt']].as_matrix()
+        s_pres = data.loc[study_filter_aud | study_filter_vis, ['trial', 'word', 'conditions']].as_matrix()
+        s_recalls = data.loc[recalls_filter, ['trial', 'recwords', 'conditions', 'rt']].as_matrix()
+        s_ffr = data.loc[ffr_filter, ['recwords', 'rt']].as_matrix()
         pres_trials = np.array([x[0] for x in s_pres])
         pres_words = np.array([str(x[1]) for x in s_pres])
         rec_trials = np.array([x[0] for x in s_recalls])
         rec_words = np.array([[str(y) for y in x[1]] for x in s_recalls])
+
         # Get distractor problems and responses, then total the number of correct answers on each trial
-        s_dist = data.loc[s_filter & distractor_filter, ['num1', 'num2', 'num3', 'responses']].as_matrix()
+        s_dist = data.loc[distractor_filter, ['num1', 'num2', 'num3', 'responses']].as_matrix()
         for trial_data in s_dist:
             valid = np.where([ans.strip().isnumeric() for ans in trial_data[3]])
             n1 = np.array(trial_data[0])[valid].astype(int)
@@ -129,23 +127,23 @@ def process_psiturk_data(data, dict_path):
             n3 = np.array(trial_data[2])[valid].astype(int)
             resp = np.array(trial_data[3])[valid].astype(int)
             correct = n1 + n2 + n3 == resp
-            d[s]['math_correct'].append(correct.tolist())
+            d['math_correct'].append(correct.tolist())
 
         # Add presented words to the data structure
-        d[s]['pres_words'] = [[word for i, word in enumerate(pres_words) if pres_trials[i] == trial] for trial in np.unique(pres_trials)]
+        d['pres_words'] = [[word for i, word in enumerate(pres_words) if pres_trials[i] == trial] for trial in np.unique(pres_trials)]
 
         # Get conditions for each trial and add them to the data structure
         conditions = [x[2] for x in s_recalls]
-        d[s]['list_len'] = [x[0] for x in conditions]
-        d[s]['pres_rate'] = [x[1] for x in conditions]
-        d[s]['pres_mod'] = [x[2] for x in conditions]
-        d[s]['dist_dur'] = [x[3] for x in conditions]
+        d['list_len'] = [x[0] for x in conditions]
+        d['pres_rate'] = [x[1] for x in conditions]
+        d['pres_mod'] = [x[2] for x in conditions]
+        d['dist_dur'] = [x[3] for x in conditions]
 
         # Create empty was_recalled matrix
-        d[s]['recalled'] = np.zeros((len(d[s]['pres_words']), np.max(d[s]['list_len'])))
+        d['recalled'] = np.zeros((len(d['pres_words']), np.max(d['list_len'])))
 
         # Add recall timing matrix to the data structure
-        d[s]['rt'] = [x[3] for x in s_recalls]
+        d['rt'] = [x[3] for x in s_recalls]
 
         # For each trial in a subject's session
         for i, t in enumerate(np.unique(pres_trials)):
@@ -166,7 +164,7 @@ def process_psiturk_data(data, dict_path):
                     sp.append(position)
                 else:
                     # Mark word as recalled
-                    d[s]['recalled'][list_num, position-1] = 1
+                    d['recalled'][list_num, position-1] = 1
                     # PLIs get serial position of -n, where n is the number of lists back the word was presented
                     if list_num != t:
                         sp.append(list_num - t)
@@ -175,24 +173,23 @@ def process_psiturk_data(data, dict_path):
                         sp.append(position)
 
             # Add the current trial's recalls as a row in the participant's recalls matrix
-            d[s]['serialpos'].append(sp)
-            d[s]['rec_words'].append(recalled_this_list)
-            d[s]['recalled'][i, d[s]['list_len'][i]:] = np.nan
+            d['serialpos'].append(sp)
+            d['rec_words'].append(recalled_this_list)
+            d['recalled'][i, d['list_len'][i]:] = np.nan
 
         # Process FFR data
-        d[s]['ffr_rt'] = []
-        d[s]['ffr_rec_words'] = []
+        d['ffr_rt'] = []
+        d['ffr_rec_words'] = []
         if len(s_ffr) == 1 and len(s_ffr[0]) == 2:
-            d[s]['ffr_rt'] = s_ffr[0][1]
+            d['ffr_rt'] = s_ffr[0][1]
             for i, recall in enumerate(s_ffr[0][0]):
                 _, _, recall = which_item(recall, t+1, pres_words, pres_trials, dictionary)
-                d[s]['ffr_rec_words'].append(recall)
+                d['ffr_rec_words'].append(recall)
 
-        if max([len(x) for x in d[s]['pres_words']]) > 24:
+        if max([len(x) for x in d['pres_words']]) > 24:
             print('%s SUBJECT RESTART DETECTED!! EXLCUDING!' % s)
-            d.pop(s)
-
-    return d
+        else:
+            write_data_to_json(d, outfile)
 
 
 def which_item(recall, trial, presented, when_presented, dictionary):
