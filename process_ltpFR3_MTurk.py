@@ -6,10 +6,21 @@ from report import ltpFR3_report
 db_url = 'sqlite:////data/eeg/scalp/ltp/ltpFR3_MTurk/ltpFR3_anonymized.db'  # url for the database in which raw psiturk ouput is stored
 table_name = 'ltpFR3'  # table of the database
 dict_path = 'webster_dictionary.txt'  # dictionary to use when looking for ELIs and correcting spelling
-event_dir = '/data/eeg/scalp/ltp/ltpFR3_MTurk/events/'
-behmat_dir = '/data/eeg/scalp/ltp/ltpFR3_MTurk/data/'
-stat_dir = '/data/eeg/scalp/ltp/ltpFR3_MTurk/stats/'
-report_dir = '/data/eeg/scalp/ltp/ltpFR3_MTurk/reports/'
+
+RUN_LOCATION = 'RHINO'
+if RUN_LOCATION == 'RHINO':
+    event_dir = '/data/eeg/scalp/ltp/ltpFR3_MTurk/events/'
+    behmat_dir = '/data/eeg/scalp/ltp/ltpFR3_MTurk/data/'
+    stat_dir = '/data/eeg/scalp/ltp/ltpFR3_MTurk/stats/'
+    report_dir = '/data/eeg/scalp/ltp/ltpFR3_MTurk/reports/'
+elif RUN_LOCATION == 'LOCAL':
+    event_dir = '/Users/jessepazdera/Desktop/ltpFR3_MTurk/events/'
+    behmat_dir = '/Users/jessepazdera/Desktop/ltpFR3_MTurk/data/'
+    stat_dir = '/Users/jessepazdera/Desktop/ltpFR3_MTurk/stats/'
+    report_dir = '/Users/jessepazdera/Desktop/ltpFR3_MTurk/reports/'
+else:
+    print('RUN_LOCATION not recognized. Valid options are RHINO and LOCAL.')
+    exit()
 
 # Load the data from the psiTurk experiment database and process it into JSON files
 psiturk_tools.load_psiturk_data(db_url=db_url, table_name=table_name, event_dir=event_dir)
@@ -19,4 +30,3 @@ psiturk_tools.process_psiturk_data(event_dir, behmat_dir, dict_path)
 run_stats(behmat_dir, stat_dir)
 # Generate a PDF report for each participant, along with an aggregate report
 ltpFR3_report(stat_dir, report_dir)
-
