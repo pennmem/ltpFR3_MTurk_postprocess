@@ -94,7 +94,10 @@ def process_psiturk_data(event_dir, behmat_dir, dict_path, force=False):
         # Initialize data entries for subject
         d = {}
         d['serialpos'] = []
+        d['ffr_serialpos'] = []
+        d['ffr_pres_trial'] = []
         d['rec_words'] = []
+        d['ffr_rec_words'] = []
         d['pres_words'] = []
         d['list_len'] = []
         d['pres_rate'] = []
@@ -139,8 +142,9 @@ def process_psiturk_data(event_dir, behmat_dir, dict_path, force=False):
         d['pres_mod'] = [x[2] for x in conditions]
         d['dist_dur'] = [x[3] for x in conditions]
 
-        # Create empty was_recalled matrix
+        # Create empty recalled and FFR_recalled matrix to mark whether each word was subsequently recalled
         d['recalled'] = np.zeros((len(d['pres_words']), np.max(d['list_len'])))
+        d['ffr_recalled'] = np.zeros((len(d['pres_words']), np.max(d['list_len'])))
 
         # Add recall timing matrix to the data structure
         d['rt'] = [x[3] for x in s_recalls]
@@ -157,7 +161,7 @@ def process_psiturk_data(event_dir, behmat_dir, dict_path, force=False):
             # Mark each recall as a correct recall, ELI, PLI, or other and make a recall list for the current trial
             sp = []
             for j, recall in enumerate(recalled_this_list):
-                list_num, position, recall = which_item(recall, t, presented_so_far, when_presented, dictionary)
+                list_num, position, recall = which_item(recall, presented_so_far, when_presented, dictionary)
                 recalled_this_list[j] = recall  # Replace recalled words with their spell-checked versions
                 if list_num is None:
                     # ELIs and invalid strings get error code of -999 listed in their recalls matrix
@@ -176,23 +180,28 @@ def process_psiturk_data(event_dir, behmat_dir, dict_path, force=False):
             d['serialpos'].append(sp)
             d['rec_words'].append(recalled_this_list)
             d['recalled'][i, d['list_len'][i]:] = np.nan
+            d['ffr_recalled'][i, d['list_len'][i]:] = np.nan
 
         # Process FFR data
         d['ffr_rt'] = []
-        d['ffr_rec_words'] = []
         if len(s_ffr) == 1 and len(s_ffr[0]) == 2:
             d['ffr_rt'] = s_ffr[0][1]
             for i, recall in enumerate(s_ffr[0][0]):
-                _, _, recall = which_item(recall, t+1, pres_words, pres_trials, dictionary)
+                list_num, position, recall = which_item(recall, pres_words, pres_trials, dictionary)
                 d['ffr_rec_words'].append(recall)
+                d['ffr_serialpos'].append(position)
+                if list_num is None:
+                    d['ffr_pres_trial'].append(-999)
+                else:
+                    d['ffr_pres_trial'].append(list_num)
+                    d['ffr_recalled'][list_num, position-1] = 1
 
         if max([len(x) for x in d['pres_words']]) > 24:
             print('%s SUBJECT RESTART DETECTED!! EXLCUDING!' % s)
         else:
             # Zero-pad recall-related arrays, create intrusions matrix, and create subject array, then save to JSON
-            d['subject'] = np.array([s for row in d['serialpos']])
+            d['subject'] = [s for row in d['serialpos']]
             d['serialpos'] = pad_into_array(d['serialpos']).astype(int)
-            d['recalled'] = np.array(d['recalled'])
             d['rt'] = pad_into_array(d['rt'])
             d['rec_words'] = pad_into_array(d['rec_words'])
             d['pres_words'] = pad_into_array(d['pres_words'])
@@ -201,13 +210,12 @@ def process_psiturk_data(event_dir, behmat_dir, dict_path, force=False):
             write_data_to_json(d, outfile)
 
 
-def which_item(recall, trial, presented, when_presented, dictionary):
+def which_item(recall, presented, when_presented, dictionary):
     """
     Determine the serial position of a recalled word. Extra-list intrusions are identified by looking them up in a word
     list. Unrecognized words are spell-checked.
 
     :param recall: A string typed by the subject into the recall entry box
-    :param trial: The trial number during which the recall was entered
     :param presented: The list of words seen by this subject so far, across all trials <= the current trial number
     :param when_presented: A listing of which trial each word was presented in
     :param dictionary: A list of strings that should be considered as possible extra-list intrusions
@@ -238,7 +246,7 @@ def which_item(recall, trial, presented, when_presented, dictionary):
 
     # If word is not in the dictionary, find the closest match based on edit distance
     recall = correct_spelling(recall, presented, dictionary)
-    return which_item(recall, trial, presented, when_presented, dictionary)
+    return which_item(recall, presented, when_presented, dictionary)
 
 
 def self_term_search(find_this, in_this):
