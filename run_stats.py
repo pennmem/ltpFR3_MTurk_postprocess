@@ -5,6 +5,7 @@ from glob import glob
 from pybeh.spc import spc
 from pybeh.pnr import pnr
 from pybeh.crp import crp
+from pybeh.temp_fact import temp_fact
 from scipy.stats import sem
 from write_to_json import write_stats_to_json
 
@@ -26,7 +27,7 @@ def run_stats(data_dir, stat_dir, force=False):
     :param force: If False, only calculate stats for participants who do not already have a stats file (plus the average
      stat file). If True, calculate stats for all participants. (Default == False)
     """
-    stats_to_run = ['prec', 'spc', 'pfr', 'psr', 'ptr', 'crp_early', 'crp_late', 'plis', 'elis', 'reps', 'pli_recency']
+    stats_to_run = ['prec', 'spc', 'pfr', 'psr', 'ptr', 'crp_early', 'crp_late', 'plis', 'elis', 'reps', 'pli_recency', 'ffr_spc', 'temp_fact']
 
     filters = {'all': {'ll': None, 'pr': None, 'mod': None, 'dd': None},
                'a12': {'ll': 12, 'mod': 'a'}, 'a24': {'ll': 24, 'mod': 'a'},
@@ -53,6 +54,7 @@ def run_stats(data_dir, stat_dir, force=False):
         condi = [(d['list_len'][i], d['pres_rate'][i], str(d['pres_mod'][i]), d['dist_dur'][i]) for i in range(len(d['serialpos']))]
         recalls = np.array(d['serialpos'])
         wasrec = np.array(d['recalled'])
+        ffr_wasrec = np.array(d['ffr_recalled'])
         rt = np.array(d['rt'])
         recw = np.array(d['rec_words'])
         presw = np.array(d['pres_words'])
@@ -60,14 +62,14 @@ def run_stats(data_dir, stat_dir, force=False):
         math = np.array(d['math_correct'])
 
         # Run all stats for a single participant and add the resulting stats object to the stats dictionary
-        stats = stats_for_subj(sub, condi, recalls, wasrec, rt, recw, presw, intru, math, stats_to_run, filters)
+        stats = stats_for_subj(sub, condi, recalls, wasrec, ffr_wasrec, rt, recw, presw, intru, math, stats_to_run, filters)
         write_stats_to_json(stats, outfile)
 
     # Calculate average stats. First we need to load the stats from all participants.
     stats = {}
     for stat_file in glob(os.path.join(stat_dir, '*.json')):
         subj = os.path.splitext(os.path.basename(stat_file))[0]
-        if subj != 'average':
+        if subj != 'all':
             with open(stat_file, 'r') as f:
                 stats[subj] = json.load(f)
 
@@ -78,7 +80,7 @@ def run_stats(data_dir, stat_dir, force=False):
     write_stats_to_json(avg_stats, outfile, average_stats=True)
 
 
-def stats_for_subj(sub, condi, recalls, wasrec, rt, recw, presw, intru, math, stats_to_run, filters):
+def stats_for_subj(sub, condi, recalls, wasrec, ffr_wasrec, rt, recw, presw, intru, math, stats_to_run, filters):
     """
     Create a stats dictionary for a single participant.
     
@@ -96,12 +98,13 @@ def stats_for_subj(sub, condi, recalls, wasrec, rt, recw, presw, intru, math, st
     stats = {stat: {} for stat in stats_to_run}
     for f in filters:
         ll = filters[f]['ll']
-        fsub, frecalls, fwasrec, frt, frecw, fpresw, fintru = [filter_by_condi(a, condi, **filters[f]) for a in [sub, recalls, wasrec, rt, recw, presw, intru]]
+        fsub, frecalls, fwasrec, fffr_wasrec, frt, frecw, fpresw, fintru = [filter_by_condi(a, condi, **filters[f]) for a in [sub, recalls, wasrec, ffr_wasrec, rt, recw, presw, intru]]
 
         # Calculate stats on all lists within the current condition
         if ll is not None:
             stats['prec'][f] = prec(fwasrec[:, :ll], fsub)[0]
             stats['spc'][f] = spc(frecalls, fsub, ll)[0]
+            stats['ffr_spc'][f] = ffr_spc(fffr_wasrec, fsub)[0]
             stats['pfr'][f] = pnr(frecalls, fsub, ll, n=0)[0]
             stats['psr'][f] = pnr(frecalls, fsub, ll, n=1)[0]
             stats['ptr'][f] = pnr(frecalls, fsub, ll, n=2)[0]
@@ -109,6 +112,7 @@ def stats_for_subj(sub, condi, recalls, wasrec, rt, recw, presw, intru, math, st
             stats['crp_late'][f] = crp(frecalls[:, 2:], fsub, ll, lag_num=3)[0]
             stats['crp_early'][f][3] = np.nan  # Fix CRPs to have a 0-lag of NaN
             stats['crp_late'][f][3] = np.nan  # Fix CRPs to have a 0-lag of NaN
+            stats['temp_fact'][f] = temp_fact(frecalls, fsub, ll)[0]
         stats['plis'][f] = avg_pli(fintru, fsub, frecw)[0]
         stats['elis'][f] = avg_eli(fintru, fsub)[0]
         stats['reps'][f] = avg_reps(frecalls, fsub)[0]
@@ -121,7 +125,7 @@ def stats_for_subj(sub, condi, recalls, wasrec, rt, recw, presw, intru, math, st
 
 
 def calculate_avg_stats(s, stats_to_run, filters):
-    EXCLUDED = ['all', 'MTK0019', 'MTK0181']
+    EXCLUDED = ['MTK0019', 'MTK0181']
 
     avs = {}
     stderr = {}
@@ -170,10 +174,18 @@ def prec(recalled, subjects):
     if len(recalled) == 0:
         return np.array([]), np.array([])
     usub = np.unique(subjects)
-    result = np.array([recalled[subjects == subj].mean() for subj in usub])
+    result = np.array([np.nanmean(recalled[subjects == subj]) for subj in usub])
     stderr = np.array([sem(recalled[subjects == subj], nan_policy='omit') for subj in usub])
 
     return result, stderr
+
+
+def ffr_spc(ffr_recalled, subjects):
+    if len(ffr_recalled) == 0:
+        return np.array([])
+    usub = np.unique(subjects)
+    result = np.array([np.nanmean(ffr_recalled[subjects == subj], axis=0) for subj in usub])
+    return result
 
 
 def pli_recency(intrusions, subjects, nmax, rec_words):
@@ -291,7 +303,6 @@ def avg_reps(rec_itemnos, subjects):
 
 
 if __name__ == "__main__":
-    import json
     with open('/Users/jessepazdera/Desktop/ltpFR3_data.json') as f:
         data = json.load(f)
     stats = run_stats(data)
