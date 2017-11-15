@@ -342,7 +342,7 @@ def plot_temp_fact(s, err=None):
     plt.ylabel('Clustering Score')
     plt.xticks([1, 2, 3, 4], ('12/Slow', '12/Fast', '24/Slow', '24/Fast'))
     plt.legend(labels=['Visual', 'Auditory'])
-    plt.ylim(0, 1.05)
+    plt.ylim(.5, .8)
 
 
 def plot_rec_perlist(s):
