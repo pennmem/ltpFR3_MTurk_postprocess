@@ -71,7 +71,7 @@ def ltpFR3_report(stat_dir, report_dir, force=False):
             plot_elis(stats['elis'])
             plot_plis(stats['plis'])
             plot_reps(stats['reps'])
-            plot_temp_fact(stats['mean']['temp_fact'])
+            plot_temp_fact(stats['temp_fact'])
         plt.tight_layout(rect=[0, 0.03, 1, 0.95])
         pdf.savefig()
         pdf.close()
