@@ -363,10 +363,3 @@ def plot_math_perlist(s):
     plt.ylabel('Math Correct')
     plt.xlim(0, 19)
     plt.ylim(-.5, 20.5)
-
-
-if __name__ == "__main__":
-    import json
-    with open('/Users/jessepazdera/Desktop/ltpFR3_stats.json') as f:
-        stats = json.load(f)
-    ltpFR3_report(stats)

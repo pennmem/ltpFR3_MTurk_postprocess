@@ -301,28 +301,3 @@ def avg_reps(rec_itemnos, subjects):
         result[subject_index] = count / lists if lists > 0 else np.nan
     return result
 
-
-if __name__ == "__main__":
-    with open('/Users/jessepazdera/Desktop/ltpFR3_data.json') as f:
-        data = json.load(f)
-    stats = run_stats(data)
-    for subj in stats:
-        if subj == 'all':
-            for stat in stats['all']['mean']:
-                for f in stats['all']['mean'][stat]:
-                    if isinstance(stats['all']['mean'][stat][f], np.ndarray):
-                        stats['all']['mean'][stat][f] = stats['all']['mean'][stat][f].tolist()
-            for stat in stats['all']['sem']:
-                for f in stats['all']['sem'][stat]:
-                    if isinstance(stats['all']['sem'][stat][f], np.ndarray):
-                        stats['all']['sem'][stat][f] = stats['all']['sem'][stat][f].tolist()
-        for stat in stats[subj]:
-            if stat in ('rec_per_trial', 'math_per_trial'):
-                stats[subj][stat] = stats[subj][stat].tolist()
-            else:
-                for f in stats[subj][stat]:
-                    if isinstance(stats[subj][stat][f], np.ndarray):
-                        stats[subj][stat][f] = stats[subj][stat][f].tolist()
-
-    with open('/Users/jessepazdera/Desktop/ltpFR3_stats.json', 'w') as f:
-        json.dump(stats, f)
