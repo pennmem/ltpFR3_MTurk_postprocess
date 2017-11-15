@@ -58,6 +58,7 @@ def ltpFR3_report(stat_dir, report_dir, force=False):
             plot_elis(stats['mean']['elis'], stats['sem']['elis'])
             plot_plis(stats['mean']['plis'], stats['sem']['plis'])
             plot_reps(stats['mean']['reps'], stats['sem']['reps'])
+            plot_temp_fact(stats['mean']['temp_fact'], stats['sem']['temp_fact'])
         else:
             plt.suptitle(subj, fontsize=36)
             for key in stat_plotters:
@@ -70,6 +71,7 @@ def ltpFR3_report(stat_dir, report_dir, force=False):
             plot_elis(stats['elis'])
             plot_plis(stats['plis'])
             plot_reps(stats['reps'])
+            plot_temp_fact(stats['mean']['temp_fact'])
         plt.tight_layout(rect=[0, 0.03, 1, 0.95])
         pdf.savefig()
         pdf.close()
@@ -322,6 +324,25 @@ def plot_reps(s, err=None):
     plt.ylabel('Reps Per List')
     plt.xticks([1, 2, 3, 4], ('12/Slow', '12/Fast', '24/Slow', '24/Fast'))
     plt.legend(labels=['Visual', 'Auditory'])
+
+
+def plot_temp_fact(s, err=None):
+    plt.subplot(7, 3, 20)
+    if err is None:
+        plt.plot([1, 2], [s['sv12'], s['fv12']], 'ko-')
+        plt.plot([1.02, 2.02], [s['sa12'], s['fa12']], 'ko--', markerfacecolor='white')
+        plt.plot([3, 4], [s['sv24'], s['fv24']], 'ko-')
+        plt.plot([3.02, 4.02], [s['sa24'], s['fa24']], 'ko--', markerfacecolor='white')
+    else:
+        plt.errorbar([1, 2], [s['sv12'], s['fv12']], yerr=[err['sv12'], err['fv12']], fmt='ko-')
+        plt.errorbar([1.02, 2.02], [s['sa12'], s['fa12']], yerr=[err['sa12'], err['fa12']], fmt='ko--', markerfacecolor='white')
+        plt.errorbar([3, 4], [s['sv24'], s['fv24']], yerr=[err['sv24'], err['fv24']], fmt='ko-')
+        plt.errorbar([3.02, 4.02], [s['sa24'], s['fa24']], yerr=[err['sa24'], err['fa24']], fmt='ko--', markerfacecolor='white')
+    plt.title('Temporal Clustering Factor')
+    plt.ylabel('Clustering Score')
+    plt.xticks([1, 2, 3, 4], ('12/Slow', '12/Fast', '24/Slow', '24/Fast'))
+    plt.legend(labels=['Visual', 'Auditory'])
+    plt.ylim(0, 1.05)
 
 
 def plot_rec_perlist(s):
