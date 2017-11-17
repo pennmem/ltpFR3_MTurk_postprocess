@@ -181,6 +181,14 @@ def prec(recalled, subjects):
     return result, stderr
 
 
+def ffr_spc(ffr_recalled, subjects, ll):
+    if len(ffr_recalled) == 0:
+        return np.array([])
+    usub = np.unique(subjects)
+    result = np.array([np.nanmean(ffr_recalled[subjects == subj], axis=0) for subj in usub])
+    return result[:, :ll]
+
+
 def pli_recency(intrusions, subjects, nmax, rec_words):
     """
     Calculate the ratio of PLIs that originated from 1 list back, 2 lists back, etc. up until nmax lists back.
@@ -293,4 +301,3 @@ def avg_reps(rec_itemnos, subjects):
                 count += repetitions.sum()
         result[subject_index] = count / lists if lists > 0 else np.nan
     return result
-
