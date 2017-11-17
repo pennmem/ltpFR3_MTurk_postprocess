@@ -35,7 +35,7 @@ def ltpFR3_report(stat_dir, report_dir, force=False):
     stat_plotters = {'spc': plot_spc, 'pfr': plot_pfr, 'psr': plot_psr, 'ptr': plot_ptr,
                      'crp_early': plot_crp_early, 'crp_late': plot_crp_late, 'pli_recency': plot_pli_recency,
                      'elis': plot_elis, 'plis': plot_plis, 'reps': plot_reps, 'rec_per_trial': plot_rec_perlist,
-                     'math_per_trial': plot_math_perlist}
+                     'math_per_trial': plot_math_perlist, 'temp_fact': plot_temp_fact}
 
     for stat_file in glob(os.path.join(stat_dir, '*.json')):
         subj = os.path.splitext(os.path.basename(stat_file))[0]  # Get subject ID from file name
@@ -68,10 +68,10 @@ def ltpFR3_report(stat_dir, report_dir, force=False):
                 else:
                     print('ALERT! Missing stat %s for subject %s' % (key, subj))
             plot_intrusions(stats['plis'], stats['elis'], stats['reps'])
-            plot_elis(stats['elis'])
-            plot_plis(stats['plis'])
-            plot_reps(stats['reps'])
-            plot_temp_fact(stats['temp_fact'])
+            # plot_elis(stats['elis'])
+            # plot_plis(stats['plis'])
+            # plot_reps(stats['reps'])
+            # plot_temp_fact(stats['temp_fact'])
         plt.tight_layout(rect=[0, 0.03, 1, 0.95])
         pdf.savefig()
         pdf.close()
@@ -101,6 +101,32 @@ def plot_spc(s):
     plt.ylabel('Probability of Recall')
     plt.legend(labels=['Slow/Visual', 'Fast/Visual', 'Slow/Auditory', 'Fast/Auditory'])
     plt.ylim(-.05, 1.05)
+    plt.xticks(range(1, 25, 2), range(1, 25, 2))
+
+
+def plot_ffr_spc(s):
+    plt.subplot(7, 3, 1)
+    plt.plot(range(1, 13), s['sv12'], 'ko-')
+    plt.plot(range(1, 13), s['fv12'], 'k^-')
+    plt.plot(range(1, 13), s['sa12'], 'ko--', markerfacecolor='white')
+    plt.plot(range(1, 13), s['fa12'], 'k^--', markerfacecolor='white')
+    plt.title('FFR SPC (List Length 12)')
+    plt.xlabel('Serial Position')
+    plt.ylabel('Probability of Recall')
+    plt.legend(labels=['Slow/Visual', 'Fast/Visual', 'Slow/Auditory', 'Fast/Auditory'])
+    plt.ylim(0, .3)
+    plt.xticks(range(1, 13, 2), range(1, 13, 2))
+
+    plt.subplot(7, 3, 4)
+    plt.plot(range(1, 25), s['sv24'], 'ko-')
+    plt.plot(range(1, 25), s['fv24'], 'k^-')
+    plt.plot(range(1, 25), s['sa24'], 'ko--', markerfacecolor='white')
+    plt.plot(range(1, 25), s['fa24'], 'k^--', markerfacecolor='white')
+    plt.title('FFR SPC (List Length 24)')
+    plt.xlabel('Serial Position')
+    plt.ylabel('Probability of Recall')
+    plt.legend(labels=['Slow/Visual', 'Fast/Visual', 'Slow/Auditory', 'Fast/Auditory'])
+    plt.ylim(0, .3)
     plt.xticks(range(1, 25, 2), range(1, 25, 2))
 
 
