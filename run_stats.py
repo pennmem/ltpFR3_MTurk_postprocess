@@ -104,7 +104,7 @@ def stats_for_subj(sub, condi, recalls, wasrec, ffr_wasrec, rt, recw, presw, int
         if ll is not None:
             stats['prec'][f] = prec(fwasrec[:, :ll], fsub)[0]
             stats['spc'][f] = spc(frecalls, fsub, ll)[0]
-            stats['ffr_spc'][f] = spc(fffr_wasrec, fsub, ll)[0]
+            stats['ffr_spc'][f] = ffr_spc(fffr_wasrec, fsub, ll)[0]
             stats['pfr'][f] = pnr(frecalls, fsub, ll, n=0)[0]
             stats['psr'][f] = pnr(frecalls, fsub, ll, n=1)[0]
             stats['ptr'][f] = pnr(frecalls, fsub, ll, n=2)[0]
