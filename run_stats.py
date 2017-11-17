@@ -104,7 +104,7 @@ def stats_for_subj(sub, condi, recalls, wasrec, ffr_wasrec, rt, recw, presw, int
         if ll is not None:
             stats['prec'][f] = prec(fwasrec[:, :ll], fsub)[0]
             stats['spc'][f] = spc(frecalls, fsub, ll)[0]
-            stats['ffr_spc'][f] = ffr_spc(fffr_wasrec, fsub)[0]
+            stats['ffr_spc'][f] = spc(fffr_wasrec, fsub, ll)[0]
             stats['pfr'][f] = pnr(frecalls, fsub, ll, n=0)[0]
             stats['psr'][f] = pnr(frecalls, fsub, ll, n=1)[0]
             stats['ptr'][f] = pnr(frecalls, fsub, ll, n=2)[0]
@@ -179,14 +179,6 @@ def prec(recalled, subjects):
     stderr = np.array([sem(recalled[subjects == subj], nan_policy='omit') for subj in usub])
 
     return result, stderr
-
-
-def ffr_spc(ffr_recalled, subjects):
-    if len(ffr_recalled) == 0:
-        return np.array([])
-    usub = np.unique(subjects)
-    result = np.array([np.nanmean(ffr_recalled[subjects == subj], axis=0) for subj in usub])
-    return result
 
 
 def pli_recency(intrusions, subjects, nmax, rec_words):
