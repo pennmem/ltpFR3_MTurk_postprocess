@@ -52,7 +52,7 @@ def lookup_and_acceptance_tool():
         # Determine the subject ID (should be of the form "MTK####"). We only use subject IDs in the acceptance record.
         if inp.startswith('MTK') and len(inp) == 7:
             subjid = inp
-        elif idmap[inp].startswith('MTK') and len(inp) == 7:
+        elif idmap[inp].startswith('MTK') and len(idmap[inp]) == 7:
             subjid = idmap[inp]
         else:
             continue
@@ -69,10 +69,10 @@ def lookup_and_acceptance_tool():
         while True:
             accept = input('Enter 1 to ACCEPT, 0 to REJECT, or leave blank to POSTPONE: ')
             if accept == '0':
-                acceptance[inp] = 0
+                acceptance[subjid] = 0
                 break
             elif accept == '1':
-                acceptance[inp] = 1
+                acceptance[subjid] = 1
                 break
             elif accept == '':
                 break
