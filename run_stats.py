@@ -125,8 +125,8 @@ def stats_for_subj(sub, condi, recalls, wasrec, ffr_wasrec, rt, recw, presw, int
 
 
 def calculate_avg_stats(s, stats_to_run, filters):
-    # 19 - rejected, 181 - rejected, 354 - unable to hear some lists, 412 - rejected
-    EXCLUDED = ['MTK0019', 'MTK0181', 'MTK0354', 'MTK0412']
+    # Exclusion notes can be found at: https://app.asana.com/0/291595828487527/468440625589939/f
+    EXCLUDED = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/EXCLUDED.txt', dtype='U8')
 
     avs = {}
     stderr = {}
