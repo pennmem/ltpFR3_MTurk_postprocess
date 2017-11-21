@@ -29,7 +29,7 @@ def run_stats(data_dir, stat_dir, force=False):
     """
     EXCLUDED = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/EXCLUDED.txt', dtype='U8')
 
-    stats_to_run = ['prec', 'spc', 'pfr', 'psr', 'ptr', 'crp_early', 'crp_late', 'plis', 'elis', 'reps', 'pli_recency', 'ffr_spc', 'temp_fact']
+    stats_to_run = ['prec', 'spc', 'pfr', 'psr', 'ptr', 'crp', 'crp_early', 'crp_late', 'plis', 'elis', 'reps', 'pli_recency', 'ffr_spc', 'temp_fact']
 
     filters = {'all': {'ll': None, 'pr': None, 'mod': None, 'dd': None},
                'a12': {'ll': 12, 'mod': 'a'}, 'a24': {'ll': 24, 'mod': 'a'},
@@ -110,6 +110,7 @@ def stats_for_subj(sub, condi, recalls, wasrec, ffr_wasrec, rt, recw, presw, int
             stats['pfr'][f] = pnr(frecalls, fsub, ll, n=0)[0]
             stats['psr'][f] = pnr(frecalls, fsub, ll, n=1)[0]
             stats['ptr'][f] = pnr(frecalls, fsub, ll, n=2)[0]
+            stats['crp'][f] = crp(frecalls, fsub, ll, lag_num=3)[0]
             stats['crp_early'][f] = crp(frecalls[:, :3], fsub, ll, lag_num=3)[0]
             stats['crp_late'][f] = crp(frecalls[:, 2:], fsub, ll, lag_num=3)[0]
             stats['crp_early'][f][3] = np.nan  # Fix CRPs to have a 0-lag of NaN
