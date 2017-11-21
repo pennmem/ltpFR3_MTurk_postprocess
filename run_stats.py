@@ -27,6 +27,8 @@ def run_stats(data_dir, stat_dir, force=False):
     :param force: If False, only calculate stats for participants who do not already have a stats file (plus the average
      stat file). If True, calculate stats for all participants. (Default == False)
     """
+    EXCLUDED = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/EXCLUDED.txt', dtype='U8')
+
     stats_to_run = ['prec', 'spc', 'pfr', 'psr', 'ptr', 'crp_early', 'crp_late', 'plis', 'elis', 'reps', 'pli_recency', 'ffr_spc', 'temp_fact']
 
     filters = {'all': {'ll': None, 'pr': None, 'mod': None, 'dd': None},
@@ -43,7 +45,7 @@ def run_stats(data_dir, stat_dir, force=False):
     for data_file in glob(os.path.join(data_dir, '*.json')):
         subj = os.path.splitext(os.path.basename(data_file))[0]  # Get subject ID from file name
         outfile = os.path.join(stat_dir, '%s.json' % subj)  # Define file path for stat file
-        if os.path.exists(outfile) and not force:  # Skip participants who already had stats calculated
+        if (os.path.exists(outfile) or subj in EXCLUDED) and not force:  # Skip participants who already had stats calculated
             continue
 
         with open(data_file, 'r') as f:

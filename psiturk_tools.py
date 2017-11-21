@@ -75,12 +75,15 @@ def process_psiturk_data(event_dir, behmat_dir, dict_path, force=False):
         dictionary = df.readlines()
     dictionary = [word.lower().strip() for word in dictionary if ' ' not in word]
 
+    # Load list of excluded participants
+    EXCLUDED = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/EXCLUDED.txt', dtype='U8')
+
     # Process each participant's raw data into a JSON file of behavioral matrices
     for json_file in glob(os.path.join(event_dir, '*.json')):
 
         s = os.path.splitext(os.path.basename(json_file))[0]  # Get subject ID from file name
         outfile = os.path.join(behmat_dir, '%s.json' % s)  # Define file path for behavioral matrix file
-        if os.path.exists(outfile) and not force:  # Skip participants who have already been post-processed
+        if (os.path.exists(outfile) or s in EXCLUDED) and not force:  # Skip participants who have already been post-processed
             continue
 
         # Get participant's data as data frame
