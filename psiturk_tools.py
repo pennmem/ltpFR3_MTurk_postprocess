@@ -34,7 +34,7 @@ def load_psiturk_data(db_url, table_name, event_dir, data_column_name='datastrin
     BONUSED = 7
     """
     statuses = [3, 4, 5, 7]  # Status codes of subjects who have completed the study
-    exclude = []  # Manually exclude workers by adding their subject IDs here
+    exclude = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/EXCLUDED.txt', dtype='U8')
 
     # Use sqlalchemy to load rows from specified table in the specified database
     engine = create_engine(db_url)
