@@ -34,7 +34,7 @@ def load_psiturk_data(db_url, table_name, event_dir, data_column_name='datastrin
     BONUSED = 7
     """
     statuses = [3, 4, 5, 7]  # Status codes of subjects who have completed the study
-    exclude = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/EXCLUDED.txt', dtype='U8')
+    exclude = np.loadtxt('/data10/eeg/scalp/ltp/ltpFR3_MTurk/EXCLUDED.txt', dtype='U8')
 
     # Use sqlalchemy to load rows from specified table in the specified database
     engine = create_engine(db_url)
@@ -76,7 +76,7 @@ def process_psiturk_data(event_dir, behmat_dir, dict_path, force=False):
     dictionary = [word.lower().strip() for word in dictionary if ' ' not in word]
 
     # Load list of excluded participants
-    EXCLUDED = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/EXCLUDED.txt', dtype='U8')
+    EXCLUDED = np.loadtxt('/data10/eeg/scalp/ltp/ltpFR3_MTurk/EXCLUDED.txt', dtype='U8')
 
     # Process each participant's raw data into a JSON file of behavioral matrices
     for json_file in glob(os.path.join(event_dir, '*.json')):

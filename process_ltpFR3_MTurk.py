@@ -9,10 +9,10 @@ dict_path = 'webster_dictionary.txt'  # dictionary to use when looking for ELIs 
 
 RUN_LOCATION = 'RHINO'
 if RUN_LOCATION == 'RHINO':
-    event_dir = '/data/eeg/scalp/ltp/ltpFR3_MTurk/events/'
-    behmat_dir = '/data/eeg/scalp/ltp/ltpFR3_MTurk/data/'
-    stat_dir = '/data/eeg/scalp/ltp/ltpFR3_MTurk/stats/'
-    report_dir = '/data/eeg/scalp/ltp/ltpFR3_MTurk/reports/'
+    event_dir = '/data10/eeg/scalp/ltp/ltpFR3_MTurk/events/'
+    behmat_dir = '/data10/eeg/scalp/ltp/ltpFR3_MTurk/data/'
+    stat_dir = '/data10/eeg/scalp/ltp/ltpFR3_MTurk/stats/'
+    report_dir = '/data10/eeg/scalp/ltp/ltpFR3_MTurk/reports/'
 elif RUN_LOCATION == 'LOCAL':
     event_dir = '/Users/jessepazdera/Desktop/ltpFR3_MTurk/events/'
     behmat_dir = '/Users/jessepazdera/Desktop/ltpFR3_MTurk/data/'
