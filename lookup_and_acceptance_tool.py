@@ -11,8 +11,9 @@ def lookup_and_acceptance_tool():
 
     Requires administrator privileges to access IDs.
     """
-    ID_MAP = '/data/eeg/scalp/ltp/admin_docs/MTurk/ltpFR3_IDs.json'
-    ACCEPTED_REJECTED = '/data/eeg/scalp/ltp/ltpFR3_MTurk/acceptance.json'
+    #ID_MAP = '/data/eeg/scalp/ltp/admin_docs/MTurk/ltpFR3_IDs.json'
+    ID_MAP = '/home1/maint/ltpFR3_IDs.json'
+    ACCEPTED_REJECTED = '/data10/eeg/scalp/ltp/ltpFR3_MTurk/acceptance.json'
 
     ##########
     #
