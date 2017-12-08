@@ -120,9 +120,9 @@ def process_psiturk_data(event_dir, behmat_dir, dict_path, force=False):
         s_recalls = data.loc[recalls_filter, ['trial', 'recwords', 'conditions', 'rt']].as_matrix()
         s_ffr = data.loc[ffr_filter, ['recwords', 'rt']].as_matrix()
         pres_trials = np.array([x[0] for x in s_pres])
-        pres_words = np.array([str(x[1]) for x in s_pres])
+        pres_words = np.array([str(x[1]).strip() for x in s_pres])
         rec_trials = np.array([x[0] for x in s_recalls])
-        rec_words = np.array([[str(y) for y in x[1]] for x in s_recalls])
+        rec_words = np.array([[str(y).strip() for y in x[1] if str(y).strip() != ''] for x in s_recalls])
 
         # Get distractor problems and responses, then total the number of correct answers on each trial
         s_dist = data.loc[distractor_filter, ['num1', 'num2', 'num3', 'responses']].as_matrix()
