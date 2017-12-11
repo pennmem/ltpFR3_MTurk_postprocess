@@ -27,9 +27,9 @@ def run_stats(data_dir, stat_dir, force=False):
     :param force: If False, only calculate stats for participants who do not already have a stats file (plus the average
      stat file). If True, calculate stats for all participants. (Default == False)
     """
-    EXCLUDED = np.loadtxt('/data10/eeg/scalp/ltp/ltpFR3_MTurk/EXCLUDED.txt', dtype='U8')
+    EXCLUDED = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/EXCLUDED.txt', dtype='U8')
 
-    stats_to_run = ['prec', 'spc', 'pfr', 'psr', 'ptr', 'crp', 'crp_early', 'crp_late', 'plis', 'elis', 'reps', 'pli_recency', 'ffr_spc', 'temp_fact']
+    stats_to_run = ['prec', 'spc', 'pfr', 'psr', 'ptr', 'crp', 'crp_early', 'crp_late', 'plis', 'elis', 'reps', 'pli_recency', 'ffr_spc', 'temp_fact', 'irt']
 
     filters = {'all': {'ll': None, 'pr': None, 'mod': None, 'dd': None},
                'a12': {'ll': 12, 'mod': 'a'}, 'a24': {'ll': 24, 'mod': 'a'},
@@ -116,6 +116,7 @@ def stats_for_subj(sub, condi, recalls, wasrec, ffr_wasrec, rt, recw, presw, int
             stats['crp_early'][f][3] = np.nan  # Fix CRPs to have a 0-lag of NaN
             stats['crp_late'][f][3] = np.nan  # Fix CRPs to have a 0-lag of NaN
             stats['temp_fact'][f] = temp_fact(frecalls, fsub, ll)[0]
+            stats['irt'][f] = irt_subj(frt, frecalls)
         stats['plis'][f] = avg_pli(fintru, fsub, frecw)[0]
         stats['elis'][f] = avg_eli(fintru, fsub)[0]
         stats['reps'][f] = avg_reps(frecalls, fsub)[0]
@@ -129,7 +130,7 @@ def stats_for_subj(sub, condi, recalls, wasrec, ffr_wasrec, rt, recw, presw, int
 
 def calculate_avg_stats(s, stats_to_run, filters):
     # Exclusion notes can be found at: https://app.asana.com/0/291595828487527/468440625589939/f
-    EXCLUDED = np.loadtxt('/data10/eeg/scalp/ltp/ltpFR3_MTurk/EXCLUDED.txt', dtype='U8')
+    EXCLUDED = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/EXCLUDED.txt', dtype='U8')
 
     avs = {}
     stderr = {}
@@ -304,3 +305,30 @@ def avg_reps(rec_itemnos, subjects):
                 count += repetitions.sum()
         result[subject_index] = count / lists if lists > 0 else np.nan
     return result
+
+
+def irt_subj(rectimes, recalls, ll):
+    irt = np.zeros((ll+1, ll+1))
+    trial_count = np.zeros_like(irt)
+
+    for trial, row in enumerate(rectimes):
+        # Get the first output position at which each word was recalled, filtering out intrusions and repetitions
+        spos, idx = np.unique(recalls[trial], return_index=True)
+        idx = idx[spos > 0]
+
+        # Get only the RTs for correct recalls
+        masked_rt = row[np.sort(idx)]
+
+        # Count the number of correct recalls
+        num_recs = np.sum(masked_rt != 0)
+
+        # Group trials' RTs based on the number of correct recalls made
+        if num_recs > 1:
+            irt[num_recs, :num_recs - 1] += np.diff(masked_rt)
+            trial_count[num_recs, :] += 1
+
+    # Set NaNs where no data is available
+    irt[irt == 0] = np.nan
+    irt = irt / trial_count
+
+    return irt

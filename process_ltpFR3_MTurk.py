@@ -3,16 +3,16 @@ from run_stats import run_stats
 from report import ltpFR3_report
 
 # Set paths
-db_url = 'sqlite:////data10/eeg/scalp/ltp/ltpFR3_MTurk/ltpFR3_anonymized.db'  # url for the database in which raw psiturk ouput is stored
+db_url = 'sqlite:////data/eeg/scalp/ltp/ltpFR3_MTurk/ltpFR3_anonymized.db'  # url for the database in which raw psiturk ouput is stored
 table_name = 'ltpFR3'  # table of the database
 dict_path = 'webster_dictionary.txt'  # dictionary to use when looking for ELIs and correcting spelling
 
 RUN_LOCATION = 'RHINO'
 if RUN_LOCATION == 'RHINO':
-    event_dir = '/data10/eeg/scalp/ltp/ltpFR3_MTurk/events/'
-    behmat_dir = '/data10/eeg/scalp/ltp/ltpFR3_MTurk/data/'
-    stat_dir = '/data10/eeg/scalp/ltp/ltpFR3_MTurk/stats/'
-    report_dir = '/data10/eeg/scalp/ltp/ltpFR3_MTurk/reports/'
+    event_dir = '/data/eeg/scalp/ltp/ltpFR3_MTurk/events/'
+    behmat_dir = '/data/eeg/scalp/ltp/ltpFR3_MTurk/data/'
+    stat_dir = '/data/eeg/scalp/ltp/ltpFR3_MTurk/stats/'
+    report_dir = '/data/eeg/scalp/ltp/ltpFR3_MTurk/reports/'
 elif RUN_LOCATION == 'LOCAL':
     event_dir = '/Users/jessepazdera/Desktop/ltpFR3_MTurk/events/'
     behmat_dir = '/Users/jessepazdera/Desktop/ltpFR3_MTurk/data/'
