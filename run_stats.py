@@ -116,7 +116,7 @@ def stats_for_subj(sub, condi, recalls, wasrec, ffr_wasrec, rt, recw, presw, int
             stats['crp_early'][f][3] = np.nan  # Fix CRPs to have a 0-lag of NaN
             stats['crp_late'][f][3] = np.nan  # Fix CRPs to have a 0-lag of NaN
             stats['temp_fact'][f] = temp_fact(frecalls, fsub, ll)[0]
-            stats['irt'][f] = irt_subj(frt, frecalls)
+            stats['irt'][f] = irt_subj(frt, frecalls, ll)
         stats['plis'][f] = avg_pli(fintru, fsub, frecw)[0]
         stats['elis'][f] = avg_eli(fintru, fsub)[0]
         stats['reps'][f] = avg_reps(frecalls, fsub)[0]
