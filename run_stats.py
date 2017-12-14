@@ -110,7 +110,7 @@ def stats_for_subj(sub, condi, recalls, wasrec, ffr_wasrec, rt, recw, presw, int
             stats['pfr'][f] = pnr(frecalls, fsub, ll, n=0)[0]
             stats['psr'][f] = pnr(frecalls, fsub, ll, n=1)[0]
             stats['ptr'][f] = pnr(frecalls, fsub, ll, n=2)[0]
-            stats['crp'][f] = crp(frecalls, fsub, ll, lag_num=3)[0]
+            stats['crp'][f] = crp(frecalls, fsub, ll, lag_num=4)[0]
             stats['crp_early'][f] = crp(frecalls[:, :3], fsub, ll, lag_num=4)[0]
             stats['crp_late'][f] = crp(frecalls[:, 2:], fsub, ll, lag_num=4)[0]
             stats['temp_fact'][f] = temp_fact(frecalls, fsub, ll)[0]
