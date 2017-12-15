@@ -36,7 +36,7 @@ def load_psiturk_data(db_url, table_name, event_dir, data_column_name='datastrin
     statuses = [3, 4, 5, 7]  # Status codes of subjects who have completed the study
     exclude = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/EXCLUDED.txt', dtype='U8')
     bad_sess = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/BAD_SESS.txt', dtype='U8')
-    rejected = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/REJECTEDD.txt', dtype='U8')
+    rejected = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/REJECTED.txt', dtype='U8')
     skip = np.union1d(np.union1d(exclude, bad_sess), rejected)
 
     # Use sqlalchemy to load rows from specified table in the specified database
@@ -81,7 +81,7 @@ def process_psiturk_data(event_dir, behmat_dir, dict_path, force=False):
     # Load list of excluded participants
     exclude = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/EXCLUDED.txt', dtype='U8')
     bad_sess = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/BAD_SESS.txt', dtype='U8')
-    rejected = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/REJECTEDD.txt', dtype='U8')
+    rejected = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/REJECTED.txt', dtype='U8')
     skip = np.union1d(np.union1d(exclude, bad_sess), rejected)
 
     # Process each participant's raw data into a JSON file of behavioral matrices

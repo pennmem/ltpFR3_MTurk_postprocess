@@ -29,7 +29,7 @@ def run_stats(data_dir, stat_dir, force=False):
     """
     exclude = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/EXCLUDED.txt', dtype='U8')
     bad_sess = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/BAD_SESS.txt', dtype='U8')
-    rejected = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/REJECTEDD.txt', dtype='U8')
+    rejected = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/REJECTED.txt', dtype='U8')
     skip = np.union1d(np.union1d(exclude, bad_sess), rejected)
 
     stats_to_run = ['prec', 'spc', 'pfr', 'psr', 'ptr', 'crp', 'crp_early', 'crp_late', 'plis', 'elis', 'reps', 'pli_recency', 'ffr_spc', 'temp_fact', 'irt']
@@ -133,7 +133,7 @@ def calculate_avg_stats(s, stats_to_run, filters):
     # Exclusion notes can be found at: https://app.asana.com/0/291595828487527/468440625589939/f
     exclude = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/EXCLUDED.txt', dtype='U8')
     bad_sess = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/BAD_SESS.txt', dtype='U8')
-    rejected = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/REJECTEDD.txt', dtype='U8')
+    rejected = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/REJECTED.txt', dtype='U8')
     skip = np.union1d(np.union1d(exclude, bad_sess), rejected)
 
     avs = {}
