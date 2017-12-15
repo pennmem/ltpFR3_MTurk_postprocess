@@ -35,6 +35,9 @@ def load_psiturk_data(db_url, table_name, event_dir, data_column_name='datastrin
     """
     statuses = [3, 4, 5, 7]  # Status codes of subjects who have completed the study
     exclude = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/EXCLUDED.txt', dtype='U8')
+    bad_sess = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/BAD_SESS.txt', dtype='U8')
+    rejected = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/REJECTEDD.txt', dtype='U8')
+    skip = np.union1d(np.union1d(exclude, bad_sess), rejected)
 
     # Use sqlalchemy to load rows from specified table in the specified database
     engine = create_engine(db_url)
@@ -47,7 +50,7 @@ def load_psiturk_data(db_url, table_name, event_dir, data_column_name='datastrin
     data = []
     for row in rows:
         # only use subjects who completed experiment and aren't excluded
-        if row['status'] in statuses and row['workerid'] not in exclude:  # and not os.path.exists('/data/eeg/scalp/ltp/ltpFR3_MTurk/reports/%s.pdf' % row['workerid']):
+        if row['status'] in statuses and row['workerid'] not in skip:  # and not os.path.exists('/data/eeg/scalp/ltp/ltpFR3_MTurk/reports/%s.pdf' % row['workerid']):
             data.append(row[data_column_name])
 
     # Parse each subject's data as a JSON object, then save a copy into a JSON file for easy access later
@@ -76,14 +79,17 @@ def process_psiturk_data(event_dir, behmat_dir, dict_path, force=False):
     dictionary = [word.lower().strip() for word in dictionary if ' ' not in word]
 
     # Load list of excluded participants
-    EXCLUDED = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/EXCLUDED.txt', dtype='U8')
+    exclude = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/EXCLUDED.txt', dtype='U8')
+    bad_sess = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/BAD_SESS.txt', dtype='U8')
+    rejected = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/REJECTEDD.txt', dtype='U8')
+    skip = np.union1d(np.union1d(exclude, bad_sess), rejected)
 
     # Process each participant's raw data into a JSON file of behavioral matrices
     for json_file in glob(os.path.join(event_dir, '*.json')):
 
         s = os.path.splitext(os.path.basename(json_file))[0]  # Get subject ID from file name
         outfile = os.path.join(behmat_dir, '%s.json' % s)  # Define file path for behavioral matrix file
-        if (os.path.exists(outfile) or s in EXCLUDED) and not force:  # Skip participants who have already been post-processed
+        if (os.path.exists(outfile) or s in skip) and not force:  # Skip participants who have already been post-processed
             continue
 
         # Get participant's data as data frame

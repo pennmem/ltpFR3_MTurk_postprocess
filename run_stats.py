@@ -27,7 +27,10 @@ def run_stats(data_dir, stat_dir, force=False):
     :param force: If False, only calculate stats for participants who do not already have a stats file (plus the average
      stat file). If True, calculate stats for all participants. (Default == False)
     """
-    EXCLUDED = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/EXCLUDED.txt', dtype='U8')
+    exclude = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/EXCLUDED.txt', dtype='U8')
+    bad_sess = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/BAD_SESS.txt', dtype='U8')
+    rejected = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/REJECTEDD.txt', dtype='U8')
+    skip = np.union1d(np.union1d(exclude, bad_sess), rejected)
 
     stats_to_run = ['prec', 'spc', 'pfr', 'psr', 'ptr', 'crp', 'crp_early', 'crp_late', 'plis', 'elis', 'reps', 'pli_recency', 'ffr_spc', 'temp_fact', 'irt']
 
@@ -45,7 +48,7 @@ def run_stats(data_dir, stat_dir, force=False):
     for data_file in glob(os.path.join(data_dir, '*.json')):
         subj = os.path.splitext(os.path.basename(data_file))[0]  # Get subject ID from file name
         outfile = os.path.join(stat_dir, '%s.json' % subj)  # Define file path for stat file
-        if (os.path.exists(outfile) or subj in EXCLUDED) and not force:  # Skip participants who already had stats calculated
+        if (os.path.exists(outfile) or subj in skip) and not force:  # Skip participants who already had stats calculated
             continue
 
         with open(data_file, 'r') as f:
@@ -128,7 +131,10 @@ def stats_for_subj(sub, condi, recalls, wasrec, ffr_wasrec, rt, recw, presw, int
 
 def calculate_avg_stats(s, stats_to_run, filters):
     # Exclusion notes can be found at: https://app.asana.com/0/291595828487527/468440625589939/f
-    EXCLUDED = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/EXCLUDED.txt', dtype='U8')
+    exclude = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/EXCLUDED.txt', dtype='U8')
+    bad_sess = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/BAD_SESS.txt', dtype='U8')
+    rejected = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/REJECTEDD.txt', dtype='U8')
+    skip = np.union1d(np.union1d(exclude, bad_sess), rejected)
 
     avs = {}
     stderr = {}
@@ -140,7 +146,7 @@ def calculate_avg_stats(s, stats_to_run, filters):
                 continue
             scores = []
             for subj in s:
-                if subj not in EXCLUDED:
+                if subj not in skip:
                     scores.append(s[subj][stat][f])
             scores = np.array(scores)
             avs[stat][f] = np.nanmean(scores, axis=0)
