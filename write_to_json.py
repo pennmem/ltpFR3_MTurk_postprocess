@@ -33,6 +33,10 @@ def write_stats_to_json(stats, outfile, average_stats=False):
             for f in stats['sem'][stat]:
                 if isinstance(stats['sem'][stat][f], np.ndarray):
                     stats['sem'][stat][f] = stats['sem'][stat][f].tolist()
+        for stat in stats['N']:
+            for f in stats['N'][stat]:
+                if isinstance(stats['N'][stat][f], np.ndarray):
+                    stats['N'][stat][f] = stats['N'][stat][f].tolist()
     else:
         for stat in stats:
             if stat in ('rec_per_trial', 'math_per_trial'):
