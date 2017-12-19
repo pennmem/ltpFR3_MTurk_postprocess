@@ -153,7 +153,7 @@ def calculate_avg_stats(s, stats_to_run, filters):
             scores = np.array(scores)
             avs[stat][f] = np.nanmean(scores, axis=0)
             stderr[stat][f] = sem(scores, axis=0, nan_policy='omit')
-            Ns[stat][f] = np.sum(np.logical_not(np.isnan(scores)), axis=0, dtype=int)
+            Ns[stat][f] = np.sum(np.logical_not(np.isnan(scores)), axis=0, dtype=np.float64)
 
     return avs, stderr, Ns
 
