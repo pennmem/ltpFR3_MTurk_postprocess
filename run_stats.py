@@ -81,7 +81,7 @@ def run_stats(data_dir, stat_dir, force=False):
     # Now we calculate the average stats and save to a JSON file
     outfile = os.path.join(stat_dir, 'all.json')
     avg_stats = {}
-    avg_stats['mean'], avg_stats['sem'] = calculate_avg_stats(stats, stats_to_run, filters.keys())
+    avg_stats['mean'], avg_stats['sem'], avg_stats['N'] = calculate_avg_stats(stats, stats_to_run, filters.keys())
     write_stats_to_json(avg_stats, outfile, average_stats=True)
 
 
@@ -138,9 +138,11 @@ def calculate_avg_stats(s, stats_to_run, filters):
 
     avs = {}
     stderr = {}
+    Ns = {}
     for stat in stats_to_run:
         avs[stat] = {}
         stderr[stat] = {}
+        Ns[stat] = {}
         for f in filters:
             if f == 'all' and stat not in ('plis', 'elis', 'reps', 'pli_recency'):  # Only do intrusion stats for "all" filter
                 continue
@@ -151,8 +153,9 @@ def calculate_avg_stats(s, stats_to_run, filters):
             scores = np.array(scores)
             avs[stat][f] = np.nanmean(scores, axis=0)
             stderr[stat][f] = sem(scores, axis=0, nan_policy='omit')
+            Ns[stat][f] = np.sum(np.logical_not(np.isnan(scores)), axis=0)
 
-    return avs, stderr
+    return avs, stderr, Ns
 
 
 def filter_by_condi(a, condi, ll=None, pr=None, mod=None, dd=None):
