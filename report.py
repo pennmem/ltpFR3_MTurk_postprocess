@@ -80,52 +80,68 @@ def ltpFR3_report(stat_dir, report_dir, force=False):
 
 def plot_spc(s):
     plt.subplot(7, 3, 1)
-    plt.plot(range(1, 13), s['sv12'], 'ko-')
-    plt.plot(range(1, 13), s['fv12'], 'k^-')
-    plt.plot(range(1, 13), s['sa12'], 'ko--', markerfacecolor='white')
-    plt.plot(range(1, 13), s['fa12'], 'k^--', markerfacecolor='white')
+    if 'sv12' in s:
+        plt.plot(range(1, 13), s['sv12'], 'ko-', label='Slow/Visual')
+    if 'fv12' in s:
+        plt.plot(range(1, 13), s['fv12'], 'k^-', label='Fast/Visual')
+    if 'sa12' in s:
+        plt.plot(range(1, 13), s['sa12'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
+    if 'fa12' in s:
+        plt.plot(range(1, 13), s['fa12'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
     plt.title('SPC (List Length 12)')
     plt.xlabel('Serial Position')
     plt.ylabel('Probability of Recall')
-    plt.legend(labels=['Slow/Visual', 'Fast/Visual', 'Slow/Auditory', 'Fast/Auditory'])
+    plt.legend()
     plt.ylim(-.05, 1.05)
     plt.xticks(range(1, 13, 2), range(1, 13, 2))
 
     plt.subplot(7, 3, 4)
-    plt.plot(range(1, 25), s['sv24'], 'ko-')
-    plt.plot(range(1, 25), s['fv24'], 'k^-')
-    plt.plot(range(1, 25), s['sa24'], 'ko--', markerfacecolor='white')
-    plt.plot(range(1, 25), s['fa24'], 'k^--', markerfacecolor='white')
+    if 'sv24' in s:
+        plt.plot(range(1, 25), s['sv24'], 'ko-', label='Slow/Visual')
+    if 'fv24' in s:
+        plt.plot(range(1, 25), s['fv24'], 'k^-', label='Fast/Visual')
+    if 'sa24' in s:
+        plt.plot(range(1, 25), s['sa24'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
+    if 'fa24' in s:
+        plt.plot(range(1, 25), s['fa24'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
     plt.title('SPC (List Length 24)')
     plt.xlabel('Serial Position')
     plt.ylabel('Probability of Recall')
-    plt.legend(labels=['Slow/Visual', 'Fast/Visual', 'Slow/Auditory', 'Fast/Auditory'])
+    plt.legend()
     plt.ylim(-.05, 1.05)
     plt.xticks(range(1, 25, 2), range(1, 25, 2))
 
 
 def plot_ffr_spc(s):
-    plt.subplot(7, 3, 1)
-    plt.plot(range(1, 13), s['sv12'], 'ko-')
-    plt.plot(range(1, 13), s['fv12'], 'k^-')
-    plt.plot(range(1, 13), s['sa12'], 'ko--', markerfacecolor='white')
-    plt.plot(range(1, 13), s['fa12'], 'k^--', markerfacecolor='white')
+    # plt.subplot(7, 3, 1)
+    if 'sv12' in s:
+        plt.plot(range(1, 13), s['sv12'], 'ko-', label='Slow/Visual')
+    if 'fv12' in s:
+        plt.plot(range(1, 13), s['fv12'], 'k^-', label='Fast/Visual')
+    if 'sa12' in s:
+        plt.plot(range(1, 13), s['sa12'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
+    if 'fa12' in s:
+        plt.plot(range(1, 13), s['fa12'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
     plt.title('FFR SPC (List Length 12)')
     plt.xlabel('Serial Position')
     plt.ylabel('Probability of Recall')
-    plt.legend(labels=['Slow/Visual', 'Fast/Visual', 'Slow/Auditory', 'Fast/Auditory'])
+    plt.legend()
     plt.ylim(0, .3)
     plt.xticks(range(1, 13, 2), range(1, 13, 2))
 
-    plt.subplot(7, 3, 4)
-    plt.plot(range(1, 25), s['sv24'], 'ko-')
-    plt.plot(range(1, 25), s['fv24'], 'k^-')
-    plt.plot(range(1, 25), s['sa24'], 'ko--', markerfacecolor='white')
-    plt.plot(range(1, 25), s['fa24'], 'k^--', markerfacecolor='white')
+    # plt.subplot(7, 3, 4)
+    if 'sv24' in s:
+        plt.plot(range(1, 25), s['sv24'], 'ko-', label='Slow/Visual')
+    if 'fv24' in s:
+        plt.plot(range(1, 25), s['fv24'], 'k^-', label='Fast/Visual')
+    if 'sa24' in s:
+        plt.plot(range(1, 25), s['sa24'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
+    if 'fa24' in s:
+        plt.plot(range(1, 25), s['fa24'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
     plt.title('FFR SPC (List Length 24)')
     plt.xlabel('Serial Position')
     plt.ylabel('Probability of Recall')
-    plt.legend(labels=['Slow/Visual', 'Fast/Visual', 'Slow/Auditory', 'Fast/Auditory'])
+    plt.legend()
     plt.ylim(0, .3)
     plt.xticks(range(1, 25, 2), range(1, 25, 2))
 

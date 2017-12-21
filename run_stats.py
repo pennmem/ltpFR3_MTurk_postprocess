@@ -102,10 +102,15 @@ def stats_for_subj(sub, condi, recalls, wasrec, ffr_wasrec, rt, recw, presw, int
     """
     stats = {stat: {} for stat in stats_to_run}
     for f in filters:
-        ll = filters[f]['ll']
+        # Get presentation and recall info just from trials that match the filter's set of conditions
         fsub, frecalls, fwasrec, fffr_wasrec, frt, frecw, fpresw, fintru = [filter_by_condi(a, condi, **filters[f]) for a in [sub, recalls, wasrec, ffr_wasrec, rt, recw, presw, intru]]
 
-        # Calculate stats on all lists within the current condition
+        # If no trials match the current filter, skip to next filter
+        if fsub is None:
+            continue
+
+        # Calculate stats on all lists within the current condition. Note that some stats require filtering by list len
+        ll = filters[f]['ll']
         if ll is not None:
             stats['prec'][f] = prec(fwasrec[:, :ll], fsub)[0]
             stats['spc'][f] = spc(frecalls, fsub, ll)[0]
@@ -148,7 +153,7 @@ def calculate_avg_stats(s, stats_to_run, filters):
                 continue
             scores = []
             for subj in s:
-                if subj not in skip:
+                if subj not in skip and f in s[subj][stat]:
                     scores.append(s[subj][stat][f])
             scores = np.array(scores)
             avs[stat][f] = np.nanmean(scores, axis=0)
@@ -170,6 +175,8 @@ def filter_by_condi(a, condi, ll=None, pr=None, mod=None, dd=None):
     :return: A numpy array containing only the data from trials that match the specified condition(s)
     """
     ind = [i for i in range(len(condi)) if ((ll is None or condi[i][0] == ll) and (pr is None or condi[i][1] == pr) and (mod is None or condi[i][2] == mod) and (dd is None or condi[i][3] == dd))]
+    if len(ind) == 0:
+        return None
     return a[ind]
 
 
