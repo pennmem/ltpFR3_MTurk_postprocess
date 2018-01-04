@@ -148,151 +148,199 @@ def plot_ffr_spc(s):
 
 def plot_crp_early(s):
     plt.subplot(7, 3, 2)
-    plt.plot(range(-4, 5), s['sv12'], 'ko-')
-    plt.plot(range(-4, 5), s['fv12'], 'k^-')
-    plt.plot(range(-4, 5), s['sa12'], 'ko--', markerfacecolor='white')
-    plt.plot(range(-4, 5), s['fa12'], 'k^--', markerfacecolor='white')
+    if 'sv12' in s:
+        plt.plot(range(-4, 5), s['sv12'], 'ko-', label='Slow/Visual')
+    if 'fv12' in s:
+        plt.plot(range(-4, 5), s['fv12'], 'k^-', label='Fast/Visual')
+    if 'sa12' in s:
+        plt.plot(range(-4, 5), s['sa12'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
+    if 'fa12' in s:
+        plt.plot(range(-4, 5), s['fa12'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
     plt.title('lag-CRP Early (List Length 12)')
     plt.xlabel('Lag')
     plt.ylabel('Cond. Resp. Probability')
-    plt.legend(labels=['Slow/Visual', 'Fast/Visual', 'Slow/Auditory', 'Fast/Auditory'])
+    plt.legend()
     plt.ylim(-.05, 1.05)
 
     plt.subplot(7, 3, 5)
-    plt.plot(range(-4, 5), s['sv24'], 'ko-')
-    plt.plot(range(-4, 5), s['fv24'], 'k^-')
-    plt.plot(range(-4, 5), s['sa24'], 'ko--', markerfacecolor='white')
-    plt.plot(range(-4, 5), s['fa24'], 'k^--', markerfacecolor='white')
+    if 'sv24' in s:
+        plt.plot(range(-4, 5), s['sv24'], 'ko-', label='Slow/Visual')
+    if 'fv24' in s:
+        plt.plot(range(-4, 5), s['fv24'], 'k^-', label='Fast/Visual')
+    if 'sa24' in s:
+        plt.plot(range(-4, 5), s['sa24'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
+    if 'fa24' in s:
+        plt.plot(range(-4, 5), s['fa24'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
     plt.title('lag-CRP Early (List Length 24)')
     plt.xlabel('Lag')
     plt.ylabel('Cond. Resp. Probability')
-    plt.legend(labels=['Slow/Visual', 'Fast/Visual', 'Slow/Auditory', 'Fast/Auditory'])
+    plt.legend()
     plt.ylim(-.05, 1.05)
 
 
 def plot_crp_late(s):
     plt.subplot(7, 3, 3)
-    plt.plot(range(-4, 5), s['sv12'], 'ko-')
-    plt.plot(range(-4, 5), s['fv12'], 'k^-')
-    plt.plot(range(-4, 5), s['sa12'], 'ko--', markerfacecolor='white')
-    plt.plot(range(-4, 5), s['fa12'], 'k^--', markerfacecolor='white')
+    if 'sv12' in s:
+        plt.plot(range(-4, 5), s['sv12'], 'ko-', label='Slow/Visual')
+    if 'fv12' in s:
+        plt.plot(range(-4, 5), s['fv12'], 'k^-', label='Fast/Visual')
+    if 'sa12' in s:
+        plt.plot(range(-4, 5), s['sa12'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
+    if 'fa12' in s:
+        plt.plot(range(-4, 5), s['fa12'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
     plt.title('lag-CRP Late (List Length 12)')
     plt.xlabel('Lag')
     plt.ylabel('Cond. Resp. Probability')
-    plt.legend(labels=['Slow/Visual', 'Fast/Visual', 'Slow/Auditory', 'Fast/Auditory'])
+    plt.legend()
     plt.ylim(-.05, 1.05)
 
     plt.subplot(7, 3, 6)
-    plt.plot(range(-4, 5), s['sv12'], 'ko-')
-    plt.plot(range(-4, 5), s['fv12'], 'k^-')
-    plt.plot(range(-4, 5), s['sa24'], 'ko--', markerfacecolor='white')
-    plt.plot(range(-4, 5), s['fa24'], 'k^--', markerfacecolor='white')
+    if 'sv24' in s:
+        plt.plot(range(-4, 5), s['sv24'], 'ko-', label='Slow/Visual')
+    if 'fv24' in s:
+        plt.plot(range(-4, 5), s['fv24'], 'k^-', label='Fast/Visual')
+    if 'sa24' in s:
+        plt.plot(range(-4, 5), s['sa24'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
+    if 'fa24' in s:
+        plt.plot(range(-4, 5), s['fa24'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
     plt.title('lag-CRP Late (List Length 24)')
     plt.xlabel('Lag')
     plt.ylabel('Cond. Resp. Probability')
-    plt.legend(labels=['Slow/Visual', 'Fast/Visual', 'Slow/Auditory', 'Fast/Auditory'])
+    plt.legend()
     plt.ylim(-.05, 1.05)
 
 
 def plot_pfr(s):
     plt.subplot(7, 3, 7)
-    plt.plot(range(1, 13), s['sv12'], 'ko-')
-    plt.plot(range(1, 13), s['fv12'], 'k^-')
-    plt.plot(range(1, 13), s['sa12'], 'ko--', markerfacecolor='white')
-    plt.plot(range(1, 13), s['fa12'], 'k^--', markerfacecolor='white')
+    if 'sv12' in s:
+        plt.plot(range(1, 13), s['sv12'], 'ko-', label='Slow/Visual')
+    if 'fv12' in s:
+        plt.plot(range(1, 13), s['fv12'], 'k^-', label='Fast/Visual')
+    if 'sa12' in s:
+        plt.plot(range(1, 13), s['sa12'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
+    if 'fa12' in s:
+        plt.plot(range(1, 13), s['fa12'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
     plt.title('PFR (List Length 12)')
     plt.xlabel('Serial Position')
     plt.ylabel('Probability of First Recall')
-    plt.legend(labels=['Slow/Visual', 'Fast/Visual', 'Slow/Auditory', 'Fast/Auditory'])
+    plt.legend()
     plt.ylim(-.05, 1.05)
     plt.xticks(range(1, 13, 2), range(1, 13, 2))
 
     plt.subplot(7, 3, 10)
-    plt.plot(range(1, 25), s['sv24'], 'ko-')
-    plt.plot(range(1, 25), s['fv24'], 'k^-')
-    plt.plot(range(1, 25), s['sa24'], 'ko--', markerfacecolor='white')
-    plt.plot(range(1, 25), s['fa24'], 'k^--', markerfacecolor='white')
+    if 'sv24' in s:
+        plt.plot(range(1, 25), s['sv24'], 'ko-', label='Slow/Visual')
+    if 'fv24' in s:
+        plt.plot(range(1, 25), s['fv24'], 'k^-', label='Fast/Visual')
+    if 'sa24' in s:
+        plt.plot(range(1, 25), s['sa24'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
+    if 'fa24' in s:
+        plt.plot(range(1, 25), s['fa24'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
     plt.title('PFR (List Length 24)')
     plt.xlabel('Serial Position')
     plt.ylabel('Probability of First Recall')
-    plt.legend(labels=['Slow/Visual', 'Fast/Visual', 'Slow/Auditory', 'Fast/Auditory'])
+    plt.legend()
     plt.ylim(-.05, 1.05)
     plt.xticks(range(1, 25, 2), range(1, 25, 2))
 
 
 def plot_psr(s):
     plt.subplot(7, 3, 8)
-    plt.plot(range(1, 13), s['sv12'], 'ko-')
-    plt.plot(range(1, 13), s['fv12'], 'k^-')
-    plt.plot(range(1, 13), s['sa12'], 'ko--', markerfacecolor='white')
-    plt.plot(range(1, 13), s['fa12'], 'k^--', markerfacecolor='white')
+    if 'sv12' in s:
+        plt.plot(range(1, 13), s['sv12'], 'ko-', label='Slow/Visual')
+    if 'fv12' in s:
+        plt.plot(range(1, 13), s['fv12'], 'k^-', label='Fast/Visual')
+    if 'sa12' in s:
+        plt.plot(range(1, 13), s['sa12'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
+    if 'fa12' in s:
+        plt.plot(range(1, 13), s['fa12'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
     plt.title('PSR (List Length 12)')
     plt.xlabel('Serial Position')
     plt.ylabel('Probability of Second Recall')
-    plt.legend(labels=['Slow/Visual', 'Fast/Visual', 'Slow/Auditory', 'Fast/Auditory'])
+    plt.legend()
     plt.ylim(-.05, 1.05)
     plt.xticks(range(1, 13, 2), range(1, 13, 2))
 
     plt.subplot(7, 3, 11)
-    plt.plot(range(1, 25), s['sv24'], 'ko-')
-    plt.plot(range(1, 25), s['fv24'], 'k^-')
-    plt.plot(range(1, 25), s['sa24'], 'ko--', markerfacecolor='white')
-    plt.plot(range(1, 25), s['fa24'], 'k^--', markerfacecolor='white')
+    if 'sv24' in s:
+        plt.plot(range(1, 25), s['sv24'], 'ko-', label='Slow/Visual')
+    if 'fv24' in s:
+        plt.plot(range(1, 25), s['fv24'], 'k^-', label='Fast/Visual')
+    if 'sa24' in s:
+        plt.plot(range(1, 25), s['sa24'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
+    if 'fa24' in s:
+        plt.plot(range(1, 25), s['fa24'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
     plt.title('PSR (List Length 24)')
     plt.xlabel('Serial Position')
     plt.ylabel('Probability of Second Recall')
-    plt.legend(labels=['Slow/Visual', 'Fast/Visual', 'Slow/Auditory', 'Fast/Auditory'])
+    plt.legend()
     plt.ylim(-.05, 1.05)
     plt.xticks(range(1, 25, 2), range(1, 25, 2))
 
 
 def plot_ptr(s):
     plt.subplot(7, 3, 9)
-    plt.plot(range(1, 13), s['sv12'], 'ko-')
-    plt.plot(range(1, 13), s['fv12'], 'k^-')
-    plt.plot(range(1, 13), s['sa12'], 'ko--', markerfacecolor='white')
-    plt.plot(range(1, 13), s['fa12'], 'k^--', markerfacecolor='white')
+    if 'sv12' in s:
+        plt.plot(range(1, 13), s['sv12'], 'ko-', label='Slow/Visual')
+    if 'fv12' in s:
+        plt.plot(range(1, 13), s['fv12'], 'k^-', label='Fast/Visual')
+    if 'sa12' in s:
+        plt.plot(range(1, 13), s['sa12'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
+    if 'fa12' in s:
+        plt.plot(range(1, 13), s['fa12'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
     plt.title('PTR (List Length 12)')
     plt.xlabel('Serial Position')
     plt.ylabel('Probability of Third Recall')
-    plt.legend(labels=['Slow/Visual', 'Fast/Visual', 'Slow/Auditory', 'Fast/Auditory'])
+    plt.legend()
     plt.ylim(-.05, 1.05)
     plt.xticks(range(1, 13, 2), range(1, 13, 2))
 
     plt.subplot(7, 3, 12)
-    plt.plot(range(1, 25), s['sv24'], 'ko-')
-    plt.plot(range(1, 25), s['fv24'], 'k^-')
-    plt.plot(range(1, 25), s['sa24'], 'ko--', markerfacecolor='white')
-    plt.plot(range(1, 25), s['fa24'], 'k^--', markerfacecolor='white')
+    if 'sv24' in s:
+        plt.plot(range(1, 25), s['sv24'], 'ko-', label='Slow/Visual')
+    if 'fv24' in s:
+        plt.plot(range(1, 25), s['fv24'], 'k^-', label='Fast/Visual')
+    if 'sa24' in s:
+        plt.plot(range(1, 25), s['sa24'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
+    if 'fa24' in s:
+        plt.plot(range(1, 25), s['fa24'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
     plt.title('PTR (List Length 24)')
     plt.xlabel('Serial Position')
     plt.ylabel('Probability of Third Recall')
-    plt.legend(labels=['Slow/Visual', 'Fast/Visual', 'Slow/Auditory', 'Fast/Auditory'])
+    plt.legend()
     plt.ylim(-.05, 1.05)
     plt.xticks(range(1, 25, 2), range(1, 25, 2))
 
 
 def plot_pli_recency(s):
     plt.subplot(7, 3, 13)
-    plt.plot(range(1, 7), s['sv12'], 'ko-')
-    plt.plot(range(1, 7), s['fv12'], 'k^-')
-    plt.plot(range(1, 7), s['sa12'], 'ko--', markerfacecolor='white')
-    plt.plot(range(1, 7), s['fa12'], 'k^--', markerfacecolor='white')
+    if 'sv12' in s:
+        plt.plot(range(1, 7), s['sv12'], 'ko-', label='Slow/Visual')
+    if 'fv12' in s:
+        plt.plot(range(1, 7), s['fv12'], 'k^-', label='Fast/Visual')
+    if 'sa12' in s:
+        plt.plot(range(1, 7), s['sa12'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
+    if 'fa12' in s:
+        plt.plot(range(1, 7), s['fa12'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
     plt.title('PLI Recency (List Length 12)')
     plt.xlabel('Number of Lists Back')
     plt.ylabel('Ratio of PLIs')
-    plt.legend(labels=['Slow/Visual', 'Fast/Visual', 'Slow/Auditory', 'Fast/Auditory'])
+    plt.legend()
     plt.ylim(-.05, .55)
 
     plt.subplot(7, 3, 16)
-    plt.plot(range(1, 7), s['sv24'], 'ko-')
-    plt.plot(range(1, 7), s['fv24'], 'k^-')
-    plt.plot(range(1, 7), s['sa24'], 'ko--', markerfacecolor='white')
-    plt.plot(range(1, 7), s['fa24'], 'k^--', markerfacecolor='white')
+    if 'sv24' in s:
+        plt.plot(range(1, 7), s['sv24'], 'ko-', label='Slow/Visual')
+    if 'fv24' in s:
+        plt.plot(range(1, 7), s['fv24'], 'k^-', label='Fast/Visual')
+    if 'sa24' in s:
+        plt.plot(range(1, 7), s['sa24'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
+    if 'fa24' in s:
+        plt.plot(range(1, 7), s['fa24'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
     plt.title('PLI Recency (List Length 24)')
     plt.xlabel('Number of Lists Back')
     plt.ylabel('Ratio of PLIs')
-    plt.legend(labels=['Slow/Visual', 'Fast/Visual', 'Slow/Auditory', 'Fast/Auditory'])
+    plt.legend()
     plt.ylim(-.05, .55)
 
 
@@ -314,76 +362,108 @@ def plot_intrusions(plis, elis, reps, pli_err=None, eli_err=None, rep_err=None):
 def plot_elis(s, err=None):
     plt.subplot(7, 3, 15)
     if err is None:
-        plt.plot([1, 2], [s['sv12'], s['fv12']], 'ko-')
-        plt.plot([1.02, 2.02], [s['sa12'], s['fa12']], 'ko--', markerfacecolor='white')
-        plt.plot([3, 4], [s['sv24'], s['fv24']], 'ko-')
-        plt.plot([3.02, 4.02], [s['sa24'], s['fa24']], 'ko--', markerfacecolor='white')
+        if 'sv12' in s and 'fv12' in s:
+            plt.plot([1, 2], [s['sv12'], s['fv12']], 'ko-', label='Visual')
+        if 'sa12' in s and 'fa12' in s:
+            plt.plot([1.02, 2.02], [s['sa12'], s['fa12']], 'ko--', markerfacecolor='white', label='Auditory')
+        if 'sv24' in s and 'fv24' in s:
+            plt.plot([3, 4], [s['sv24'], s['fv24']], 'ko-')
+        if 'sa24' in s and 'fa24' in s:
+            plt.plot([3.02, 4.02], [s['sa24'], s['fa24']], 'ko--', markerfacecolor='white')
     else:
-        plt.errorbar([1, 2], [s['sv12'], s['fv12']], yerr=[err['sv12']*1.96, err['fv12']*1.96], fmt='ko-')
-        plt.errorbar([1.02, 2.02], [s['sa12'], s['fa12']], yerr=[err['sa12']*1.96, err['fa12']*1.96], fmt='ko--', markerfacecolor='white')
-        plt.errorbar([3, 4], [s['sv24'], s['fv24']], yerr=[err['sv24']*1.96, err['fv24']*1.96], fmt='ko-')
-        plt.errorbar([3.02, 4.02], [s['sa24'], s['fa24']], yerr=[err['sa24']*1.96, err['fa24']*1.96], fmt='ko--', markerfacecolor='white')
+        if 'sv12' in s and 'fv12' in s:
+            plt.errorbar([1, 2], [s['sv12'], s['fv12']], yerr=[err['sv12']*1.96, err['fv12']*1.96], fmt='ko-')
+        if 'sa12' in s and 'fa12' in s:
+            plt.errorbar([1.02, 2.02], [s['sa12'], s['fa12']], yerr=[err['sa12']*1.96, err['fa12']*1.96], fmt='ko--', markerfacecolor='white')
+        if 'sv24' in s and 'fv24' in s:
+            plt.errorbar([3, 4], [s['sv24'], s['fv24']], yerr=[err['sv24']*1.96, err['fv24']*1.96], fmt='ko-')
+        if 'sa24' in s and 'fa24' in s:
+            plt.errorbar([3.02, 4.02], [s['sa24'], s['fa24']], yerr=[err['sa24']*1.96, err['fa24']*1.96], fmt='ko--', markerfacecolor='white')
         plt.ylim(0, 1.05)
     plt.title('ELIs')
     plt.ylabel('ELIs Per List')
     plt.xticks([1, 2, 3, 4], ('12/Slow', '12/Fast', '24/Slow', '24/Fast'))
-    plt.legend(labels=['Visual', 'Auditory'])
+    plt.legend()
 
 
 def plot_plis(s, err=None):
     plt.subplot(7, 3, 17)
     if err is None:
-        plt.plot([1, 2], [s['sv12'], s['fv12']], 'ko-')
-        plt.plot([1.02, 2.02], [s['sa12'], s['fa12']], 'ko--', markerfacecolor='white')
-        plt.plot([3, 4], [s['sv24'], s['fv24']], 'ko-')
-        plt.plot([3.02, 4.02], [s['sa24'], s['fa24']], 'ko--', markerfacecolor='white')
+        if 'sv12' in s and 'fv12' in s:
+            plt.plot([1, 2], [s['sv12'], s['fv12']], 'ko-', label='Visual')
+        if 'sa12' in s and 'fa12' in s:
+            plt.plot([1.02, 2.02], [s['sa12'], s['fa12']], 'ko--', markerfacecolor='white', label='Auditory')
+        if 'sv24' in s and 'fv24' in s:
+            plt.plot([3, 4], [s['sv24'], s['fv24']], 'ko-')
+        if 'sa24' in s and 'fa24' in s:
+            plt.plot([3.02, 4.02], [s['sa24'], s['fa24']], 'ko--', markerfacecolor='white')
     else:
-        plt.errorbar([1, 2], [s['sv12'], s['fv12']], yerr=[err['sv12']*1.96, err['fv12']*1.96], fmt='ko-')
-        plt.errorbar([1.02, 2.02], [s['sa12'], s['fa12']], yerr=[err['sa12']*1.96, err['fa12']*1.96], fmt='ko--', markerfacecolor='white')
-        plt.errorbar([3, 4], [s['sv24'], s['fv24']], yerr=[err['sv24']*1.96, err['fv24']*1.96], fmt='ko-')
-        plt.errorbar([3.02, 4.02], [s['sa24'], s['fa24']], yerr=[err['sa24']*1.96, err['fa24']*1.96], fmt='ko--', markerfacecolor='white')
+        if 'sv12' in s and 'fv12' in s:
+            plt.errorbar([1, 2], [s['sv12'], s['fv12']], yerr=[err['sv12']*1.96, err['fv12']*1.96], fmt='ko-')
+        if 'sa12' in s and 'fa12' in s:
+            plt.errorbar([1.02, 2.02], [s['sa12'], s['fa12']], yerr=[err['sa12']*1.96, err['fa12']*1.96], fmt='ko--', markerfacecolor='white')
+        if 'sv24' in s and 'fv24' in s:
+            plt.errorbar([3, 4], [s['sv24'], s['fv24']], yerr=[err['sv24']*1.96, err['fv24']*1.96], fmt='ko-')
+        if 'sa24' in s and 'fa24' in s:
+            plt.errorbar([3.02, 4.02], [s['sa24'], s['fa24']], yerr=[err['sa24']*1.96, err['fa24']*1.96], fmt='ko--', markerfacecolor='white')
         plt.ylim(0, .45)
     plt.title('PLIs')
     plt.ylabel('PLIs Per List')
     plt.xticks([1, 2, 3, 4], ('12/Slow', '12/Fast', '24/Slow', '24/Fast'))
-    plt.legend(labels=['Visual', 'Auditory'])
+    plt.legend()
 
 
 def plot_reps(s, err=None):
     plt.subplot(7, 3, 18)
     if err is None:
-        plt.plot([1, 2], [s['sv12'], s['fv12']], 'ko-')
-        plt.plot([1.02, 2.02], [s['sa12'], s['fa12']], 'ko--', markerfacecolor='white')
-        plt.plot([3, 4], [s['sv24'], s['fv24']], 'ko-')
-        plt.plot([3.02, 4.02], [s['sa24'], s['fa24']], 'ko--', markerfacecolor='white')
+        if 'sv12' in s and 'fv12' in s:
+            plt.plot([1, 2], [s['sv12'], s['fv12']], 'ko-', label='Visual')
+        if 'sa12' in s and 'fa12' in s:
+            plt.plot([1.02, 2.02], [s['sa12'], s['fa12']], 'ko--', markerfacecolor='white', label='Auditory')
+        if 'sv24' in s and 'fv24' in s:
+            plt.plot([3, 4], [s['sv24'], s['fv24']], 'ko-')
+        if 'sa24' in s and 'fa24' in s:
+            plt.plot([3.02, 4.02], [s['sa24'], s['fa24']], 'ko--', markerfacecolor='white')
     else:
-        plt.errorbar([1, 2], [s['sv12'], s['fv12']], yerr=[err['sv12']*1.96, err['fv12']*1.96], fmt='ko-')
-        plt.errorbar([1.02, 2.02], [s['sa12'], s['fa12']], yerr=[err['sa12']*1.96, err['fa12']*1.96], fmt='ko--', markerfacecolor='white')
-        plt.errorbar([3, 4], [s['sv24'], s['fv24']], yerr=[err['sv24']*1.96, err['fv24']*1.96], fmt='ko-')
-        plt.errorbar([3.02, 4.02], [s['sa24'], s['fa24']], yerr=[err['sa24']*1.96, err['fa24']*1.96], fmt='ko--', markerfacecolor='white')
+        if 'sv12' in s and 'fv12' in s:
+            plt.errorbar([1, 2], [s['sv12'], s['fv12']], yerr=[err['sv12']*1.96, err['fv12']*1.96], fmt='ko-')
+        if 'sa12' in s and 'fa12' in s:
+            plt.errorbar([1.02, 2.02], [s['sa12'], s['fa12']], yerr=[err['sa12']*1.96, err['fa12']*1.96], fmt='ko--', markerfacecolor='white')
+        if 'sv24' in s and 'fv24' in s:
+            plt.errorbar([3, 4], [s['sv24'], s['fv24']], yerr=[err['sv24']*1.96, err['fv24']*1.96], fmt='ko-')
+        if 'sa24' in s and 'fa24' in s:
+            plt.errorbar([3.02, 4.02], [s['sa24'], s['fa24']], yerr=[err['sa24']*1.96, err['fa24']*1.96], fmt='ko--', markerfacecolor='white')
         plt.ylim(0, .45)
     plt.title('Repetitions')
     plt.ylabel('Reps Per List')
     plt.xticks([1, 2, 3, 4], ('12/Slow', '12/Fast', '24/Slow', '24/Fast'))
-    plt.legend(labels=['Visual', 'Auditory'])
+    plt.legend()
 
 
 def plot_temp_fact(s, err=None):
     plt.subplot(7, 3, 20)
     if err is None:
-        plt.plot([1, 2], [s['sv12'], s['fv12']], 'ko-')
-        plt.plot([1.02, 2.02], [s['sa12'], s['fa12']], 'ko--', markerfacecolor='white')
-        plt.plot([3, 4], [s['sv24'], s['fv24']], 'ko-')
-        plt.plot([3.02, 4.02], [s['sa24'], s['fa24']], 'ko--', markerfacecolor='white')
+        if 'sv12' in s and 'fv12' in s:
+            plt.plot([1, 2], [s['sv12'], s['fv12']], 'ko-', label='Visual')
+        if 'sa12' in s and 'fa12' in s:
+            plt.plot([1.02, 2.02], [s['sa12'], s['fa12']], 'ko--', markerfacecolor='white', label='Auditory')
+        if 'sv24' in s and 'fv24' in s:
+            plt.plot([3, 4], [s['sv24'], s['fv24']], 'ko-')
+        if 'sa24' in s and 'fa24' in s:
+            plt.plot([3.02, 4.02], [s['sa24'], s['fa24']], 'ko--', markerfacecolor='white')
     else:
-        plt.errorbar([1, 2], [s['sv12'], s['fv12']], yerr=[err['sv12']*1.96, err['fv12']*1.96], fmt='ko-')
-        plt.errorbar([1.02, 2.02], [s['sa12'], s['fa12']], yerr=[err['sa12']*1.96, err['fa12']*1.96], fmt='ko--', markerfacecolor='white')
-        plt.errorbar([3, 4], [s['sv24'], s['fv24']], yerr=[err['sv24']*1.96, err['fv24']*1.96], fmt='ko-')
-        plt.errorbar([3.02, 4.02], [s['sa24'], s['fa24']], yerr=[err['sa24']*1.96, err['fa24']*1.96], fmt='ko--', markerfacecolor='white')
+        if 'sv12' in s and 'fv12' in s:
+            plt.errorbar([1, 2], [s['sv12'], s['fv12']], yerr=[err['sv12']*1.96, err['fv12']*1.96], fmt='ko-')
+        if 'sa12' in s and 'fa12' in s:
+            plt.errorbar([1.02, 2.02], [s['sa12'], s['fa12']], yerr=[err['sa12']*1.96, err['fa12']*1.96], fmt='ko--', markerfacecolor='white')
+        if 'sv24' in s and 'fv24' in s:
+            plt.errorbar([3, 4], [s['sv24'], s['fv24']], yerr=[err['sv24']*1.96, err['fv24']*1.96], fmt='ko-')
+        if 'sa24' in s and 'fa24' in s:
+            plt.errorbar([3.02, 4.02], [s['sa24'], s['fa24']], yerr=[err['sa24']*1.96, err['fa24']*1.96], fmt='ko--', markerfacecolor='white')
     plt.title('Temporal Clustering Factor')
     plt.ylabel('Clustering Score')
     plt.xticks([1, 2, 3, 4], ('12/Slow', '12/Fast', '24/Slow', '24/Fast'))
-    plt.legend(labels=['Visual', 'Auditory'])
+    plt.legend()
     plt.ylim(.5, .8)
 
 
