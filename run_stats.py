@@ -31,6 +31,8 @@ def run_stats(data_dir, stat_dir, force=False):
     bad_sess = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/BAD_SESS.txt', dtype='U8')
     rejected = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/REJECTED.txt', dtype='U8')
     skip = np.union1d(np.union1d(exclude, bad_sess), rejected)
+    with open('/data/eeg/scalp/ltp/ltpFR3_MTurk/VERSION_STARTS.json') as f:
+        version_starts = json.load(f)
 
     stats_to_run = ['prec', 'spc', 'pfr', 'psr', 'ptr', 'crp', 'crp_early', 'crp_late', 'plis', 'elis', 'reps', 'pli_recency', 'ffr_spc', 'temp_fact', 'irt']
 
@@ -79,10 +81,14 @@ def run_stats(data_dir, stat_dir, force=False):
                 stats[subj] = json.load(f)
 
     # Now we calculate the average stats and save to a JSON file
-    outfile = os.path.join(stat_dir, 'all.json')
-    avg_stats = {}
-    avg_stats['mean'], avg_stats['sem'], avg_stats['N'] = calculate_avg_stats(stats, stats_to_run, filters.keys())
-    write_stats_to_json(avg_stats, outfile, average_stats=True)
+    for version in version_starts:
+        v_start = version_starts[version]
+        v_end = None if version + 1 not in version_starts else version_starts[version + 1]
+        outfile = os.path.join(stat_dir, 'all_v%d.json' % version)
+        avg_stats = {}
+        avg_stats['mean'], avg_stats['sem'], avg_stats['N'] = calculate_avg_stats(stats, stats_to_run, filters.keys(),
+                                                                version_start=v_start, version_end=v_end)
+        write_stats_to_json(avg_stats, outfile, average_stats=True)
 
 
 def stats_for_subj(sub, condi, recalls, wasrec, ffr_wasrec, rt, recw, presw, intru, math, stats_to_run, filters):
@@ -134,7 +140,7 @@ def stats_for_subj(sub, condi, recalls, wasrec, ffr_wasrec, rt, recw, presw, int
     return stats
 
 
-def calculate_avg_stats(s, stats_to_run, filters):
+def calculate_avg_stats(s, stats_to_run, filters, version_start=1, version_end=None):
     # Exclusion notes can be found at: https://app.asana.com/0/291595828487527/468440625589939/f
     exclude = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/EXCLUDED.txt', dtype='U8')
     bad_sess = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/BAD_SESS.txt', dtype='U8')
@@ -149,11 +155,15 @@ def calculate_avg_stats(s, stats_to_run, filters):
         stderr[stat] = {}
         Ns[stat] = {}
         for f in filters:
-            if f == 'all' and stat not in ('plis', 'elis', 'reps', 'pli_recency'):  # Only do intrusion stats for "all" filter
+            # For the "all" filter, only do intrusion stats
+            if f == 'all' and stat not in ('plis', 'elis', 'reps', 'pli_recency'):
                 continue
             scores = []
+            # Only use a subject's scores if they are from the correct version of the experiment and are not excluded
             for subj in s:
-                if subj not in skip and f in s[subj][stat]:
+                snum = int(subj[-4:])
+                if (subj not in skip) and (version_start is None or snum >= version_start) and \
+                        (version_end is None or snum < version_end) and f in s[subj][stat]:
                     scores.append(s[subj][stat][f])
             scores = np.array(scores)
             avs[stat][f] = np.nanmean(scores, axis=0)

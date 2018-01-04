@@ -48,8 +48,7 @@ def ltpFR3_report(stat_dir, report_dir, force=False):
 
         pdf = PdfPages(outfile)
         plt.figure(figsize=(30, 30))
-        if subj == 'all':
-            plt.suptitle('All', fontsize=36)
+        if subj.startswith('all'):
             for key in stat_plotters:
                 if key in stats['mean']:
                     stat_plotters[key](stats['mean'][key])
