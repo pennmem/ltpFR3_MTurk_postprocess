@@ -40,7 +40,7 @@ def ltpFR3_report(stat_dir, report_dir, force=False):
     for stat_file in glob(os.path.join(stat_dir, '*.json')):
         subj = os.path.splitext(os.path.basename(stat_file))[0]  # Get subject ID from file name
         outfile = os.path.join(report_dir, '%s.pdf' % subj)  # Define file path for stat file
-        if subj != 'all' and os.path.exists(outfile) and not force:  # Skip participants who already have reports
+        if not subj.startswith('all') and os.path.exists(outfile) and not force:  # Skip participants who already have reports
             continue
 
         with open(stat_file, 'r') as f:
