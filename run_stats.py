@@ -77,7 +77,7 @@ def run_stats(data_dir, stat_dir, force=False):
     stats = {}
     for stat_file in glob(os.path.join(stat_dir, '*.json')):
         subj = os.path.splitext(os.path.basename(stat_file))[0]
-        if subj != 'all':
+        if not subj.startswith('all'):
             with open(stat_file, 'r') as f:
                 stats[subj] = json.load(f)
 
