@@ -84,7 +84,7 @@ def run_stats(data_dir, stat_dir, force=False):
     for version in version_starts:
         v_start = version_starts[version]
         v_end = None if version + 1 not in version_starts else version_starts[version + 1]
-        outfile = os.path.join(stat_dir, 'all_v%d.json' % version)
+        outfile = os.path.join(stat_dir, 'all_v%s.json' % version)
         avg_stats = {}
         avg_stats['mean'], avg_stats['sem'], avg_stats['N'] = calculate_avg_stats(stats, stats_to_run, filters.keys(),
                                                                 version_start=v_start, version_end=v_end)
