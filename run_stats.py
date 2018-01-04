@@ -33,6 +33,7 @@ def run_stats(data_dir, stat_dir, force=False):
     skip = np.union1d(np.union1d(exclude, bad_sess), rejected)
     with open('/data/eeg/scalp/ltp/ltpFR3_MTurk/VERSION_STARTS.json') as f:
         version_starts = json.load(f)
+        version_starts = {int(v): version_starts[v] for v in version_starts}
 
     stats_to_run = ['prec', 'spc', 'pfr', 'psr', 'ptr', 'crp', 'crp_early', 'crp_late', 'plis', 'elis', 'reps', 'pli_recency', 'ffr_spc', 'temp_fact', 'irt']
 
@@ -84,7 +85,7 @@ def run_stats(data_dir, stat_dir, force=False):
     for version in version_starts:
         v_start = version_starts[version]
         v_end = None if version + 1 not in version_starts else version_starts[version + 1]
-        outfile = os.path.join(stat_dir, 'all_v%s.json' % version)
+        outfile = os.path.join(stat_dir, 'all_v%d.json' % version)
         avg_stats = {}
         avg_stats['mean'], avg_stats['sem'], avg_stats['N'] = calculate_avg_stats(stats, stats_to_run, filters.keys(),
                                                                 version_start=v_start, version_end=v_end)
