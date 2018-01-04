@@ -354,7 +354,7 @@ def plot_intrusions(plis, elis, reps, pli_err=None, eli_err=None, rep_err=None):
         rep_err = 1.96 * rep_err['all']
         plt.bar([1, 2, 3], [plis['all'], elis['all'], reps['all']], yerr=[pli_err, eli_err, rep_err], align='center',
                 color='k', fill=False)
-    plt.xticks([1, 2, 3], ['PLI', 'ELI', 'Rep']).all()
+    plt.xticks([1, 2, 3], ['PLI', 'ELI', 'Rep'])
     plt.title('Intrusions')
     plt.ylabel('Intrusions Per List')
 
