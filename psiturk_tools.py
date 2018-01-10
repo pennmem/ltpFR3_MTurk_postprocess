@@ -33,7 +33,7 @@ def load_psiturk_data(db_url, table_name, event_dir, data_column_name='datastrin
     QUITEARLY = 6
     BONUSED = 7
     """
-    statuses = [3, 4, 5, 7]  # Status codes of subjects who have completed the study
+    complete_statuses = [3, 4, 5, 7]  # Status codes of subjects who have completed the study
     exclude = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/EXCLUDED.txt', dtype='U8')
     bad_sess = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/BAD_SESS.txt', dtype='U8')
     rejected = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/REJECTED.txt', dtype='U8')
@@ -48,18 +48,24 @@ def load_psiturk_data(db_url, table_name, event_dir, data_column_name='datastrin
     rows = s.execute()
 
     data = []
+    statuses = []
     for row in rows:
-        # only use subjects who completed experiment and aren't excluded
-        if row['status'] in statuses and row['workerid'] not in skip:  # and not os.path.exists('/data/eeg/scalp/ltp/ltpFR3_MTurk/reports/%s.pdf' % row['workerid']):
+        # only use subjects who aren't excluded
+        if row['workerid'] not in skip:  # and not os.path.exists('/data/eeg/scalp/ltp/ltpFR3_MTurk/reports/%s.pdf' % row['workerid']):
             data.append(row[data_column_name])
-
+            statuses.append(row['status'])
     # Parse each subject's data as a JSON object, then save a copy into a JSON file for easy access later
     data = [json.loads(subj_data) for subj_data in data if subj_data != '']
-    for entry in data:
+    for i, entry in enumerate(data):
         datafile_path = os.path.join(event_dir, '%s.json' % entry['workerId'])
-        if force or not os.path.exists(datafile_path):
+        inc_datafile_path = os.path.join(event_dir, 'incomplete', '%s.json' % entry['workerId'])
+        # Don't bother writing file if it already exists
+        if force or (not os.path.exists(datafile_path) and not os.path.exists(inc_datafile_path)):
             with open(datafile_path, 'w') as f:
                 json.dump(entry, f)
+        # Move logs from incomplete sessions to their own folder
+        if statuses[i] not in complete_statuses and os.path.exists(datafile_path):
+            os.rename(datafile_path, inc_datafile_path)
 
 
 def process_psiturk_data(event_dir, behmat_dir, dict_path, force=False):
