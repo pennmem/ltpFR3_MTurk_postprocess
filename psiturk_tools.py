@@ -50,21 +50,33 @@ def load_psiturk_data(db_url, table_name, event_dir, data_column_name='datastrin
     data = []
     statuses = []
     for row in rows:
-        # only use subjects who aren't excluded
-        if row['workerid'] not in skip:  # and not os.path.exists('/data/eeg/scalp/ltp/ltpFR3_MTurk/reports/%s.pdf' % row['workerid']):
-            data.append(row[data_column_name])
-            statuses.append(row['status'])
-    # Parse each subject's data as a JSON object, then save a copy into a JSON file for easy access later
-    data = [json.loads(subj_data) for subj_data in data if subj_data != '']
-    for i, entry in enumerate(data):
-        datafile_path = os.path.join(event_dir, '%s.json' % entry['workerId'])
-        inc_datafile_path = os.path.join(event_dir, 'incomplete', '%s.json' % entry['workerId'])
-        # Don't bother writing file if it already exists
+        # Get subject ID
+        subj_id = row['workerid']
+
+        # Only process subjects who aren't excluded
+        if subj_id in skip:
+            continue
+
+        # Extract participant's data string
+        data = row[data_column_name]
+
+        # Skip any participants with no data string
+        if data == '':
+            continue
+
+        # Parse data string as a JSON object
+        data = json.loads(data)
+
+        # Write JSON data to a file if the file does not already exist
+        datafile_path = os.path.join(event_dir, '%s.json' % subj_id)
+        inc_datafile_path = os.path.join(event_dir, 'incomplete', '%s.json' % subj_id)
         if force or (not os.path.exists(datafile_path) and not os.path.exists(inc_datafile_path)):
             with open(datafile_path, 'w') as f:
-                json.dump(entry, f)
+                json.dump(data, f)
+
         # Move logs from incomplete sessions to their own folder
-        if statuses[i] not in complete_statuses and os.path.exists(datafile_path):
+        status = row['status']
+        if status not in complete_statuses and os.path.exists(datafile_path):
             os.rename(datafile_path, inc_datafile_path)
 
 
