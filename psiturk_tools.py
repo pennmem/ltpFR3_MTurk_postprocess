@@ -79,6 +79,10 @@ def load_psiturk_data(db_url, table_name, event_dir, data_column_name='datastrin
         if status not in complete_statuses and os.path.exists(datafile_path):
             os.rename(datafile_path, inc_datafile_path)
 
+        # Remove logs previously marked as incomplete if they have now become complete
+        elif status in complete_statuses and os.path.exists(inc_datafile_path):
+            os.remove(inc_datafile_path)
+
 
 def process_psiturk_data(event_dir, behmat_dir, dict_path, force=False):
     """
