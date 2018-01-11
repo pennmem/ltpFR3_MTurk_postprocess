@@ -50,7 +50,6 @@ def load_psiturk_data(db_url, table_name, event_dir, data_column_name='datastrin
     for row in rows:
         # Get subject ID
         subj_id = row['workerid']
-        print('EVENTS', subj_id, subj_id=='MTK1310')
         datafile_path = os.path.join(event_dir, '%s.json' % subj_id)
         inc_datafile_path = os.path.join(event_dir, 'incomplete', '%s.json' % subj_id)
 
