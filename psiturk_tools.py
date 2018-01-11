@@ -47,11 +47,12 @@ def load_psiturk_data(db_url, table_name, event_dir, data_column_name='datastrin
     s = table.select()
     rows = s.execute()
 
-    data = []
-    statuses = []
     for row in rows:
         # Get subject ID
         subj_id = row['workerid']
+        print('EVENTS', subj_id, subj_id=='MTK1310')
+        datafile_path = os.path.join(event_dir, '%s.json' % subj_id)
+        inc_datafile_path = os.path.join(event_dir, 'incomplete', '%s.json' % subj_id)
 
         # Only process subjects who aren't excluded
         if subj_id in skip:
@@ -60,19 +61,15 @@ def load_psiturk_data(db_url, table_name, event_dir, data_column_name='datastrin
         # Extract participant's data string
         data = row[data_column_name]
 
-        # Skip any participants with no data string
-        if data == '':
-            continue
+        # Only attempt to write a JSON file if the participant has data and does not already have a JSON file
+        if data != '' and not os.path.exists(datafile_path):
+            # Parse data string as a JSON object
+            data = json.loads(data)
 
-        # Parse data string as a JSON object
-        data = json.loads(data)
-
-        # Write JSON data to a file if the file does not already exist
-        datafile_path = os.path.join(event_dir, '%s.json' % subj_id)
-        inc_datafile_path = os.path.join(event_dir, 'incomplete', '%s.json' % subj_id)
-        if force or (not os.path.exists(datafile_path) and not os.path.exists(inc_datafile_path)):
-            with open(datafile_path, 'w') as f:
-                json.dump(data, f)
+            # Write JSON data to a file if the file does not already exist
+            if force or not os.path.exists(datafile_path):
+                with open(datafile_path, 'w') as f:
+                    json.dump(data, f)
 
         # Move logs from incomplete sessions to their own folder
         status = row['status']
