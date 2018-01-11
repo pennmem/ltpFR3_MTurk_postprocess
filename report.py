@@ -80,13 +80,13 @@ def ltpFR3_report(stat_dir, report_dir, force=False):
 
 def plot_spc(s):
     plt.subplot(7, 3, 1)
-    if not np.isnan(s['sv12']).all():
+    if 'sv12' in s and not np.isnan(s['sv12']).all():
         plt.plot(range(1, 13), s['sv12'], 'ko-', label='Slow/Visual')
-    if not np.isnan(s['fv12']).all():
+    if 'fv12' in s and not np.isnan(s['fv12']).all():
         plt.plot(range(1, 13), s['fv12'], 'k^-', label='Fast/Visual')
-    if not np.isnan(s['sa12']).all():
+    if 'sa12' in s and not np.isnan(s['sa12']).all():
         plt.plot(range(1, 13), s['sa12'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
-    if not np.isnan(s['fa12']).all():
+    if 'fa12' in s and not np.isnan(s['fa12']).all():
         plt.plot(range(1, 13), s['fa12'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
     plt.title('SPC (List Length 12)')
     plt.xlabel('Serial Position')
@@ -96,13 +96,13 @@ def plot_spc(s):
     plt.xticks(range(1, 13, 2), range(1, 13, 2))
 
     plt.subplot(7, 3, 4)
-    if not np.isnan(s['sv24']).all():
+    if 'sv12' in s and not np.isnan(s['sv24']).all():
         plt.plot(range(1, 25), s['sv24'], 'ko-', label='Slow/Visual')
-    if not np.isnan(s['fv24']).all():
+    if 'fv24' in s and not np.isnan(s['fv24']).all():
         plt.plot(range(1, 25), s['fv24'], 'k^-', label='Fast/Visual')
-    if not np.isnan(s['sa24']).all():
+    if 'sa12' in s and not np.isnan(s['sa24']).all():
         plt.plot(range(1, 25), s['sa24'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
-    if not np.isnan(s['fa24']).all():
+    if 'fa24' in s and not np.isnan(s['fa24']).all():
         plt.plot(range(1, 25), s['fa24'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
     plt.title('SPC (List Length 24)')
     plt.xlabel('Serial Position')
@@ -114,13 +114,13 @@ def plot_spc(s):
 
 def plot_ffr_spc(s):
     # plt.subplot(7, 3, 1)
-    if not np.isnan(s['sv12']).all():
+    if 'sv12' in s and not np.isnan(s['sv12']).all():
         plt.plot(range(1, 13), s['sv12'], 'ko-', label='Slow/Visual')
-    if not np.isnan(s['fv12']).all():
+    if 'fv12' in s and not np.isnan(s['fv12']).all():
         plt.plot(range(1, 13), s['fv12'], 'k^-', label='Fast/Visual')
-    if not np.isnan(s['sa12']).all():
+    if 'sa12' in s and not np.isnan(s['sa12']).all():
         plt.plot(range(1, 13), s['sa12'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
-    if not np.isnan(s['fa12']).all():
+    if 'fa12' in s and not np.isnan(s['fa12']).all():
         plt.plot(range(1, 13), s['fa12'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
     plt.title('FFR SPC (List Length 12)')
     plt.xlabel('Serial Position')
@@ -130,13 +130,13 @@ def plot_ffr_spc(s):
     plt.xticks(range(1, 13, 2), range(1, 13, 2))
 
     # plt.subplot(7, 3, 4)
-    if not np.isnan(s['sv24']).all():
+    if 'sv24' in s and not np.isnan(s['sv24']).all():
         plt.plot(range(1, 25), s['sv24'], 'ko-', label='Slow/Visual')
-    if not np.isnan(s['fv24']).all():
+    if 'fv24' in s and not np.isnan(s['fv24']).all():
         plt.plot(range(1, 25), s['fv24'], 'k^-', label='Fast/Visual')
-    if not np.isnan(s['sa24']).all():
+    if 'sa24' in s and not np.isnan(s['sa24']).all():
         plt.plot(range(1, 25), s['sa24'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
-    if not np.isnan(s['fa24']).all():
+    if 'fa24' in s and not np.isnan(s['fa24']).all():
         plt.plot(range(1, 25), s['fa24'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
     plt.title('FFR SPC (List Length 24)')
     plt.xlabel('Serial Position')
@@ -148,13 +148,13 @@ def plot_ffr_spc(s):
 
 def plot_crp_early(s):
     plt.subplot(7, 3, 2)
-    if not np.isnan(s['sv12']).all():
+    if 'sv12' in s and not np.isnan(s['sv12']).all():
         plt.plot(range(-4, 5), s['sv12'], 'ko-', label='Slow/Visual')
-    if not np.isnan(s['fv12']).all():
+    if 'fv12' in s and not np.isnan(s['fv12']).all():
         plt.plot(range(-4, 5), s['fv12'], 'k^-', label='Fast/Visual')
-    if not np.isnan(s['sa12']).all():
+    if 'sa12' in s and not np.isnan(s['sa12']).all():
         plt.plot(range(-4, 5), s['sa12'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
-    if not np.isnan(s['fa12']).all():
+    if 'fa12' in s and not np.isnan(s['fa12']).all():
         plt.plot(range(-4, 5), s['fa12'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
     plt.title('lag-CRP Early (List Length 12)')
     plt.xlabel('Lag')
@@ -163,13 +163,13 @@ def plot_crp_early(s):
     plt.ylim(-.05, 1.05)
 
     plt.subplot(7, 3, 5)
-    if not np.isnan(s['sv24']).all():
+    if 'sv24' in s and not np.isnan(s['sv24']).all():
         plt.plot(range(-4, 5), s['sv24'], 'ko-', label='Slow/Visual')
-    if not np.isnan(s['fv24']).all():
+    if 'fv24' in s and not np.isnan(s['fv24']).all():
         plt.plot(range(-4, 5), s['fv24'], 'k^-', label='Fast/Visual')
-    if not np.isnan(s['sa24']).all():
+    if 'sa24' in s and not np.isnan(s['sa24']).all():
         plt.plot(range(-4, 5), s['sa24'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
-    if not np.isnan(s['fa24']).all():
+    if 'fa24' in s and not np.isnan(s['fa24']).all():
         plt.plot(range(-4, 5), s['fa24'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
     plt.title('lag-CRP Early (List Length 24)')
     plt.xlabel('Lag')
@@ -180,13 +180,13 @@ def plot_crp_early(s):
 
 def plot_crp_late(s):
     plt.subplot(7, 3, 3)
-    if not np.isnan(s['sv12']).all():
+    if 'sv12' in s and not np.isnan(s['sv12']).all():
         plt.plot(range(-4, 5), s['sv12'], 'ko-', label='Slow/Visual')
-    if not np.isnan(s['fv12']).all():
+    if 'fv12' in s and not np.isnan(s['fv12']).all():
         plt.plot(range(-4, 5), s['fv12'], 'k^-', label='Fast/Visual')
-    if not np.isnan(s['sa12']).all():
+    if 'sa12' in s and not np.isnan(s['sa12']).all():
         plt.plot(range(-4, 5), s['sa12'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
-    if not np.isnan(s['fa12']).all():
+    if 'fa12' in s and not np.isnan(s['fa12']).all():
         plt.plot(range(-4, 5), s['fa12'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
     plt.title('lag-CRP Late (List Length 12)')
     plt.xlabel('Lag')
@@ -195,13 +195,13 @@ def plot_crp_late(s):
     plt.ylim(-.05, 1.05)
 
     plt.subplot(7, 3, 6)
-    if not np.isnan(s['sv24']).all():
+    if 'sv24' in s and not np.isnan(s['sv24']).all():
         plt.plot(range(-4, 5), s['sv24'], 'ko-', label='Slow/Visual')
-    if not np.isnan(s['fv24']).all():
+    if 'fv24' in s and not np.isnan(s['fv24']).all():
         plt.plot(range(-4, 5), s['fv24'], 'k^-', label='Fast/Visual')
-    if not np.isnan(s['sa24']).all():
+    if 'sa24' in s and not np.isnan(s['sa24']).all():
         plt.plot(range(-4, 5), s['sa24'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
-    if not np.isnan(s['fa24']).all():
+    if 'fa24' in s and not np.isnan(s['fa24']).all():
         plt.plot(range(-4, 5), s['fa24'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
     plt.title('lag-CRP Late (List Length 24)')
     plt.xlabel('Lag')
@@ -212,13 +212,13 @@ def plot_crp_late(s):
 
 def plot_pfr(s):
     plt.subplot(7, 3, 7)
-    if not np.isnan(s['sv12']).all():
+    if 'sv12' in s and not np.isnan(s['sv12']).all():
         plt.plot(range(1, 13), s['sv12'], 'ko-', label='Slow/Visual')
-    if not np.isnan(s['fv12']).all():
+    if 'fv12' in s and not np.isnan(s['fv12']).all():
         plt.plot(range(1, 13), s['fv12'], 'k^-', label='Fast/Visual')
-    if not np.isnan(s['sa12']).all():
+    if 'sa12' in s and not np.isnan(s['sa12']).all():
         plt.plot(range(1, 13), s['sa12'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
-    if not np.isnan(s['fa12']).all():
+    if 'fa12' in s and not np.isnan(s['fa12']).all():
         plt.plot(range(1, 13), s['fa12'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
     plt.title('PFR (List Length 12)')
     plt.xlabel('Serial Position')
@@ -228,13 +228,13 @@ def plot_pfr(s):
     plt.xticks(range(1, 13, 2), range(1, 13, 2))
 
     plt.subplot(7, 3, 10)
-    if not np.isnan(s['sv24']).all():
+    if 'sv24' in s and not np.isnan(s['sv24']).all():
         plt.plot(range(1, 25), s['sv24'], 'ko-', label='Slow/Visual')
-    if not np.isnan(s['fv24']).all():
+    if 'fv24' in s and not np.isnan(s['fv24']).all():
         plt.plot(range(1, 25), s['fv24'], 'k^-', label='Fast/Visual')
-    if not np.isnan(s['sa24']).all():
+    if 'sa24' in s and not np.isnan(s['sa24']).all():
         plt.plot(range(1, 25), s['sa24'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
-    if not np.isnan(s['fa24']).all():
+    if 'fa24' in s and not np.isnan(s['fa24']).all():
         plt.plot(range(1, 25), s['fa24'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
     plt.title('PFR (List Length 24)')
     plt.xlabel('Serial Position')
@@ -246,13 +246,13 @@ def plot_pfr(s):
 
 def plot_psr(s):
     plt.subplot(7, 3, 8)
-    if not np.isnan(s['sv12']).all():
+    if 'sv12' in s and not np.isnan(s['sv12']).all():
         plt.plot(range(1, 13), s['sv12'], 'ko-', label='Slow/Visual')
-    if not np.isnan(s['fv12']).all():
+    if 'fv12' in s and not np.isnan(s['fv12']).all():
         plt.plot(range(1, 13), s['fv12'], 'k^-', label='Fast/Visual')
-    if not np.isnan(s['sa12']).all():
+    if 'sa12' in s and not np.isnan(s['sa12']).all():
         plt.plot(range(1, 13), s['sa12'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
-    if not np.isnan(s['fa12']).all():
+    if 'fa12' in s and not np.isnan(s['fa12']).all():
         plt.plot(range(1, 13), s['fa12'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
     plt.title('PSR (List Length 12)')
     plt.xlabel('Serial Position')
@@ -262,13 +262,13 @@ def plot_psr(s):
     plt.xticks(range(1, 13, 2), range(1, 13, 2))
 
     plt.subplot(7, 3, 11)
-    if not np.isnan(s['sv24']).all():
+    if 'sv24' in s and not np.isnan(s['sv24']).all():
         plt.plot(range(1, 25), s['sv24'], 'ko-', label='Slow/Visual')
-    if not np.isnan(s['fv24']).all():
+    if 'fv24' in s and not np.isnan(s['fv24']).all():
         plt.plot(range(1, 25), s['fv24'], 'k^-', label='Fast/Visual')
-    if not np.isnan(s['sa24']).all():
+    if 'sa24' in s and not np.isnan(s['sa24']).all():
         plt.plot(range(1, 25), s['sa24'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
-    if not np.isnan(s['fa24']).all():
+    if 'fa24' in s and not np.isnan(s['fa24']).all():
         plt.plot(range(1, 25), s['fa24'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
     plt.title('PSR (List Length 24)')
     plt.xlabel('Serial Position')
@@ -280,13 +280,13 @@ def plot_psr(s):
 
 def plot_ptr(s):
     plt.subplot(7, 3, 9)
-    if not np.isnan(s['sv12']).all():
+    if 'sv12' in s and not np.isnan(s['sv12']).all():
         plt.plot(range(1, 13), s['sv12'], 'ko-', label='Slow/Visual')
-    if not np.isnan(s['fv12']).all():
+    if 'fv12' in s and not np.isnan(s['fv12']).all():
         plt.plot(range(1, 13), s['fv12'], 'k^-', label='Fast/Visual')
-    if not np.isnan(s['sa12']).all():
+    if 'sa12' in s and not np.isnan(s['sa12']).all():
         plt.plot(range(1, 13), s['sa12'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
-    if not np.isnan(s['fa12']).all():
+    if 'fa12' in s and not np.isnan(s['fa12']).all():
         plt.plot(range(1, 13), s['fa12'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
     plt.title('PTR (List Length 12)')
     plt.xlabel('Serial Position')
@@ -296,13 +296,13 @@ def plot_ptr(s):
     plt.xticks(range(1, 13, 2), range(1, 13, 2))
 
     plt.subplot(7, 3, 12)
-    if not np.isnan(s['sv24']).all():
+    if 'sv24' in s and not np.isnan(s['sv24']).all():
         plt.plot(range(1, 25), s['sv24'], 'ko-', label='Slow/Visual')
-    if not np.isnan(s['fv24']).all():
+    if 'fv24' in s and not np.isnan(s['fv24']).all():
         plt.plot(range(1, 25), s['fv24'], 'k^-', label='Fast/Visual')
-    if not np.isnan(s['sa24']).all():
+    if 'sa24' in s and not np.isnan(s['sa24']).all():
         plt.plot(range(1, 25), s['sa24'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
-    if not np.isnan(s['fa24']).all():
+    if 'fa24' in s and not np.isnan(s['fa24']).all():
         plt.plot(range(1, 25), s['fa24'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
     plt.title('PTR (List Length 24)')
     plt.xlabel('Serial Position')
@@ -314,13 +314,13 @@ def plot_ptr(s):
 
 def plot_pli_recency(s):
     plt.subplot(7, 3, 13)
-    if not np.isnan(s['sv12']).all():
+    if 'sv12' in s and not np.isnan(s['sv12']).all():
         plt.plot(range(1, 7), s['sv12'], 'ko-', label='Slow/Visual')
-    if not np.isnan(s['fv12']).all():
+    if 'fv12' in s and not np.isnan(s['fv12']).all():
         plt.plot(range(1, 7), s['fv12'], 'k^-', label='Fast/Visual')
-    if not np.isnan(s['sa12']).all():
+    if 'sa12' in s and not np.isnan(s['sa12']).all():
         plt.plot(range(1, 7), s['sa12'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
-    if not np.isnan(s['fa12']).all():
+    if 'fa12' in s and not np.isnan(s['fa12']).all():
         plt.plot(range(1, 7), s['fa12'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
     plt.title('PLI Recency (List Length 12)')
     plt.xlabel('Number of Lists Back')
@@ -329,13 +329,13 @@ def plot_pli_recency(s):
     plt.ylim(-.05, .55)
 
     plt.subplot(7, 3, 16)
-    if not np.isnan(s['sv24']).all():
+    if 'sv24' in s and not np.isnan(s['sv24']).all():
         plt.plot(range(1, 7), s['sv24'], 'ko-', label='Slow/Visual')
-    if not np.isnan(s['fv24']).all():
+    if 'fv24' in s and not np.isnan(s['fv24']).all():
         plt.plot(range(1, 7), s['fv24'], 'k^-', label='Fast/Visual')
-    if not np.isnan(s['sa24']).all():
+    if 'sa24' in s and not np.isnan(s['sa24']).all():
         plt.plot(range(1, 7), s['sa24'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
-    if not np.isnan(s['fa24']).all():
+    if 'fa24' in s and not np.isnan(s['fa24']).all():
         plt.plot(range(1, 7), s['fa24'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
     plt.title('PLI Recency (List Length 24)')
     plt.xlabel('Number of Lists Back')
@@ -362,22 +362,22 @@ def plot_intrusions(plis, elis, reps, pli_err=None, eli_err=None, rep_err=None):
 def plot_elis(s, err=None):
     plt.subplot(7, 3, 15)
     if err is None:
-        if not np.isnan(s['sv12']).all() and not np.isnan(s['fv12']).all():
+        if 'sv12' in s and not np.isnan(s['sv12']).all() and 'fv12' in s and not np.isnan(s['fv12']).all():
             plt.plot([1, 2], [s['sv12'], s['fv12']], 'ko-', label='Visual')
-        if not np.isnan(s['sa12']).all() and not np.isnan(s['fa12']).all():
+        if 'sa12' in s and not np.isnan(s['sa12']).all() and 'fa12' in s and not np.isnan(s['fa12']).all():
             plt.plot([1.02, 2.02], [s['sa12'], s['fa12']], 'ko--', markerfacecolor='white', label='Auditory')
-        if not np.isnan(s['sv24']).all() and not np.isnan(s['fv24']).all():
+        if 'sv24' in s and not np.isnan(s['sv24']).all() and 'fv24' in s and not np.isnan(s['fv24']).all():
             plt.plot([3, 4], [s['sv24'], s['fv24']], 'ko-')
-        if not np.isnan(s['sa24']).all() and not np.isnan(s['fa24']).all():
+        if 'sa24' in s and not np.isnan(s['sa24']).all() and 'fa24' in s and not np.isnan(s['fa24']).all():
             plt.plot([3.02, 4.02], [s['sa24'], s['fa24']], 'ko--', markerfacecolor='white')
     else:
-        if not np.isnan(s['sv12']).all() and not np.isnan(s['fv12']).all():
+        if 'sv12' in s and not np.isnan(s['sv12']).all() and 'fv12' in s and not np.isnan(s['fv12']).all():
             plt.errorbar([1, 2], [s['sv12'], s['fv12']], yerr=[err['sv12']*1.96, err['fv12']*1.96], fmt='ko-')
-        if not np.isnan(s['sa12']).all() and not np.isnan(s['fa12']).all():
+        if 'sa12' in s and not np.isnan(s['sa12']).all() and 'fa12' in s and not np.isnan(s['fa12']).all():
             plt.errorbar([1.02, 2.02], [s['sa12'], s['fa12']], yerr=[err['sa12']*1.96, err['fa12']*1.96], fmt='ko--', markerfacecolor='white')
-        if not np.isnan(s['sv24']).all() and not np.isnan(s['fv24']).all():
+        if 'sv24' in s and not np.isnan(s['sv24']).all() and 'fv24' in s and not np.isnan(s['fv24']).all():
             plt.errorbar([3, 4], [s['sv24'], s['fv24']], yerr=[err['sv24']*1.96, err['fv24']*1.96], fmt='ko-')
-        if not np.isnan(s['sa24']).all() and not np.isnan(s['fa24']).all():
+        if 'sa24' in s and not np.isnan(s['sa24']).all() and 'fa24' in s and not np.isnan(s['fa24']).all():
             plt.errorbar([3.02, 4.02], [s['sa24'], s['fa24']], yerr=[err['sa24']*1.96, err['fa24']*1.96], fmt='ko--', markerfacecolor='white')
         plt.ylim(0, 1.05)
     plt.title('ELIs')
@@ -389,22 +389,22 @@ def plot_elis(s, err=None):
 def plot_plis(s, err=None):
     plt.subplot(7, 3, 17)
     if err is None:
-        if not np.isnan(s['sv12']).all() and not np.isnan(s['fv12']).all():
+        if 'sv12' in s and not np.isnan(s['sv12']).all() and 'fv12' in s and not np.isnan(s['fv12']).all():
             plt.plot([1, 2], [s['sv12'], s['fv12']], 'ko-', label='Visual')
-        if not np.isnan(s['sa12']).all() and not np.isnan(s['fa12']).all():
+        if 'sa12' in s and not np.isnan(s['sa12']).all() and 'fa12' in s and not np.isnan(s['fa12']).all():
             plt.plot([1.02, 2.02], [s['sa12'], s['fa12']], 'ko--', markerfacecolor='white', label='Auditory')
-        if not np.isnan(s['sv24']).all() and not np.isnan(s['fv24']).all():
+        if 'sv24' in s and not np.isnan(s['sv24']).all() and 'fv24' in s and not np.isnan(s['fv24']).all():
             plt.plot([3, 4], [s['sv24'], s['fv24']], 'ko-')
-        if not np.isnan(s['sa24']).all() and not np.isnan(s['fa24']).all():
+        if 'sa24' in s and not np.isnan(s['sa24']).all() and 'fa24' in s and not np.isnan(s['fa24']).all():
             plt.plot([3.02, 4.02], [s['sa24'], s['fa24']], 'ko--', markerfacecolor='white')
     else:
-        if not np.isnan(s['sv12']).all() and not np.isnan(s['fv12']).all():
+        if 'sv12' in s and not np.isnan(s['sv12']).all() and 'fv12' in s and not np.isnan(s['fv12']).all():
             plt.errorbar([1, 2], [s['sv12'], s['fv12']], yerr=[err['sv12']*1.96, err['fv12']*1.96], fmt='ko-')
-        if not np.isnan(s['sa12']).all() and not np.isnan(s['fa12']).all():
+        if 'sa12' in s and not np.isnan(s['sa12']).all() and 'fa12' in s and not np.isnan(s['fa12']).all():
             plt.errorbar([1.02, 2.02], [s['sa12'], s['fa12']], yerr=[err['sa12']*1.96, err['fa12']*1.96], fmt='ko--', markerfacecolor='white')
-        if not np.isnan(s['sv24']).all() and not np.isnan(s['fv24']).all():
+        if 'sv24' in s and not np.isnan(s['sv24']).all() and 'fv24' in s and not np.isnan(s['fv24']).all():
             plt.errorbar([3, 4], [s['sv24'], s['fv24']], yerr=[err['sv24']*1.96, err['fv24']*1.96], fmt='ko-')
-        if not np.isnan(s['sa24']).all() and not np.isnan(s['fa24']).all():
+        if 'sa24' in s and not np.isnan(s['sa24']).all() and 'fa24' in s and not np.isnan(s['fa24']).all():
             plt.errorbar([3.02, 4.02], [s['sa24'], s['fa24']], yerr=[err['sa24']*1.96, err['fa24']*1.96], fmt='ko--', markerfacecolor='white')
         plt.ylim(0, .45)
     plt.title('PLIs')
@@ -416,22 +416,22 @@ def plot_plis(s, err=None):
 def plot_reps(s, err=None):
     plt.subplot(7, 3, 18)
     if err is None:
-        if not np.isnan(s['sv12']).all() and not np.isnan(s['fv12']).all():
+        if 'sv12' in s and not np.isnan(s['sv12']).all() and 'fv12' in s and not np.isnan(s['fv12']).all():
             plt.plot([1, 2], [s['sv12'], s['fv12']], 'ko-', label='Visual')
-        if not np.isnan(s['sa12']).all() and not np.isnan(s['fa12']).all():
+        if 'sa12' in s and not np.isnan(s['sa12']).all() and 'fa12' in s and not np.isnan(s['fa12']).all():
             plt.plot([1.02, 2.02], [s['sa12'], s['fa12']], 'ko--', markerfacecolor='white', label='Auditory')
-        if not np.isnan(s['sv24']).all() and not np.isnan(s['fv24']).all():
+        if 'sv24' in s and not np.isnan(s['sv24']).all() and 'fv24' in s and not np.isnan(s['fv24']).all():
             plt.plot([3, 4], [s['sv24'], s['fv24']], 'ko-')
-        if not np.isnan(s['sa24']).all() and not np.isnan(s['fa24']).all():
+        if 'sa24' in s and not np.isnan(s['sa24']).all() and 'fa24' in s and not np.isnan(s['fa24']).all():
             plt.plot([3.02, 4.02], [s['sa24'], s['fa24']], 'ko--', markerfacecolor='white')
     else:
-        if not np.isnan(s['sv12']).all() and not np.isnan(s['fv12']).all():
+        if 'sv12' in s and not np.isnan(s['sv12']).all() and 'fv12' in s and not np.isnan(s['fv12']).all():
             plt.errorbar([1, 2], [s['sv12'], s['fv12']], yerr=[err['sv12']*1.96, err['fv12']*1.96], fmt='ko-')
-        if not np.isnan(s['sa12']).all() and not np.isnan(s['fa12']).all():
+        if 'sa12' in s and not np.isnan(s['sa12']).all() and 'fa12' in s and not np.isnan(s['fa12']).all():
             plt.errorbar([1.02, 2.02], [s['sa12'], s['fa12']], yerr=[err['sa12']*1.96, err['fa12']*1.96], fmt='ko--', markerfacecolor='white')
-        if not np.isnan(s['sv24']).all() and not np.isnan(s['fv24']).all():
+        if 'sv24' in s and not np.isnan(s['sv24']).all() and 'fv24' in s and not np.isnan(s['fv24']).all():
             plt.errorbar([3, 4], [s['sv24'], s['fv24']], yerr=[err['sv24']*1.96, err['fv24']*1.96], fmt='ko-')
-        if not np.isnan(s['sa24']).all() and not np.isnan(s['fa24']).all():
+        if 'sa24' in s and not np.isnan(s['sa24']).all() and 'fa24' in s and not np.isnan(s['fa24']).all():
             plt.errorbar([3.02, 4.02], [s['sa24'], s['fa24']], yerr=[err['sa24']*1.96, err['fa24']*1.96], fmt='ko--', markerfacecolor='white')
         plt.ylim(0, .45)
     plt.title('Repetitions')
@@ -443,22 +443,22 @@ def plot_reps(s, err=None):
 def plot_temp_fact(s, err=None):
     plt.subplot(7, 3, 20)
     if err is None:
-        if not np.isnan(s['sv12']).all() and not np.isnan(s['fv12']).all():
+        if 'sv12' in s and not np.isnan(s['sv12']).all() and 'fv12' in s and not np.isnan(s['fv12']).all():
             plt.plot([1, 2], [s['sv12'], s['fv12']], 'ko-', label='Visual')
-        if not np.isnan(s['sa12']).all() and not np.isnan(s['fa12']).all():
+        if 'sa12' in s and not np.isnan(s['sa12']).all() and 'fa12' in s and not np.isnan(s['fa12']).all():
             plt.plot([1.02, 2.02], [s['sa12'], s['fa12']], 'ko--', markerfacecolor='white', label='Auditory')
-        if not np.isnan(s['sv24']).all() and not np.isnan(s['fv24']).all():
+        if 'sv24' in s and not np.isnan(s['sv24']).all() and 'fv24' in s and not np.isnan(s['fv24']).all():
             plt.plot([3, 4], [s['sv24'], s['fv24']], 'ko-')
-        if not np.isnan(s['sa24']).all() and not np.isnan(s['fa24']).all():
+        if 'sa24' in s and not np.isnan(s['sa24']).all() and 'fa24' in s and not np.isnan(s['fa24']).all():
             plt.plot([3.02, 4.02], [s['sa24'], s['fa24']], 'ko--', markerfacecolor='white')
     else:
-        if not np.isnan(s['sv12']).all() and not np.isnan(s['fv12']).all():
+        if 'sv12' in s and not np.isnan(s['sv12']).all() and 'fv12' in s and not np.isnan(s['fv12']).all():
             plt.errorbar([1, 2], [s['sv12'], s['fv12']], yerr=[err['sv12']*1.96, err['fv12']*1.96], fmt='ko-')
-        if not np.isnan(s['sa12']).all() and not np.isnan(s['fa12']).all():
+        if 'sa12' in s and not np.isnan(s['sa12']).all() and 'fa12' in s and not np.isnan(s['fa12']).all():
             plt.errorbar([1.02, 2.02], [s['sa12'], s['fa12']], yerr=[err['sa12']*1.96, err['fa12']*1.96], fmt='ko--', markerfacecolor='white')
-        if not np.isnan(s['sv24']).all() and not np.isnan(s['fv24']).all():
+        if 'sv24' in s and not np.isnan(s['sv24']).all() and 'fv24' in s and not np.isnan(s['fv24']).all():
             plt.errorbar([3, 4], [s['sv24'], s['fv24']], yerr=[err['sv24']*1.96, err['fv24']*1.96], fmt='ko-')
-        if not np.isnan(s['sa24']).all() and not np.isnan(s['fa24']).all():
+        if 'sa24' in s and not np.isnan(s['sa24']).all() and 'fa24' in s and not np.isnan(s['fa24']).all():
             plt.errorbar([3.02, 4.02], [s['sa24'], s['fa24']], yerr=[err['sa24']*1.96, err['fa24']*1.96], fmt='ko--', markerfacecolor='white')
     plt.title('Temporal Clustering Factor')
     plt.ylabel('Clustering Score')
