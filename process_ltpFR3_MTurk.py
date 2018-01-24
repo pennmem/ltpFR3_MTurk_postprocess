@@ -1,6 +1,7 @@
 import psiturk_tools
 from run_stats import run_stats
 from report import ltpFR3_report
+from survey_processing import process_survey
 
 # Set paths
 db_url = 'sqlite:////data/eeg/scalp/ltp/ltpFR3_MTurk/ltpFR3_anonymized.db'  # url for the database in which raw psiturk ouput is stored
@@ -13,11 +14,13 @@ if RUN_LOCATION == 'RHINO':
     behmat_dir = '/data/eeg/scalp/ltp/ltpFR3_MTurk/data/'
     stat_dir = '/data/eeg/scalp/ltp/ltpFR3_MTurk/stats/'
     report_dir = '/data/eeg/scalp/ltp/ltpFR3_MTurk/reports/'
+    survey_datafile = '/data/eeg/scalp/ltp/ltpFR3_MTurk/survey_responses.csv'
 elif RUN_LOCATION == 'LOCAL':
     event_dir = '/Users/jessepazdera/Desktop/ltpFR3_MTurk/events/'
     behmat_dir = '/Users/jessepazdera/Desktop/ltpFR3_MTurk/data/'
     stat_dir = '/Users/jessepazdera/Desktop/ltpFR3_MTurk/stats/'
     report_dir = '/Users/jessepazdera/Desktop/ltpFR3_MTurk/reports/'
+    survey_datafile = '/Users/jessepazdera/Desktop/ltpFR3_MTurk/survey_responses.csv'
 else:
     print('RUN_LOCATION not recognized. Valid options are RHINO and LOCAL.')
     exit()
@@ -30,3 +33,5 @@ psiturk_tools.process_psiturk_data(event_dir, behmat_dir, dict_path, force=False
 run_stats(behmat_dir, stat_dir, force=False)
 # Generate a PDF report for each participant, along with an aggregate report
 ltpFR3_report(stat_dir, report_dir, force=False)
+# Update survey response database
+process_survey(survey_datafile)
