@@ -40,7 +40,7 @@ def process_survey(outfile):
             data = data['questiondata']
 
         # Extract demographic info
-        age = data['age'] if 'age' in data else 'Not Reported'
+        age = data['age'] if 'age' in data else ''
         education = data['education'] if 'education' in data else 'Not Reported'
         ethnicity = data['ethnicity'] if 'ethnicity' in data else 'Not Reported'
         gender = data['gender'] if 'gender' in data else 'Not Reported'
