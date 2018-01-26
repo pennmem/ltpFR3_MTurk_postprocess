@@ -132,6 +132,3 @@ def process_survey(outfile):
             w.writerow(head)
             for row in s:
                 w.writerow(row)
-
-if __name__=='__main__':
-    process_survey('/Users/jessepazdera/Desktop/ltpFR3_Survey.csv')
