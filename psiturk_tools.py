@@ -82,11 +82,11 @@ def load_psiturk_data(db_url, table_name, event_dir, data_column_name='datastrin
             os.remove(inc_datafile_path)
 
         # Move excluded, rejected, and bad sessions to the appropriate folders
-        if subj_id in exclude:
+        if subj_id in exclude and os.path.exists(datafile_path):
             os.rename(datafile_path, exc_datafile_path)
-        elif subj_id in bad_sess:
+        elif subj_id in bad_sess and os.path.exists(datafile_path):
             os.rename(datafile_path, bad_datafile_path)
-        elif subj_id in rejected:
+        elif subj_id in rejected and os.path.exists(datafile_path):
             os.rename(datafile_path, rej_datafile_path)
 
 
