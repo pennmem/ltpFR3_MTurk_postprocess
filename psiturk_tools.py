@@ -52,6 +52,9 @@ def load_psiturk_data(db_url, table_name, event_dir, data_column_name='datastrin
         subj_id = row['workerid']
         datafile_path = os.path.join(event_dir, '%s.json' % subj_id)
         inc_datafile_path = os.path.join(event_dir, 'incomplete', '%s.json' % subj_id)
+        exc_datafile_path = os.path.join(event_dir, 'excluded', '%s.json' % subj_id)
+        bad_datafile_path = os.path.join(event_dir, 'bad_sess', '%s.json' % subj_id)
+        rej_datafile_path = os.path.join(event_dir, 'rejected', '%s.json' % subj_id)
 
         # Only process subjects who aren't excluded
         if subj_id in skip:
@@ -74,10 +77,17 @@ def load_psiturk_data(db_url, table_name, event_dir, data_column_name='datastrin
         status = row['status']
         if status not in complete_statuses and os.path.exists(datafile_path):
             os.rename(datafile_path, inc_datafile_path)
-
         # Remove logs previously marked as incomplete if they have now become complete
         elif status in complete_statuses and os.path.exists(inc_datafile_path):
             os.remove(inc_datafile_path)
+
+        # Move excluded, rejected, and bad sessions to the appropriate folders
+        if subj_id in exclude:
+            os.rename(datafile_path, exc_datafile_path)
+        elif subj_id in bad_sess:
+            os.rename(datafile_path, bad_datafile_path)
+        elif subj_id in rejected:
+            os.rename(datafile_path, rej_datafile_path)
 
 
 def process_psiturk_data(event_dir, behmat_dir, dict_path, force=False):
