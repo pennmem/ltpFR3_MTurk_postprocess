@@ -56,17 +56,17 @@ def load_psiturk_data(db_url, table_name, event_dir, data_column_name='datastrin
         bad_datafile_path = os.path.join(event_dir, 'bad_sess', '%s.json' % subj_id)
         rej_datafile_path = os.path.join(event_dir, 'rejected', '%s.json' % subj_id)
 
-        # Only process subjects who aren't excluded
-        if subj_id in skip:
-            continue
-
         # Extract participant's data string
         data = row[data_column_name]
 
         # Only attempt to write a JSON file if the participant has data and does not already have a JSON file
         if data != '' and not os.path.exists(datafile_path):
             # Parse data string as a JSON object
-            data = json.loads(data)
+            try:
+                data = json.loads(data)
+            except:
+                print('Failed to parse session log for %s as a JSON object! Skipping...' % subj_id)
+                continue
 
             # Write JSON data to a file if the file does not already exist
             if force or not os.path.exists(datafile_path):
