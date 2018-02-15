@@ -138,4 +138,4 @@ def process_survey(outfile):
     all_subj = np.array(s)[:, 0]
     wn = np.array(s)[:, -2]
     subj_wrote_notes = all_subj[wn == '1']
-    subj_wrote_notes.savetxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/WROTE_NOTES.txt', subj_wrote_notes, fmt='%s')
+    np.savetxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/WROTE_NOTES.txt', subj_wrote_notes, fmt='%s')
