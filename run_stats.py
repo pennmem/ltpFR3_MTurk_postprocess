@@ -83,12 +83,20 @@ def run_stats(data_dir, stat_dir, force=False):
 
     # Now we calculate the average stats and save to a JSON file
     for version in version_starts:
+        avg_stats = {}
         v_start = version_starts[version]
         v_end = None if version + 1 not in version_starts else version_starts[version + 1]
+
         outfile = os.path.join(stat_dir, 'all_v%d.json' % version)
-        avg_stats = {}
         avg_stats['mean'], avg_stats['sem'], avg_stats['N'] = calculate_avg_stats(stats, stats_to_run, filters.keys(),
                                                                 version_start=v_start, version_end=v_end)
+        write_stats_to_json(avg_stats, outfile, average_stats=True)
+
+        outfile = os.path.join(stat_dir, 'all_v%d_excl_wn.json' % version)
+        avg_stats['mean'], avg_stats['sem'], avg_stats['N'] = calculate_avg_stats(stats, stats_to_run, filters.keys(),
+                                                                                  version_start=v_start,
+                                                                                  version_end=v_end,
+                                                                                  exclude_wrote_notes=True)
         write_stats_to_json(avg_stats, outfile, average_stats=True)
 
 
@@ -141,12 +149,16 @@ def stats_for_subj(sub, condi, recalls, wasrec, ffr_wasrec, rt, recw, presw, int
     return stats
 
 
-def calculate_avg_stats(s, stats_to_run, filters, version_start=1, version_end=None):
+def calculate_avg_stats(s, stats_to_run, filters, version_start=1, version_end=None, exclude_wrote_notes=False):
     # Exclusion notes can be found at: https://app.asana.com/0/291595828487527/468440625589939/f
     exclude = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/EXCLUDED.txt', dtype='U8')
     bad_sess = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/BAD_SESS.txt', dtype='U8')
     rejected = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/REJECTED.txt', dtype='U8')
     skip = np.union1d(np.union1d(exclude, bad_sess), rejected)
+
+    if exclude_wrote_notes:
+        wrote_notes = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/WROTE_NOTES.txt', dtype='U8')
+        skip = np.union1d(skip, wrote_notes)
 
     avs = {}
     stderr = {}

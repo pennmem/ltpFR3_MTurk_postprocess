@@ -1,5 +1,6 @@
 import csv
 import json
+import numpy as np
 from glob import glob
 
 def process_survey(outfile):
@@ -132,3 +133,7 @@ def process_survey(outfile):
             w.writerow(head)
             for row in s:
                 w.writerow(row)
+
+        # Write out WROTE_NOTES.txt file
+        subj_wrote_notes = np.array(subj)[np.array(wrote_notes) == '1']
+        subj_wrote_notes.savetxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/WROTE_NOTES.txt', subj_wrote_notes, fmt='%s')
