@@ -27,15 +27,15 @@ def run_stats(data_dir, stat_dir, force=False):
     :param force: If False, only calculate stats for participants who do not already have a stats file (plus the average
      stat file). If True, calculate stats for all participants. (Default == False)
     """
-    exclude = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/EXCLUDED.txt', dtype='U8')
-    bad_sess = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/BAD_SESS.txt', dtype='U8')
-    rejected = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/REJECTED.txt', dtype='U8')
+    exclude = [s.decode('UTF-8') for s in np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/EXCLUDED.txt', dtype='S8')]
+    bad_sess = [s.decode('UTF-8') for s in np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/BAD_SESS.txt', dtype='S8')]
+    rejected = [s.decode('UTF-8') for s in np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/REJECTED.txt', dtype='S8')]
     skip = np.union1d(np.union1d(exclude, bad_sess), rejected)
     with open('/data/eeg/scalp/ltp/ltpFR3_MTurk/VERSION_STARTS.json') as f:
         version_starts = json.load(f)
         version_starts = {int(v): version_starts[v] for v in version_starts}
 
-    stats_to_run = ['prec', 'spc', 'pfr', 'psr', 'ptr', 'crp', 'crp_early', 'crp_late', 'plis', 'elis', 'reps', 'pli_recency', 'ffr_spc', 'temp_fact', 'irt']
+    stats_to_run = ['prec', 'spc', 'pfr', 'psr', 'ptr', 'crp', 'crp_early', 'crp_late', 'plis', 'elis', 'reps', 'pli_recency', 'ffr_spc', 'temp_fact', 'irt', 'irt_sp_excl']
 
     filters = {'all': {'ll': None, 'pr': None, 'mod': None, 'dd': None},
                'a12': {'ll': 12, 'mod': 'a'}, 'a24': {'ll': 24, 'mod': 'a'},
@@ -138,6 +138,13 @@ def stats_for_subj(sub, condi, recalls, wasrec, ffr_wasrec, rt, recw, presw, int
             stats['crp_late'][f] = crp(frecalls[:, 2:], fsub, ll, lag_num=4)[0]
             stats['temp_fact'][f] = temp_fact(frecalls, fsub, ll)[0]
             stats['irt'][f] = irt_subj(frt, frecalls, ll)
+            # Special version of the IRT which excludes trials that had a recall within the last 10 seconds
+            irt_exclusion_mask = frt[:, -1] > 50000
+            if irt_exclusion_mask.sum() > 0:
+                stats['irt_sp_excl'][f] = irt_subj(frt, frecalls, ll)
+            else:
+                stats['irt_sp_excl'][f] = np.empty((ll+1, ll+1))
+                stats['irt_sp_excl'][f].fill(np.nan)
         stats['plis'][f] = avg_pli(fintru, fsub, frecw)[0]
         stats['elis'][f] = avg_eli(fintru, fsub)[0]
         stats['reps'][f] = avg_reps(frecalls, fsub)[0]
@@ -151,13 +158,13 @@ def stats_for_subj(sub, condi, recalls, wasrec, ffr_wasrec, rt, recw, presw, int
 
 def calculate_avg_stats(s, stats_to_run, filters, version_start=1, version_end=None, exclude_wrote_notes=False):
     # Exclusion notes can be found at: https://app.asana.com/0/291595828487527/468440625589939/f
-    exclude = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/EXCLUDED.txt', dtype='U8')
-    bad_sess = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/BAD_SESS.txt', dtype='U8')
-    rejected = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/REJECTED.txt', dtype='U8')
+    exclude = [b.decode('UTF-8') for b in np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/EXCLUDED.txt', dtype='S8')]
+    bad_sess = [b.decode('UTF-8') for b in np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/BAD_SESS.txt', dtype='S8')]
+    rejected = [b.decode('UTF-8') for b in np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/REJECTED.txt', dtype='S8')]
     skip = np.union1d(np.union1d(exclude, bad_sess), rejected)
 
     if exclude_wrote_notes:
-        wrote_notes = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/WROTE_NOTES.txt', dtype='U8')
+        wrote_notes = [b.decode('UTF-8') for b in np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/WROTE_NOTES.txt', dtype='S8')]
         skip = np.union1d(skip, wrote_notes)
 
     avs = {}
