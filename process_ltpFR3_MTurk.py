@@ -2,6 +2,7 @@ import psiturk_tools
 from run_stats import run_stats
 from report import ltpFR3_report
 from survey_processing import process_survey
+from sort_excluded_files import sort_excluded_files
 
 # Set paths
 db_url = 'sqlite:////data/eeg/scalp/ltp/ltpFR3_MTurk/ltpFR3_anonymized.db'  # url for the database in which raw psiturk ouput is stored
@@ -35,3 +36,5 @@ process_survey(survey_datafile)
 run_stats(behmat_dir, stat_dir, force=False)
 # Generate a PDF report for each participant, along with an aggregate report
 ltpFR3_report(stat_dir, report_dir, force=False)
+# Sort files for excluded, rejected, and bad session participants into the appropriate folders
+sort_excluded_files()
