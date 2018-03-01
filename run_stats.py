@@ -139,7 +139,7 @@ def stats_for_subj(sub, condi, recalls, wasrec, ffr_wasrec, rt, recw, presw, int
             stats['temp_fact'][f] = temp_fact(frecalls, fsub, ll)[0]
             stats['irt'][f] = irt_subj(frt, frecalls, ll)
             # Special version of the IRT which excludes trials that had a recall within the last 10 seconds
-            rt_exclusion_mask = np.max(frt, axis=1) > 50000
+            rt_exclusion_mask = np.max(frt, axis=1) <= 50000
             if rt_exclusion_mask.sum() > 0:
                 stats['irt_sp_excl'][f] = irt_subj(frt[rt_exclusion_mask], frecalls[rt_exclusion_mask], ll)
             else:
