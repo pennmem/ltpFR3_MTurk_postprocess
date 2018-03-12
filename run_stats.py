@@ -136,7 +136,7 @@ def stats_for_subj(sub, condi, recalls, wasrec, ffr_wasrec, rt, recw, presw, int
             stats['crp'][f] = crp(frecalls, fsub, ll, lag_num=4)[0]
             stats['crp_early'][f] = crp(frecalls[:, :3], fsub, ll, lag_num=4)[0]
             stats['crp_late'][f] = crp(frecalls[:, 2:], fsub, ll, lag_num=4)[0]
-            stats['temp_fact'][f] = temp_fact(frecalls, fsub, ll)[0]
+            stats['temp_fact'][f] = temp_fact(frecalls[:, 2:], fsub, ll)[0]
             stats['irt'][f] = irt_subj(frt, frecalls, ll)
             # Special version of the IRT which excludes trials that had a recall within the last 10 seconds
             rt_exclusion_mask = np.max(frt, axis=1) <= 50000
