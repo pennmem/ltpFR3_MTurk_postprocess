@@ -156,6 +156,7 @@ def process_psiturk_data(event_dir, behmat_dir, dict_path, force=False):
         pres_words = np.array([str(x[1]).strip() for x in s_pres])
         rec_trials = np.array([x[0] for x in s_recalls])
         rec_words = np.array([[str(y).strip() for y in x[1] if str(y).strip() != ''] for x in s_recalls])
+        d['rt'] = pad_into_array([[t for i, t in enumerate(x[3]) if str(x[1][i]).strip() != ''] for x in s_recalls])
 
         # Get distractor problems and responses, then total the number of correct answers on each trial
         s_dist = data.loc[distractor_filter, ['num1', 'num2', 'num3', 'responses']].as_matrix()
@@ -181,9 +182,6 @@ def process_psiturk_data(event_dir, behmat_dir, dict_path, force=False):
         # Create empty recalled and FFR_recalled matrix to mark whether each word was subsequently recalled
         d['recalled'] = np.zeros((len(d['pres_words']), np.max(d['list_len'])))
         d['ffr_recalled'] = np.zeros((len(d['pres_words']), np.max(d['list_len'])))
-
-        # Add recall timing matrix to the data structure
-        d['rt'] = [x[3] for x in s_recalls]
 
         # For each trial in a subject's session
         for i, t in enumerate(np.unique(pres_trials)):
@@ -221,11 +219,13 @@ def process_psiturk_data(event_dir, behmat_dir, dict_path, force=False):
         # Process FFR data
         d['ffr_rt'] = []
         if len(s_ffr) == 1 and len(s_ffr[0]) == 2:
-            d['ffr_rt'] = s_ffr[0][1]
             for i, recall in enumerate(s_ffr[0][0]):
+                if str(recall).strip() == '':
+                    continue
                 list_num, position, recall = which_item(recall, pres_words, pres_trials, dictionary)
                 d['ffr_rec_words'].append(recall)
                 d['ffr_serialpos'].append(position)
+                d['ffr_rt'].append(s_ffr[0][1][i])
                 if list_num is None:
                     d['ffr_pres_trial'].append(-999)
                 else:
@@ -238,7 +238,6 @@ def process_psiturk_data(event_dir, behmat_dir, dict_path, force=False):
             # Zero-pad recall-related arrays, create intrusions matrix, and create subject array, then save to JSON
             d['subject'] = [s for row in d['serialpos']]
             d['serialpos'] = pad_into_array(d['serialpos']).astype(int)
-            d['rt'] = pad_into_array(d['rt'])
             d['rec_words'] = pad_into_array(d['rec_words'])
             d['pres_words'] = pad_into_array(d['pres_words'])
             d['intrusions'] = recalls_to_intrusions(d['serialpos'])
