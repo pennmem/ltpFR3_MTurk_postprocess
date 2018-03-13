@@ -51,7 +51,7 @@ def run_stats(data_dir, stat_dir, force=False):
     for data_file in glob(os.path.join(data_dir, '*.json')):
         subj = os.path.splitext(os.path.basename(data_file))[0]  # Get subject ID from file name
         outfile = os.path.join(stat_dir, '%s.json' % subj)  # Define file path for stat file
-        if (os.path.exists(outfile) or subj in skip) and not force:  # Skip participants who already had stats calculated
+        if subj in bad_sess or ((os.path.exists(outfile) or subj in exclude or subj in rejected) and not force):  # Skip participants who already had stats calculated
             continue
 
         with open(data_file, 'r') as f:

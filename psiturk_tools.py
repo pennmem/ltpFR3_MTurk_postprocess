@@ -109,14 +109,14 @@ def process_psiturk_data(event_dir, behmat_dir, dict_path, force=False):
     exclude = [s.decode('UTF-8') for s in np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/EXCLUDED.txt', dtype='S8')]
     bad_sess = [s.decode('UTF-8') for s in np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/BAD_SESS.txt', dtype='S8')]
     rejected = [s.decode('UTF-8') for s in np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/REJECTED.txt', dtype='S8')]
-    skip = np.union1d(np.union1d(exclude, bad_sess), rejected)
 
     # Process each participant's raw data into a JSON file of behavioral matrices
     for json_file in glob(os.path.join(event_dir, '*.json')):
 
         s = os.path.splitext(os.path.basename(json_file))[0]  # Get subject ID from file name
         outfile = os.path.join(behmat_dir, '%s.json' % s)  # Define file path for behavioral matrix file
-        if (os.path.exists(outfile) or s in skip) and not force:  # Skip participants who have already been post-processed
+        # Skip bad sessions and participants who have already been processed, excluded, or rejected
+        if s in bad_sess or ((os.path.exists(outfile) or s in exclude or s in rejected) and not force):
             continue
 
         # Get participant's data as data frame
