@@ -34,9 +34,6 @@ def load_psiturk_data(db_url, table_name, event_dir, data_column_name='datastrin
     BONUSED = 7
     """
     complete_statuses = [3, 4, 5, 7]  # Status codes of subjects who have completed the study
-    exclude = [s.decode('UTF-8') for s in np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/EXCLUDED.txt', dtype='S8')]
-    bad_sess = [s.decode('UTF-8') for s in np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/BAD_SESS.txt', dtype='S8')]
-    rejected = [s.decode('UTF-8') for s in np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/REJECTED.txt', dtype='S8')]
 
     # Use sqlalchemy to load rows from specified table in the specified database
     engine = create_engine(db_url)
@@ -51,9 +48,6 @@ def load_psiturk_data(db_url, table_name, event_dir, data_column_name='datastrin
         subj_id = row['workerid']
         datafile_path = os.path.join(event_dir, '%s.json' % subj_id)
         inc_datafile_path = os.path.join(event_dir, 'incomplete', '%s.json' % subj_id)
-        exc_datafile_path = os.path.join(event_dir, 'excluded', '%s.json' % subj_id)
-        bad_datafile_path = os.path.join(event_dir, 'bad_sess', '%s.json' % subj_id)
-        rej_datafile_path = os.path.join(event_dir, 'rejected', '%s.json' % subj_id)
 
         # Extract participant's data string
         data = row[data_column_name]
@@ -79,14 +73,6 @@ def load_psiturk_data(db_url, table_name, event_dir, data_column_name='datastrin
         # Remove logs previously marked as incomplete if they have now become complete
         elif status in complete_statuses and os.path.exists(inc_datafile_path):
             os.remove(inc_datafile_path)
-
-        # Move excluded, rejected, and bad sessions to the appropriate folders
-        if subj_id in exclude and os.path.exists(datafile_path):
-            os.rename(datafile_path, exc_datafile_path)
-        elif subj_id in bad_sess and os.path.exists(datafile_path):
-            os.rename(datafile_path, bad_datafile_path)
-        elif subj_id in rejected and os.path.exists(datafile_path):
-            os.rename(datafile_path, rej_datafile_path)
 
 
 def process_psiturk_data(event_dir, behmat_dir, dict_path, force=False):
