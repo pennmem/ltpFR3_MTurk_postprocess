@@ -134,8 +134,8 @@ def stats_for_subj(sub, condi, recalls, wasrec, ffr_wasrec, rt, recw, presw, int
             stats['psr'][f] = pnr(frecalls, fsub, ll, n=1)[0]
             stats['ptr'][f] = pnr(frecalls, fsub, ll, n=2)[0]
             stats['crp'][f] = crp(frecalls, fsub, ll, lag_num=4)[0]
-            stats['crp_early'][f] = crp(frecalls[:, :3], fsub, ll, lag_num=4)[0]
-            stats['crp_late'][f] = crp(frecalls, fsub, ll, lag_num=4, skip_first_n=2)[0]
+            stats['crp_early'][f] = crp(frecalls[:, :3], fsub, ll, lag_num=5)[0]
+            stats['crp_late'][f] = crp(frecalls, fsub, ll, lag_num=5, skip_first_n=2)[0]
             stats['temp_fact'][f] = temp_fact(frecalls, fsub, ll, skip_first_n=2)[0]
             stats['irt'][f] = irt_subj(frt, frecalls, ll)
             # Special version of the IRT which excludes trials that had a recall within the last 10 seconds
