@@ -148,7 +148,7 @@ def stats_for_subj(sub, condi, recalls, wasrec, ffr_wasrec, rt, recw, presw, int
         stats['plis'][f] = avg_pli(fintru, fsub, frecw)[0]
         stats['elis'][f] = avg_eli(fintru, fsub)[0]
         stats['reps'][f] = avg_reps(frecalls, fsub)[0]
-        stats['pli_recency'][f] = pli_recency(fintru, fsub, 5, frecw)[0]
+        stats['pli_recency'][f] = pli_recency(fintru, fsub, 5)[0]
 
     stats['rec_per_trial'] = np.nanmean(wasrec, axis=1)
     stats['math_per_trial'] = np.sum(math, axis=1)
