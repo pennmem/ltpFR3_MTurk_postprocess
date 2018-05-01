@@ -315,13 +315,13 @@ def plot_ptr(s):
 def plot_pli_recency(s):
     plt.subplot(7, 3, 13)
     if 'sv12' in s and not np.isnan(s['sv12']).all():
-        plt.plot(range(1, 7), s['sv12'], 'ko-', label='Slow/Visual')
+        plt.plot(range(1, 6), s['sv12'], 'ko-', label='Slow/Visual')
     if 'fv12' in s and not np.isnan(s['fv12']).all():
-        plt.plot(range(1, 7), s['fv12'], 'k^-', label='Fast/Visual')
+        plt.plot(range(1, 6), s['fv12'], 'k^-', label='Fast/Visual')
     if 'sa12' in s and not np.isnan(s['sa12']).all():
-        plt.plot(range(1, 7), s['sa12'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
+        plt.plot(range(1, 6), s['sa12'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
     if 'fa12' in s and not np.isnan(s['fa12']).all():
-        plt.plot(range(1, 7), s['fa12'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
+        plt.plot(range(1, 6), s['fa12'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
     plt.title('PLI Recency (List Length 12)')
     plt.xlabel('Number of Lists Back')
     plt.ylabel('Ratio of PLIs')
@@ -330,13 +330,13 @@ def plot_pli_recency(s):
 
     plt.subplot(7, 3, 16)
     if 'sv24' in s and not np.isnan(s['sv24']).all():
-        plt.plot(range(1, 7), s['sv24'], 'ko-', label='Slow/Visual')
+        plt.plot(range(1, 6), s['sv24'], 'ko-', label='Slow/Visual')
     if 'fv24' in s and not np.isnan(s['fv24']).all():
-        plt.plot(range(1, 7), s['fv24'], 'k^-', label='Fast/Visual')
+        plt.plot(range(1, 6), s['fv24'], 'k^-', label='Fast/Visual')
     if 'sa24' in s and not np.isnan(s['sa24']).all():
-        plt.plot(range(1, 7), s['sa24'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
+        plt.plot(range(1, 6), s['sa24'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
     if 'fa24' in s and not np.isnan(s['fa24']).all():
-        plt.plot(range(1, 7), s['fa24'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
+        plt.plot(range(1, 6), s['fa24'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
     plt.title('PLI Recency (List Length 24)')
     plt.xlabel('Number of Lists Back')
     plt.ylabel('Ratio of PLIs')
