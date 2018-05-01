@@ -149,13 +149,13 @@ def plot_ffr_spc(s):
 def plot_crp_early(s):
     plt.subplot(7, 3, 2)
     if 'sv12' in s and not np.isnan(s['sv12']).all():
-        plt.plot(range(-4, 5), s['sv12'], 'ko-', label='Slow/Visual')
+        plt.plot(range(-5, 6), s['sv12'], 'ko-', label='Slow/Visual')
     if 'fv12' in s and not np.isnan(s['fv12']).all():
-        plt.plot(range(-4, 5), s['fv12'], 'k^-', label='Fast/Visual')
+        plt.plot(range(-5, 6), s['fv12'], 'k^-', label='Fast/Visual')
     if 'sa12' in s and not np.isnan(s['sa12']).all():
-        plt.plot(range(-4, 5), s['sa12'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
+        plt.plot(range(-5, 6), s['sa12'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
     if 'fa12' in s and not np.isnan(s['fa12']).all():
-        plt.plot(range(-4, 5), s['fa12'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
+        plt.plot(range(-5, 6), s['fa12'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
     plt.title('lag-CRP Early (List Length 12)')
     plt.xlabel('Lag')
     plt.ylabel('Cond. Resp. Probability')
@@ -164,13 +164,13 @@ def plot_crp_early(s):
 
     plt.subplot(7, 3, 5)
     if 'sv24' in s and not np.isnan(s['sv24']).all():
-        plt.plot(range(-4, 5), s['sv24'], 'ko-', label='Slow/Visual')
+        plt.plot(range(-5, 6), s['sv24'], 'ko-', label='Slow/Visual')
     if 'fv24' in s and not np.isnan(s['fv24']).all():
-        plt.plot(range(-4, 5), s['fv24'], 'k^-', label='Fast/Visual')
+        plt.plot(range(-5, 6), s['fv24'], 'k^-', label='Fast/Visual')
     if 'sa24' in s and not np.isnan(s['sa24']).all():
-        plt.plot(range(-4, 5), s['sa24'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
+        plt.plot(range(-5, 6), s['sa24'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
     if 'fa24' in s and not np.isnan(s['fa24']).all():
-        plt.plot(range(-4, 5), s['fa24'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
+        plt.plot(range(-5, 6), s['fa24'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
     plt.title('lag-CRP Early (List Length 24)')
     plt.xlabel('Lag')
     plt.ylabel('Cond. Resp. Probability')
@@ -181,13 +181,13 @@ def plot_crp_early(s):
 def plot_crp_late(s):
     plt.subplot(7, 3, 3)
     if 'sv12' in s and not np.isnan(s['sv12']).all():
-        plt.plot(range(-4, 5), s['sv12'], 'ko-', label='Slow/Visual')
+        plt.plot(range(-5, 6), s['sv12'], 'ko-', label='Slow/Visual')
     if 'fv12' in s and not np.isnan(s['fv12']).all():
-        plt.plot(range(-4, 5), s['fv12'], 'k^-', label='Fast/Visual')
+        plt.plot(range(-5, 6), s['fv12'], 'k^-', label='Fast/Visual')
     if 'sa12' in s and not np.isnan(s['sa12']).all():
-        plt.plot(range(-4, 5), s['sa12'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
+        plt.plot(range(-5, 6), s['sa12'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
     if 'fa12' in s and not np.isnan(s['fa12']).all():
-        plt.plot(range(-4, 5), s['fa12'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
+        plt.plot(range(-5, 6), s['fa12'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
     plt.title('lag-CRP Late (List Length 12)')
     plt.xlabel('Lag')
     plt.ylabel('Cond. Resp. Probability')
@@ -196,13 +196,13 @@ def plot_crp_late(s):
 
     plt.subplot(7, 3, 6)
     if 'sv24' in s and not np.isnan(s['sv24']).all():
-        plt.plot(range(-4, 5), s['sv24'], 'ko-', label='Slow/Visual')
+        plt.plot(range(-5, 6), s['sv24'], 'ko-', label='Slow/Visual')
     if 'fv24' in s and not np.isnan(s['fv24']).all():
-        plt.plot(range(-4, 5), s['fv24'], 'k^-', label='Fast/Visual')
+        plt.plot(range(-5, 6), s['fv24'], 'k^-', label='Fast/Visual')
     if 'sa24' in s and not np.isnan(s['sa24']).all():
-        plt.plot(range(-4, 5), s['sa24'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
+        plt.plot(range(-5, 6), s['sa24'], 'ko--', markerfacecolor='white', label='Slow/Auditory')
     if 'fa24' in s and not np.isnan(s['fa24']).all():
-        plt.plot(range(-4, 5), s['fa24'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
+        plt.plot(range(-5, 6), s['fa24'], 'k^--', markerfacecolor='white', label='Fast/Auditory')
     plt.title('lag-CRP Late (List Length 24)')
     plt.xlabel('Lag')
     plt.ylabel('Cond. Resp. Probability')

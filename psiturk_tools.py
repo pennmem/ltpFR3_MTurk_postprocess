@@ -312,6 +312,10 @@ def pad_into_array(l):
     if len(lens) == 0:
         return lens
 
+    # If all rows were the same length, just return the original input as an array
+    if lens.max() == lens.min():
+        return l
+
     # Mask of valid places in each row
     mask = np.arange(lens.max()) < lens[:, None]
 
