@@ -453,14 +453,17 @@ def plis_1factor(intrusions, n_skip=1):
     on practice trials.
 
     :param intrusions:
+    :param n_skip:
     :return:
     """
     plis = 0.
+    possibles = 0.
     for trial, trial_data in enumerate(intrusions):
         if trial < n_skip:
             continue
         plis += np.logical_and(trial_data > 0, trial_data <= trial).sum()
-    plis /= len(intrusions) - n_skip
+        possibles += 1.
+    plis = plis / possibles if possibles != 0 else np.nan
     return plis
 
 
