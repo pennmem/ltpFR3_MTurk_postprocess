@@ -546,9 +546,9 @@ def pffr_subj(ffr_rec, pres_words, rec_words):
     # recalled (either correctly or as an intrusion)
     rec_words = rec_words.flatten()
     prev_rec = np.full(pres_words.shape, np.nan)
+    pad_mask = pres_words != '0'
     for trial in range(ffr_rec.shape[0]):
-        pad_mask = pres_words != '0'
-        prev_rec[trial, pad_mask] = np.in1d(pres_words[trial, pad_mask], rec_words)
+        prev_rec[trial, pad_mask[trial]] = np.in1d(pres_words[trial, pad_mask[trial]], rec_words)
 
     # Probability of final free recall for all words
     overall_pffr = np.nanmean(ffr_rec)
