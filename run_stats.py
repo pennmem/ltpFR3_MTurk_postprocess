@@ -426,7 +426,7 @@ def plir_2factor(intrusions, modalities, n_points=5, n_skip=2):
         pli_recency[trial, :, :, int(cur_mod == 'v')] = np.nan
 
         # Use int(trial_mods[pli] == 'a') to send visual data into index 0 and auditory data into index 1
-        trial_plis = trial_data[(trial_data > 0) and (trial_data <= trial)]
+        trial_plis = trial_data[(trial_data > 0) & (trial_data <= trial)]
         for pli in trial_plis:
             pli_recency[trial, pli-1, int(past_mods[pli-1] == 'a'), int(cur_mod == 'a')] += 1
 
