@@ -385,7 +385,7 @@ def plir_1factor(intrusions, condi, n_points=5, n_skip=2, ll=None, pr=None, mod=
     pli_recency = pli_recency / plis if plis != 0 else np.full(n_trials, np.nan)
 
     # Extract just the recency score for n lists back
-    pli_recency = pli_recency[:, :n_points, :]
+    pli_recency = pli_recency[:n_points]
 
     return pli_recency
 
