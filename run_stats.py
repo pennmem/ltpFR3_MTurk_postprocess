@@ -553,8 +553,8 @@ def pffr_subj(ffr_rec, pres_words, rec_words):
     # Probability of final free recall for all words
     overall_pffr = np.nanmean(ffr_rec)
     # Probability of final free recall for previously recalled words
-    prev_rec_pffr = np.nanmean(ffr_rec[prev_rec])
+    prev_rec_pffr = np.nanmean(ffr_rec[prev_rec == 1])
     # Probability of final free recall for previously unrecalled words
-    prev_unrec_pffr = np.nanmean(ffr_rec[~prev_rec])
+    prev_unrec_pffr = np.nanmean(ffr_rec[prev_rec != 1])
 
     return overall_pffr, prev_rec_pffr, prev_unrec_pffr
