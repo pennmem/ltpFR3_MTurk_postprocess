@@ -370,7 +370,7 @@ def plir_1factor(intrusions, condi, n_points=5, n_skip=2, ll=None, pr=None, mod=
 
     for trial, trial_data in enumerate(intrusions):
 
-        if trial < n_skip or not condi_mask:
+        if trial < n_skip or not condi_mask[trial]:
             pli_recency[trial, :].fill(np.nan)
         else:
             trial_plis = trial_data[(trial_data > 0) & (trial_data <= trial)]
