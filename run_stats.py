@@ -180,7 +180,7 @@ def stats_for_subj(sub, condi, recalls, wasrec, ffr_wasrec, rt, recw, presw, int
             continue
 
         # Calculate stats on all lists within the current condition. Note that some stats require a single list length.
-        ll = filters[f]['ll']
+        ll = filters[f]['ll'] if 'll' in filters[f] else None
         if ll is not None:
             # SPC, PFR/PSR/PTR, CRP, TemF, IRT
             stats['spc'][f] = spc(frecalls, fsub, ll)[0]
