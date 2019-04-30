@@ -5,8 +5,10 @@ from glob import glob
 from pybeh.spc import spc
 from pybeh.pnr import pnr
 from pybeh.crp import crp
-from pybeh.temp_fact import temp_fact
+from pybeh.xli import xli
+from pybeh.reps import reps
 from scipy.stats import sem
+from pybeh.temp_fact import temp_fact
 from write_to_json import write_stats_to_json
 
 
@@ -35,17 +37,62 @@ def run_stats(data_dir, stat_dir, force=False):
         version_starts = json.load(f)
         version_starts = {int(v): version_starts[v] for v in version_starts}
 
-    stats_to_run = ['prec', 'spc', 'pfr', 'psr', 'ptr', 'crp', 'crp_early', 'crp_late', 'plis', 'elis', 'reps', 'pli_recency', 'ffr_spc', 'temp_fact', 'irt', 'irt_sp_excl']
+    filters = {
+        # Grand average
+        'all': {'ll': None, 'pr': None, 'mod': None, 'dd': None},
 
-    filters = {'all': {'ll': None, 'pr': None, 'mod': None, 'dd': None},
-               'a12': {'ll': 12, 'mod': 'a'}, 'a24': {'ll': 24, 'mod': 'a'},
-               'v12': {'ll': 12, 'mod': 'v'}, 'v24': {'ll': 24, 'mod': 'v'},
-               'f12': {'ll': 12, 'pr': 800}, 'f24': {'ll': 24, 'pr': 800},
-               's12': {'ll': 12, 'pr': 1600}, 's24': {'ll': 24, 'pr': 1600},
-               'sa12': {'ll': 12, 'pr': 1600, 'mod': 'a'}, 'sa24': {'ll': 24, 'pr': 1600, 'mod': 'a'},
-               'sv12': {'ll': 12, 'pr': 1600, 'mod': 'v'}, 'sv24': {'ll': 24, 'pr': 1600, 'mod': 'v'},
-               'fa12': {'ll': 12, 'pr': 800, 'mod': 'a'}, 'fa24': {'ll': 24, 'pr': 800, 'mod': 'a'},
-               'fv12': {'ll': 12, 'pr': 800, 'mod': 'v'}, 'fv24': {'ll': 24, 'pr': 800, 'mod': 'v'}}
+        # Modality
+        'a': {'mod': 'a'}, 'v': {'mod': 'v'},
+
+        # Pres Rate
+        's': {'pr': 1600}, 'f': {'pr': 800},
+
+        # List Length
+        '12': {'ll': 12}, '24': {'ll': 24},
+
+        # Distractor Duration
+        'd': {'dd': 12000}, 'D': {'dd': 24000},
+
+        # Modality x List Length
+        'a12': {'ll': 12, 'mod': 'a'}, 'a24': {'ll': 24, 'mod': 'a'},
+        'v12': {'ll': 12, 'mod': 'v'}, 'v24': {'ll': 24, 'mod': 'v'},
+
+        # Pres Rate x List Length
+        'f12': {'ll': 12, 'pr': 800}, 'f24': {'ll': 24, 'pr': 800},
+        's12': {'ll': 12, 'pr': 1600}, 's24': {'ll': 24, 'pr': 1600},
+
+        # Distractor Duration x List Length
+        '12d': {'ll': 12, 'dd': 12000}, '24d': {'ll': 24, 'dd': 12000},
+        '12D': {'ll': 12, 'dd': 24000}, '24D': {'ll': 24, 'dd': 24000},
+
+        # Modality x Pres Rate x List Length
+        'sa12': {'ll': 12, 'pr': 1600, 'mod': 'a'}, 'sa24': {'ll': 24, 'pr': 1600, 'mod': 'a'},
+        'sv12': {'ll': 12, 'pr': 1600, 'mod': 'v'}, 'sv24': {'ll': 24, 'pr': 1600, 'mod': 'v'},
+        'fa12': {'ll': 12, 'pr': 800, 'mod': 'a'}, 'fa24': {'ll': 24, 'pr': 800, 'mod': 'a'},
+        'fv12': {'ll': 12, 'pr': 800, 'mod': 'v'}, 'fv24': {'ll': 24, 'pr': 800, 'mod': 'v'},
+
+        # Modality x Distractor Duration x List Length
+        'a12d': {'ll': 12, 'dd': 12000, 'mod': 'a'}, 'a24d': {'ll': 24, 'dd': 12000, 'mod': 'a'},
+        'v12d': {'ll': 12, 'dd': 12000, 'mod': 'v'}, 'v24d': {'ll': 24, 'dd': 12000, 'mod': 'v'},
+        'a12D': {'ll': 12, 'dd': 24000, 'mod': 'a'}, 'a24D': {'ll': 24, 'dd': 24000, 'mod': 'a'},
+        'v12D': {'ll': 12, 'dd': 24000, 'mod': 'v'}, 'v24D': {'ll': 24, 'dd': 24000, 'mod': 'v'},
+
+        # Pres Rate x Distractor Duration x List Length
+        's12d': {'ll': 12, 'pr': 1600, 'dd': 12000}, 's24d': {'ll': 24, 'pr': 1600, 'dd': 12000},
+        's12D': {'ll': 12, 'pr': 1600, 'dd': 24000}, 's24D': {'ll': 24, 'pr': 1600, 'dd': 24000},
+        'f12d': {'ll': 12, 'pr': 800, 'dd': 12000}, 'f24d': {'ll': 24, 'pr': 800, 'dd': 12000},
+        'f12D': {'ll': 12, 'pr': 800, 'dd': 24000}, 'f24D': {'ll': 24, 'pr': 800, 'dd': 24000},
+
+        # Modality x Pres Rate x Distractor Duration x List Length
+        'sa12d': {'ll': 12, 'pr': 1600, 'mod': 'a', 'dd': 12000}, 'sa24d': {'ll': 24, 'pr': 1600, 'mod': 'a', 'dd': 12000},
+        'sv12d': {'ll': 12, 'pr': 1600, 'mod': 'v', 'dd': 12000}, 'sv24d': {'ll': 24, 'pr': 1600, 'mod': 'v', 'dd': 12000},
+        'fa12d': {'ll': 12, 'pr': 800, 'mod': 'a', 'dd': 12000}, 'fa24d': {'ll': 24, 'pr': 800, 'mod': 'a', 'dd': 12000},
+        'fv12d': {'ll': 12, 'pr': 800, 'mod': 'v', 'dd': 12000}, 'fv24d': {'ll': 24, 'pr': 800, 'mod': 'v', 'dd': 12000},
+        'sa12D': {'ll': 12, 'pr': 1600, 'mod': 'a', 'dd': 24000}, 'sa24D': {'ll': 24, 'pr': 1600, 'mod': 'a', 'dd': 24000},
+        'sv12D': {'ll': 12, 'pr': 1600, 'mod': 'v', 'dd': 24000}, 'sv24D': {'ll': 24, 'pr': 1600, 'mod': 'v', 'dd': 24000},
+        'fa12D': {'ll': 12, 'pr': 800, 'mod': 'a', 'dd': 24000}, 'fa24D': {'ll': 24, 'pr': 800, 'mod': 'a', 'dd': 24000},
+        'fv12D': {'ll': 12, 'pr': 800, 'mod': 'v', 'dd': 24000}, 'fv24D': {'ll': 24, 'pr': 800, 'mod': 'v', 'dd': 24000}
+    }
 
     # Calculate stats for new participants
     for data_file in glob(os.path.join(data_dir, '*.json')):
@@ -70,7 +117,7 @@ def run_stats(data_dir, stat_dir, force=False):
         math = np.array(d['math_correct'])
 
         # Run all stats for a single participant and add the resulting stats object to the stats dictionary
-        stats = stats_for_subj(sub, condi, recalls, wasrec, ffr_wasrec, rt, recw, presw, intru, math, stats_to_run, filters)
+        stats = stats_for_subj(sub, condi, recalls, wasrec, ffr_wasrec, rt, recw, presw, intru, math, filters)
         write_stats_to_json(stats, outfile)
 
     # Calculate average stats. First we need to load the stats from all participants.
@@ -81,40 +128,48 @@ def run_stats(data_dir, stat_dir, force=False):
             with open(stat_file, 'r') as f:
                 stats[subj] = json.load(f)
 
-    # Now we calculate the average stats and save to a JSON file
+    # Now we calculate the average stats and save to a JSON file for each experiment
     for version in version_starts:
         avg_stats = {}
         v_start = version_starts[version]
         v_end = None if version + 1 not in version_starts else version_starts[version + 1]
 
         outfile = os.path.join(stat_dir, 'all_v%d.json' % version)
-        avg_stats['mean'], avg_stats['sem'], avg_stats['N'] = calculate_avg_stats(stats, stats_to_run, filters.keys(),
-                                                                version_start=v_start, version_end=v_end)
+        avg_stats['mean'], avg_stats['sem'], avg_stats['N'] = calculate_avg_stats(stats, filters.keys(),
+                                                                                  version_start=v_start,
+                                                                                  version_end=v_end,
+                                                                                  exclude_wrote_notes=False)
         write_stats_to_json(avg_stats, outfile, average_stats=True)
 
         outfile = os.path.join(stat_dir, 'all_v%d_excl_wn.json' % version)
-        avg_stats['mean'], avg_stats['sem'], avg_stats['N'] = calculate_avg_stats(stats, stats_to_run, filters.keys(),
+        avg_stats['mean'], avg_stats['sem'], avg_stats['N'] = calculate_avg_stats(stats, filters.keys(),
                                                                                   version_start=v_start,
                                                                                   version_end=v_end,
                                                                                   exclude_wrote_notes=True)
         write_stats_to_json(avg_stats, outfile, average_stats=True)
 
 
-def stats_for_subj(sub, condi, recalls, wasrec, ffr_wasrec, rt, recw, presw, intru, math, stats_to_run, filters):
+def stats_for_subj(sub, condi, recalls, wasrec, ffr_wasrec, rt, recw, presw, intru, math, filters):
     """
     Create a stats dictionary for a single participant.
     
     :param sub: A subject array for the stats calculations. As we are only running stats on one participant at a time, 
     this array will simply be [subj_name] * number_of_trials.
-    :param condi: An array of tuples indicating which conditions were used on each trial (ll, pr, mod, dd)
-    :param recalls: A matrix where item (i, j) is the serial position of the ith recall in trial j
-    :param wasrec: A matrix where item (i, j) is 0 if the ith presented word in trial j was not recalled, 1 if it was
-    :param rt: A matrix where item (i, j) is the response time (in ms) of the ith recall in trial j
-    :param recw: A matrix where item (i, j) is the ith word recalled on trial j
-    :param presw: A matrix where item (i, j) is the ith word presented on trial j
-    :param intru: A list x items intrusions matrix (see recalls_to_intrusions)
+    :param condi: An array of tuples indicating which conditions were used on each trial (ll, pr, mod, dd).
+    :param recalls: A matrix where item (i, j) is the serial position of the ith recall in trial j.
+    :param wasrec: A matrix where item (i, j) is 0 if the ith presented word in trial j was not recalled, 1 if it was.
+    :param ffr_wasrec: A matrix where item (i, j) is 0 if the ith presented word in trial j was not recalled during FFR,
+            1 if it was.
+    :param rt: A matrix where item (i, j) is the response time (in ms) of the ith recall in trial j.
+    :param recw: A matrix where item (i, j) is the ith word recalled on trial j.
+    :param presw: A matrix where item (i, j) is the ith word presented on trial j.
+    :param intru: A list x items intrusions matrix (see recalls_to_intrusions).
     :return: 
     """
+    stats_to_run = ['spc', 'ffr_spc', 'pfr', 'psr', 'ptr', 'crp_early', 'crp_late', 'temp_fact', 'irt',
+                    'spc_fr1', 'spc_frl4', 'irt_sp_excl', 'prec', 'pffr', 'pffr_rec', 'pffr_unrec',
+                    'elis', 'reps', 'pli_recency', 'plis', 'pli_recency_2factor', 'plis_2factor',
+                    'rec_per_trial', 'math_per_trial']
     stats = {stat: {} for stat in stats_to_run}
     for f in filters:
         # Get presentation and recall info just from trials that match the filter's set of conditions
@@ -124,20 +179,34 @@ def stats_for_subj(sub, condi, recalls, wasrec, ffr_wasrec, rt, recw, presw, int
         if fsub is None:
             continue
 
-        # Calculate stats on all lists within the current condition. Note that some stats require filtering by list len
+        # Calculate stats on all lists within the current condition. Note that some stats require a single list length.
         ll = filters[f]['ll']
         if ll is not None:
-            stats['prec'][f] = prec(fwasrec[:, :ll], fsub)[0]
+            # SPC, PFR/PSR/PTR, CRP, TemF, IRT
             stats['spc'][f] = spc(frecalls, fsub, ll)[0]
             stats['ffr_spc'][f] = ffr_spc(fffr_wasrec, fsub, ll)[0]
             stats['pfr'][f] = pnr(frecalls, fsub, ll, n=0)[0]
             stats['psr'][f] = pnr(frecalls, fsub, ll, n=1)[0]
             stats['ptr'][f] = pnr(frecalls, fsub, ll, n=2)[0]
-            stats['crp'][f] = crp(frecalls, fsub, ll, lag_num=4)[0]
             stats['crp_early'][f] = crp(frecalls[:, :3], fsub, ll, lag_num=5)[0]
             stats['crp_late'][f] = crp(frecalls, fsub, ll, lag_num=5, skip_first_n=2)[0]
             stats['temp_fact'][f] = temp_fact(frecalls, fsub, ll, skip_first_n=2)[0]
             stats['irt'][f] = irt_subj(frt, frecalls, ll)
+
+            # SPCs by start position
+            start1_mask = frecalls[:, 0] == 1
+            startl4_mask = frecalls[:, 0] > ll - 4
+            if np.any(start1_mask):
+                stats['spc_fr1'][f] = spc(frecalls[start1_mask, :], fsub[start1_mask], ll)[0]
+            else:
+                stats['spc_fr1'][f] = np.empty(ll)
+                stats['spc_fr1'][f].fill(np.nan)
+            if np.any(startl4_mask):
+                stats['spc_frl4'][f] = spc(frecalls[startl4_mask, :], fsub[startl4_mask], ll)[0]
+            else:
+                stats['spc_frl4'][f] = np.empty(ll)
+                stats['spc_frl4'][f].fill(np.nan)
+
             # Special version of the IRT which excludes trials that had a recall within the last 10 seconds
             rt_exclusion_mask = np.max(frt, axis=1) <= 50000
             if rt_exclusion_mask.sum() > 0:
@@ -145,18 +214,34 @@ def stats_for_subj(sub, condi, recalls, wasrec, ffr_wasrec, rt, recw, presw, int
             else:
                 stats['irt_sp_excl'][f] = np.empty((ll+1, ll+1))
                 stats['irt_sp_excl'][f].fill(np.nan)
-        stats['plis'][f] = avg_pli(fintru, fsub, frecw)[0]
-        stats['elis'][f] = avg_eli(fintru, fsub)[0]
-        stats['reps'][f] = avg_reps(frecalls, fsub)[0]
-        stats['pli_recency'][f] = pli_recency(fintru, fsub, 5)[0]
 
+        # PRec, PFFR, Intrusions
+        stats['prec'][f] = prec(fwasrec, fsub)[0]
+        stats['pffr'][f], stats['pffr_rec'][f], stats['pffr_unrec'][f] = pffr_subj(fffr_wasrec, fpresw, frecw)
+        stats['elis'][f] = xli(fintru, fsub, per_list=True)[0]
+        stats['reps'][f] = reps(frecalls, fsub, per_list=True)[0]
+        stats['plis'][f] = plis_1factor(fintru, n_skip=1)
+        stats['pli_recency'][f] = plir_1factor(intru, condi, n_points=5, n_skip=2, **filters[f])
+
+    # PLIs and PLI recency (2 x 2 modality) - Experiment 1 only (i.e., MTK001 -- MTK1308)
+    if int(sub[0][-4:]) <= 1308:
+        mods = np.array([c[2] for c in condi])
+        stats['plis_2factor'] = plis_2factor(intru, mods)
+        stats['pli_recency_2factor'] = plir_2factor(intru, mods, n_points=5, n_skip=2)
+
+    # PRec and math performance by trial
     stats['rec_per_trial'] = np.nanmean(wasrec, axis=1)
     stats['math_per_trial'] = np.sum(math, axis=1)
 
     return stats
 
 
-def calculate_avg_stats(s, stats_to_run, filters, version_start=1, version_end=None, exclude_wrote_notes=False):
+def calculate_avg_stats(s, filters, version_start=1, version_end=None, exclude_wrote_notes=False):
+    stats_to_run = ['spc', 'ffr_spc', 'pfr', 'psr', 'ptr', 'crp_early', 'crp_late', 'temp_fact', 'irt',
+                    'spc_fr1', 'spc_frl4', 'irt_sp_excl', 'prec', 'pffr', 'pffr_rec', 'pffr_unrec',
+                    'elis', 'reps', 'pli_recency', 'plis', 'pli_recency_2factor', 'plis_2factor',
+                    'rec_per_trial', 'math_per_trial']
+
     # Exclusion notes can be found at: https://app.asana.com/0/291595828487527/468440625589939/f
     exclude = [b.decode('UTF-8') for b in np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/EXCLUDED.txt', dtype='S8')]
     bad_sess = [b.decode('UTF-8') for b in np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/BAD_SESS.txt', dtype='S8')]
@@ -171,24 +256,47 @@ def calculate_avg_stats(s, stats_to_run, filters, version_start=1, version_end=N
     stderr = {}
     Ns = {}
     for stat in stats_to_run:
-        avs[stat] = {}
-        stderr[stat] = {}
-        Ns[stat] = {}
-        for f in filters:
-            # For the "all" filter, only do intrusion stats
-            if f == 'all' and stat not in ('plis', 'elis', 'reps', 'pli_recency'):
-                continue
+
+        # Stats without filters
+        if stat in ('plis_2factor', 'pli_recency_2factor', 'rec_per_trial', 'math_rec_per_trial'):
+
+            # Get the scores from all subjects from the target experiment who are not excluded
             scores = []
-            # Only use a subject's scores if they are from the correct version of the experiment and are not excluded
             for subj in s:
                 snum = int(subj[-4:])
                 if (subj not in skip) and (version_start is None or snum >= version_start) and \
                         (version_end is None or snum < version_end) and f in s[subj][stat]:
-                    scores.append(s[subj][stat][f])
+                    scores.append(s[subj][stat])
             scores = np.array(scores)
-            avs[stat][f] = np.nanmean(scores, axis=0)
-            stderr[stat][f] = sem(scores, axis=0, nan_policy='omit')
-            Ns[stat][f] = np.sum(np.logical_not(np.isnan(scores)), axis=0, dtype=np.float64)
+
+            # Average across subjects
+            avs[stat] = np.nanmean(scores, axis=0)
+            stderr[stat] = sem(scores, axis=0, nan_policy='omit')
+            Ns[stat] = np.sum(np.logical_not(np.isnan(scores)), axis=0, dtype=np.float64)
+
+        # Stats with filters
+        else:
+            avs[stat] = {}
+            stderr[stat] = {}
+            Ns[stat] = {}
+            for f in filters:
+                # For the "all" filter, skip any stat that requires a fixed list length (e.g. SPC)
+                if f == 'all' and stat not in ('prec', 'pffr', 'pffr_rec', 'pffr_unrec', 'plis', 'elis', 'reps', 'pli_recency'):
+                    continue
+
+                # Get the scores from all subjects from the target experiment who are not excluded
+                scores = []
+                for subj in s:
+                    snum = int(subj[-4:])
+                    if (subj not in skip) and (version_start is None or snum >= version_start) and \
+                            (version_end is None or snum < version_end) and f in s[subj][stat]:
+                        scores.append(s[subj][stat][f])
+                scores = np.array(scores)
+
+                # Average across subjects
+                avs[stat][f] = np.nanmean(scores, axis=0)
+                stderr[stat][f] = sem(scores, axis=0, nan_policy='omit')
+                Ns[stat][f] = np.sum(np.logical_not(np.isnan(scores)), axis=0, dtype=np.float64)
 
     return avs, stderr, Ns
 
@@ -201,7 +309,7 @@ def filter_by_condi(a, condi, ll=None, pr=None, mod=None, dd=None):
     :param ll: Return only trials with this list length condition (ignore if None)
     :param pr: Return only trials with this presentation rate condition (ignore if None)
     :param mod: Return only trials with this presentation modality condition (ignore if None)
-    :param dd: Return only trials with this distractor duration condition (ignore if None
+    :param dd: Return only trials with this distractor duration condition (ignore if None)
     :return: A numpy array containing only the data from trials that match the specified condition(s)
     """
     ind = [i for i in range(len(condi)) if ((ll is None or condi[i][0] == ll) and (pr is None or condi[i][1] == pr) and (mod is None or condi[i][2] == mod) and (dd is None or condi[i][3] == dd))]
@@ -237,116 +345,172 @@ def ffr_spc(ffr_recalled, subjects, ll):
     return result[:, :ll]
 
 
-def pli_recency(intrusions, subjects, nmax):
+def plir_1factor(intrusions, condi, n_points=5, n_skip=2, ll=None, pr=None, mod=None, dd=None):
     """
-    Calculate the ratio of PLIs that originated from 1 list back, 2 lists back, etc. up until nmax lists back. Note that
-    this requires the function to skip the first nmax lists of each subject's data.
-    
-    :param intrusions: An intrusions matrix in the format generated by recalls_to_intrusions
-    :param subjects: A list of subject codes, indicating which subject produced each row of the intrusions matrix
-    :param nmax: The maximum number of lists back to consider
-    :return: An array of length nmax, where item i is the ratio of PLIs that originated from i+1 lists back
-    """
-    if len(intrusions) == 0 or nmax < 1:
-        return np.array([])
-
-    usub = np.unique(subjects)
-    result = np.zeros((len(usub), nmax+1), dtype=float)
-    ll = len(intrusions[0])
-    for i, s in enumerate(usub):
-        subj_intru = intrusions[subjects == s, :]
-        for j in range(len(subj_intru)):
-            # Skip the first nmax lists from each participant
-            if j < nmax:
-                continue
-            for k in range(ll):
-                if 1 <= subj_intru[j][k] <= nmax:
-                    result[i, subj_intru[j][k] - 1] += 1
-
-    result /= result.sum(axis=1)
-    return result
-
-
-def avg_pli(intrusions, subjects, rec_itemnos):
-    """
-    A modification of the behavioral toolbox's pli function. Calculate's each partcipant's average number of PLIs per 
-    list instead of their total number of PLIs.
-    
-    :param intrusions: An intrusions matrix in the format generated by recalls_to_intrusions
-    :param subjects: A list of subject codes, indicating which subject produced each row of the intrusions matrix
-    :param rec_itemnos: A matrix in which each row is the list of IDs for all words recalled by a single subject on a
-                        single trial. Rows are expected to be padded with 0s to all be the same length.
-    :return: An array where each entry is the average number of PLIs per list for a single participant.
-    """
-    usub = np.unique(subjects)
-    result = np.zeros(len(usub))
-    for subject_index in range(len(usub)):
-        count = 0.
-        lists = 0.
-        for subj in range(len(subjects)):
-            if subjects[subj] == usub[subject_index]:
-                lists += 1
-                encountered = []
-                for serial_pos in range(len(intrusions[0])):
-                    if intrusions[subj][serial_pos] > 0 and rec_itemnos[subj][serial_pos] not in encountered:
-                        count += 1
-                        encountered.append(rec_itemnos[subj][serial_pos])
-        result[subject_index] = count / lists if lists > 0 else np.nan
-
-    return result
-
-
-def avg_eli(intrusions=None, subjects=None):
-    """
-    A modification of the behavioral toolbox's xli function. Calculate's each partcipant's average number of ELIs per 
-    list instead of their total number of ELIs.
+    Calculate the ratio of PLIs that originated from 1 list back, 2 lists back, etc. up until nmax lists back.
 
     :param intrusions: An intrusions matrix in the format generated by recalls_to_intrusions
-    :param subjects: A list of subject codes, indicating which subject produced each row of the intrusions matrix
-    :return: An array where each entry is the average number of PLIs per list for a single participant.
+    :param condi: A list of tuples indicating the list length, presentation rate, modality, distractor duration of each trial
+    :param n_points: The maximum number of lists back to consider
+    :param n_skip: The number of trials to skip at the beginning of the session.
+    :param ll: Return only trials with this list length condition (ignore if None)
+    :param pr: Return only trials with this presentation rate condition (ignore if None)
+    :param mod: Return only trials with this presentation modality condition (ignore if None)
+    :param dd: Return only trials with this distractor duration condition (ignore if None)
+    :return: An array of length n_points, where item i is the ratio of PLIs that originated from i+1 lists back.
     """
-    usub = np.unique(subjects)
-    result = np.zeros(len(usub))
-    for subject_index in range(len(usub)):
-        count = 0.
-        lists = 0.
-        for subj in range(len(subjects)):
-            if subjects[subj] == usub[subject_index]:
-                lists += 1
-                for serial_pos in range(len(intrusions[0])):
-                    if intrusions[subj][serial_pos] < 0:
-                        count += 1
-        result[subject_index] = count / lists if lists > 0 else np.nan
-    return result
+    n_trials = len(intrusions)
+    pli_recency = np.zeros((n_trials, n_trials))  # trial x recency
+    condi_mask = np.array([True if (
+            (ll is None or condi[i][0] == ll) and
+            (pr is None or condi[i][1] == pr) and
+            (mod is None or condi[i][2] == mod) and
+            (dd is None or condi[i][3] == dd)
+    ) else False for i in range(len(condi))], dtype=bool)
+
+    for trial, trial_data in enumerate(intrusions):
+
+        if trial < n_skip or not condi_mask:
+            pli_recency[trial, :].fill(np.nan)
+        else:
+            trial_plis = trial_data[(trial_data > 0) & (trial_data <= trial)]
+            for pli in trial_plis:
+                pli_recency[trial, pli-1] += 1
+
+    # Average PLIs across trials at each recency
+    pli_recency = np.nanmean(pli_recency, axis=0)
+
+    # Convert PLI averages to proportions of PLIs in each condition
+    plis = np.nansum(pli_recency)
+    pli_recency = pli_recency / plis if plis != 0 else np.full(n_trials, np.nan)
+
+    # Extract just the recency score for n lists back
+    pli_recency = pli_recency[:, :n_points, :]
+
+    return pli_recency
 
 
-def avg_reps(rec_itemnos, subjects):
+def plir_2factor(intrusions, modalities, n_points=5, n_skip=2):
     """
-    Calculate's each partcipant's average number of repetitions per list.
-    
-    :param rec_itemnos: A matrix in which each row is the list of IDs for all words recalled by a single subject on a
-                        single trial. Rows are expected to be padded with 0s to all be the same length.
-    :param subjects: A list of subject codes, indicating which subject produced each row of the intrusions matrix
-    :return: An array where each entry is the average number of repetitions per list for a single participant.
+    Calculate the ratio of PLIs that originated from 1 list back, 2 lists back, etc. up until nmax lists back.
+
+    :param intrusions: An intrusions matrix in the format generated by recalls_to_intrusions
+    :param modalities: A list of strings indicating the modality of each trial
+    :param n_points: The maximum number of lists back to consider
+    :param n_skip: The number of trials to skip at the beginning of the session.
+    :return: An array of length n_points, where item i is the ratio of PLIs expected to originate from i+1 lists back
     """
-    usub = np.unique(subjects)
-    result = np.zeros(len(usub))
-    for subject_index in range(len(usub)):
-        count = 0.
-        lists = 0.
-        for subj in range(len(subjects)):
-            if subjects[subj] == usub[subject_index]:
-                lists += 1
-                # times_recalled is an array with one entry for each unique correctly recalled word, indicating the
-                # number of times that word was recalled during the current list
-                times_recalled = np.array([len(np.where(rec_itemnos[subj, :] == rec)[0]) for rec in np.unique(rec_itemnos[subj, :]) if rec > 0])
-                # Subtract 1 from the number of times each correct word was recalled in the list to give the number of
-                # repetitions
-                repetitions = times_recalled - 1
-                # Sum the number of repetitions made in the current list
-                count += repetitions.sum()
-        result[subject_index] = count / lists if lists > 0 else np.nan
-    return result
+    n_trials = len(intrusions)
+    pli_recency = np.zeros((n_trials, n_trials, 2, 2))  # trial x recency x encoding modality x retrieval modality
+    intru = intrusions
+    mod = modalities
+
+    for trial, trial_data in enumerate(intru):
+        # Skip the first n trials
+        if trial < n_skip:
+            pli_recency[trial, :, :].fill(np.nan)
+            continue
+
+        # Get the modality of the current trial
+        cur_mod = mod[trial]
+
+        # Construct an array indicating the modality of the trial at each valid recency position
+        # (most recent list at position 0, two lists back at position 1, etc. with NaNs for all impossible recencies)
+        past_mods = mod.copy()
+        past_mods[:trial] = past_mods[:trial][::-1]
+        past_mods[trial:].fill(np.nan)
+
+        # Mark NaNs in the cells that cannot have data for each trial. Visual data will go in modality index 0, auditory data will go in index 1.
+        pli_recency[trial, past_mods != 'v', 0, :] = np.nan
+        pli_recency[trial, past_mods != 'a', 1, :] = np.nan
+        pli_recency[trial, :, :, int(cur_mod == 'v')] = np.nan
+
+        # Use int(trial_mods[pli] == 'a') to send visual data into index 0 and auditory data into index 1
+        trial_plis = trial_data[(trial_data > 0) and (trial_data <= trial)]
+        for pli in trial_plis:
+            pli_recency[trial, pli-1, int(past_mods[pli-1] == 'a'), int(cur_mod == 'a')] += 1
+
+    # Average PLIs across trials at each recency and condition
+    pli_recency = np.nanmean(pli_recency, axis=0)
+
+    # Convert PLI averages to proportions of PLIs in each condition
+    plis = np.nansum(pli_recency, axis=0)
+    plis[plis == 0].fill(np.nan)
+    pli_recency[:, 0, 0] /= plis[0, 0]
+    pli_recency[:, 0, 1] /= plis[0, 1]
+    pli_recency[:, 1, 0] /= plis[1, 0]
+    pli_recency[:, 1, 1] /= plis[1, 1]
+
+    # Extract just the recency scores for n_points list back
+    pli_recency = pli_recency[:n_points, :, :]
+
+    return pli_recency
+
+
+def plis_1factor(intrusions, n_skip=1):
+    """
+    Calculate the average number of prior list intrusions per trial, while excluding PLI words that were presented
+    on practice trials.
+
+    :param intrusions:
+    :return:
+    """
+    plis = 0.
+    for trial, trial_data in enumerate(intrusions):
+        if trial < n_skip:
+            continue
+        plis += np.logical_and(trial_data > 0, trial_data <= trial).sum()
+    plis /= len(intrusions) - n_skip
+    return plis
+
+
+def plis_2factor(intrusions, modalities):
+    """
+    Calculate the average number of prior list intrusions by encoding and retrieval modality, given that it is possible
+    to make such a PLI.
+
+    :param intrusions:
+    :param modalities:
+    :param n_skip:
+    :return:
+    """
+    plis = np.zeros((2, 2))
+    possibles = np.zeros((2, 2))
+
+    had_v_trial = False
+    had_a_trial = False
+    for trial, trial_data in enumerate(intrusions):
+
+        # Determine modality of current trial
+        ret_mod = modalities[trial]
+        ret_mod_is_aud = int(ret_mod == 'a')
+
+        # Determine which types of PLIs are possible based on current list modality and whether the participant
+        # previously had at least one visual and one auditory list
+        if had_v_trial:
+            possibles[0, ret_mod_is_aud] += 1
+        if had_a_trial:
+            possibles[1, ret_mod_is_aud] += 1
+
+        # Determine the encoding modality of each PLI and add it to the appropriate count
+        trial_plis = trial_data[(trial_data > 0) & (trial_data <= trial)]
+        for pli in trial_plis:
+            enc_mod = modalities[trial - pli]
+            enc_mod_is_aud = int(enc_mod == 'a')
+            plis[enc_mod_is_aud, ret_mod_is_aud] += 1
+
+        # Once the participant has completed at least one trial of a given modality, mark had_v/a_trial as True,
+        # as this influences which PLI types are possible
+        if ret_mod_is_aud:
+            had_a_trial = True
+        else:
+            had_v_trial = True
+
+    # Convert to PLIs per list. Only count lists on which it was actually possible to make an intrusion of a given type.
+    possibles[possibles == 0].fill(np.nan)
+    plis /= possibles
+
+    return plis
 
 
 def irt_subj(rectimes, recalls, ll):
@@ -374,3 +538,23 @@ def irt_subj(rectimes, recalls, ll):
     irt = irt / trial_count
 
     return irt
+
+
+def pffr_subj(ffr_rec, pres_words, rec_words):
+
+    # Construct a special version of the recalled matrix, which indicates whether each presented word was *ever*
+    # recalled (either correctly or as an intrusion)
+    rec_words = rec_words.flatten()
+    prev_rec = np.full(pres_words.shape, np.nan)
+    for trial in range(ffr_rec.shape[0]):
+        pad_mask = pres_words != '0'
+        prev_rec[trial, pad_mask] = np.in1d(pres_words[trial, pad_mask], rec_words)
+
+    # Probability of final free recall for all words
+    overall_pffr = np.nanmean(ffr_rec)
+    # Probability of final free recall for previously recalled words
+    prev_rec_pffr = np.nanmean(ffr_rec[prev_rec])
+    # Probability of final free recall for previously unrecalled words
+    prev_unrec_pffr = np.nanmean(ffr_rec[~prev_rec])
+
+    return overall_pffr, prev_rec_pffr, prev_unrec_pffr
