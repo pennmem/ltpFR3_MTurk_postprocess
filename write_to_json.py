@@ -26,22 +26,31 @@ def write_stats_to_json(stats, outfile, average_stats=False):
     """
     if average_stats:
         for stat in stats['mean']:
-            for f in stats['mean'][stat]:
-                if isinstance(stats['mean'][stat][f], np.ndarray):
-                    stats['mean'][stat][f] = stats['mean'][stat][f].tolist()
+            if isinstance(stats['mean'][stat], np.ndarray):
+                stats['mean'][stat] = stats['mean'][stat].tolist()
+            elif isinstance(stats['mean'][stat], dict):
+                for f in stats['mean'][stat]:
+                    if isinstance(stats['mean'][stat][f], np.ndarray):
+                        stats['mean'][stat][f] = stats['mean'][stat][f].tolist()
         for stat in stats['sem']:
-            for f in stats['sem'][stat]:
-                if isinstance(stats['sem'][stat][f], np.ndarray):
-                    stats['sem'][stat][f] = stats['sem'][stat][f].tolist()
+            if isinstance(stats['sem'][stat], np.ndarray):
+                stats['sem'][stat] = stats['sem'][stat].tolist()
+            elif isinstance(stats['sem'][stat], dict):
+                for f in stats['sem'][stat]:
+                    if isinstance(stats['sem'][stat][f], np.ndarray):
+                        stats['sem'][stat][f] = stats['sem'][stat][f].tolist()
         for stat in stats['N']:
-            for f in stats['N'][stat]:
-                if isinstance(stats['N'][stat][f], np.ndarray):
-                    stats['N'][stat][f] = stats['N'][stat][f].tolist()
+            if isinstance(stats['N'][stat], np.ndarray):
+                stats['N'][stat] = stats['N'][stat].tolist()
+            elif isinstance(stats['N'][stat], dict):
+                for f in stats['N'][stat]:
+                    if isinstance(stats['N'][stat][f], np.ndarray):
+                        stats['N'][stat][f] = stats['N'][stat][f].tolist()
     else:
         for stat in stats:
-            if stat in ('rec_per_trial', 'math_per_trial'):
+            if isinstance(stats[stat], np.ndarray):
                 stats[stat] = stats[stat].tolist()
-            else:
+            elif isinstance(stats[stat], dict):
                 for f in stats[stat]:
                     if isinstance(stats[stat][f], np.ndarray):
                         stats[stat][f] = stats[stat][f].tolist()
