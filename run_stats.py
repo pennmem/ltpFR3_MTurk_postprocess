@@ -228,6 +228,9 @@ def stats_for_subj(sub, condi, recalls, wasrec, ffr_wasrec, rt, recw, presw, int
         mods = np.array([c[2] for c in condi])
         stats['plis_2factor'] = plis_2factor(intru, mods)
         stats['pli_recency_2factor'] = plir_2factor(intru, mods, n_points=5, n_skip=2)
+    else:
+        del stats['plis_2factor']
+        del stats['pli_recency_2factor']
 
     # PRec and math performance by trial
     stats['rec_per_trial'] = np.nanmean(wasrec, axis=1)
