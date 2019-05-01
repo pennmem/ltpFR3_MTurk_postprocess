@@ -258,14 +258,14 @@ def calculate_avg_stats(s, filters, version_start=1, version_end=None, exclude_w
     for stat in stats_to_run:
 
         # Stats without filters
-        if stat in ('plis_2factor', 'pli_recency_2factor', 'rec_per_trial', 'math_rec_per_trial'):
+        if stat in ('plis_2factor', 'pli_recency_2factor', 'rec_per_trial', 'math_per_trial'):
 
             # Get the scores from all subjects from the target experiment who are not excluded
             scores = []
             for subj in s:
                 snum = int(subj[-4:])
                 if (subj not in skip) and (version_start is None or snum >= version_start) and \
-                        (version_end is None or snum < version_end) and f in s[subj][stat]:
+                        (version_end is None or snum < version_end) and stat in s[subj]:
                     scores.append(s[subj][stat])
             scores = np.array(scores)
 
