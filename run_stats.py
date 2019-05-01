@@ -104,17 +104,17 @@ def run_stats(data_dir, stat_dir, force=False):
         with open(data_file, 'r') as f:
             d = json.load(f)
 
-        # Extract behavioral matrices from JSON object and convert to numpy arrays
-        sub = np.array(d['subject'])
-        condi = [(d['list_len'][i], d['pres_rate'][i], str(d['pres_mod'][i]), d['dist_dur'][i]) for i in range(len(d['serialpos']))]
-        recalls = np.array(d['serialpos'])
-        wasrec = np.array(d['recalled'])
-        ffr_wasrec = np.array(d['ffr_recalled'])
-        rt = np.array(d['rt'])
-        recw = np.array(d['rec_words'])
-        presw = np.array(d['pres_words'])
-        intru = np.array(d['intrusions'])
-        math = np.array(d['math_correct'])
+        # Extract behavioral matrices from JSON object and convert to numpy arrays; drop practice trials
+        sub = np.array(d['subject'])[2:]
+        condi = [(d['list_len'][i], d['pres_rate'][i], str(d['pres_mod'][i]), d['dist_dur'][i]) for i in range(len(d['serialpos']))][2:]
+        recalls = np.array(d['serialpos'])[2:]
+        wasrec = np.array(d['recalled'])[2:]
+        ffr_wasrec = np.array(d['ffr_recalled'])[2:]
+        rt = np.array(d['rt'])[2:]
+        recw = np.array(d['rec_words'])[2:]
+        presw = np.array(d['pres_words'])[2:]
+        intru = np.array(d['intrusions'])[2:]
+        math = np.array(d['math_correct'])[2:]
 
         # Run all stats for a single participant and add the resulting stats object to the stats dictionary
         stats = stats_for_subj(sub, condi, recalls, wasrec, ffr_wasrec, rt, recw, presw, intru, math, filters)
