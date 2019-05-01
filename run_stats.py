@@ -376,6 +376,10 @@ def plir_1factor(intrusions, condi, n_points=5, n_skip=2, ll=None, pr=None, mod=
         if trial < n_skip or not condi_mask[trial]:
             pli_recency[trial, :].fill(np.nan)
         else:
+            # Mark NaNs for all lags that are not possible on the current trial
+            # i.e. the third trial can only have PLIs of lag -1 and -2
+            pli_recency[trial, trial:].fill(np.nan)
+            # Count PLIs at lags that were possible
             trial_plis = trial_data[(trial_data > 0) & (trial_data <= trial)]
             for pli in trial_plis:
                 pli_recency[trial, pli-1] += 1
