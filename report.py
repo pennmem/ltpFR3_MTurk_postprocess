@@ -469,19 +469,19 @@ def plot_temp_fact(s, err=None):
 
 def plot_rec_perlist(s):
     plt.subplot(7, 3, 19)
-    plt.plot(range(1, 19), s, 'ko-')
+    plt.plot(range(1, 17), s, 'ko-')
     plt.title('Recall Performance Check')
     plt.xlabel('Trial Number')
     plt.ylabel('Probability of Recall')
-    plt.xlim(0, 19)
+    plt.xlim(0, 17)
     plt.ylim(-.05, 1.05)
 
 
 def plot_math_perlist(s):
     plt.subplot(7, 3, 21)
-    plt.plot(range(1, 19), s, 'ko-')
+    plt.plot(range(1, 17), s, 'ko-')
     plt.title('Math Performance Check')
     plt.xlabel('Trial Number')
     plt.ylabel('Math Correct')
-    plt.xlim(0, 19)
+    plt.xlim(0, 17)
     plt.ylim(-.5, 20.5)
