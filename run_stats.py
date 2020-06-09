@@ -199,7 +199,7 @@ def stats_for_subj(sub, condi, recalls, wasrec, ffr_wasrec, rt, recw, presw, rec
             stats['crp_early'][f] = crp(frecalls[:, :3], fsub, ll, lag_num=5)[0]
             stats['crp_late'][f] = crp(frecalls, fsub, ll, lag_num=5, skip_first_n=2)[0]
             stats['temp_fact'][f] = temp_fact(frecalls, fsub, ll, skip_first_n=2)[0]
-            stats['sem_fact'][f] = dist_fact(frecnos, fpresnos, fsub, w2v, skip_first_n=2)[0]
+            stats['sem_fact'][f] = dist_fact(frecnos, fpresnos, fsub, w2v, is_similarity=True, skip_first_n=2)[0]
             stats['irt'][f] = irt_subj(frt, frecalls, ll)
 
             # SPCs by start position
