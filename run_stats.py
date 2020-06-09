@@ -174,7 +174,7 @@ def stats_for_subj(sub, condi, recalls, wasrec, ffr_wasrec, rt, recw, presw, rec
     :param intru: A list x items intrusions matrix (see recalls_to_intrusions).
     :return: 
     """
-    stats_to_run = ['spc', 'ffr_spc', 'pfr', 'psr', 'ptr', 'crp_early', 'crp_late', 'temp_fact', 'irt',
+    stats_to_run = ['spc', 'ffr_spc', 'pfr', 'psr', 'ptr', 'crp_early', 'crp_late', 'temp_fact', 'sem_fact', 'irt',
                     'spc_fr1', 'spc_frl4', 'irt_sp_excl', 'prec', 'pffr', 'pffr_rec', 'pffr_unrec',
                     'elis', 'reps', 'pli_recency', 'plis', 'pli_recency_2factor', 'plis_2factor',
                     'rec_per_trial', 'math_per_trial']
