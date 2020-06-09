@@ -9,6 +9,7 @@ from pybeh.xli import xli
 from pybeh.reps import reps
 from scipy.stats import sem
 from pybeh.temp_fact import temp_fact
+from pybeh.dist_fact import dist_fact
 from write_to_json import write_stats_to_json
 
 
@@ -36,6 +37,10 @@ def run_stats(data_dir, stat_dir, force=False):
     with open('/data/eeg/scalp/ltp/ltpFR3_MTurk/VERSION_STARTS.json') as f:
         version_starts = json.load(f)
         version_starts = {int(v): version_starts[v] for v in version_starts}
+    
+    # Load wordpool and word2vec similarity
+    wordpool = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/wasnorm_wordpool.txt')
+    w2v = np.loadtxt('/data/eeg/scalp/ltp/w2v.txt')
 
     filters = {
         # Grand average
@@ -113,11 +118,13 @@ def run_stats(data_dir, stat_dir, force=False):
         rt = np.array(d['rt'])[2:]
         recw = np.array(d['rec_words'])[2:]
         presw = np.array(d['pres_words'])[2:]
+        recnos = np.searchsorted(wordpool, recw, side='right')
+        presnos = np.searchsorted(wordpool, presw, side='right')
         intru = np.array(d['intrusions'])[2:]
         math = np.array(d['math_correct'])[2:]
 
         # Run all stats for a single participant and add the resulting stats object to the stats dictionary
-        stats = stats_for_subj(sub, condi, recalls, wasrec, ffr_wasrec, rt, recw, presw, intru, math, filters)
+        stats = stats_for_subj(sub, condi, recalls, wasrec, ffr_wasrec, rt, recw, presw, recnos, presnos, intru, math, filters, w2v)
         write_stats_to_json(stats, outfile)
 
     # Calculate average stats. First we need to load the stats from all participants.
@@ -149,7 +156,7 @@ def run_stats(data_dir, stat_dir, force=False):
         write_stats_to_json(avg_stats, outfile, average_stats=True)
 
 
-def stats_for_subj(sub, condi, recalls, wasrec, ffr_wasrec, rt, recw, presw, intru, math, filters):
+def stats_for_subj(sub, condi, recalls, wasrec, ffr_wasrec, rt, recw, presw, recnos, presnos, intru, math, filters, w2v):
     """
     Create a stats dictionary for a single participant.
     
@@ -173,7 +180,7 @@ def stats_for_subj(sub, condi, recalls, wasrec, ffr_wasrec, rt, recw, presw, int
     stats = {stat: {} for stat in stats_to_run}
     for f in filters:
         # Get presentation and recall info just from trials that match the filter's set of conditions
-        fsub, frecalls, fwasrec, fffr_wasrec, frt, frecw, fpresw, fintru = [filter_by_condi(a, condi, **filters[f]) for a in [sub, recalls, wasrec, ffr_wasrec, rt, recw, presw, intru]]
+        fsub, frecalls, fwasrec, fffr_wasrec, frt, frecw, fpresw, frecnos, fpresnos, fintru = [filter_by_condi(a, condi, **filters[f]) for a in [sub, recalls, wasrec, ffr_wasrec, rt, recw, presw, recnos, presnos, intru]]
 
         # If no trials match the current filter, skip to next filter
         if fsub is None:
@@ -191,6 +198,7 @@ def stats_for_subj(sub, condi, recalls, wasrec, ffr_wasrec, rt, recw, presw, int
             stats['crp_early'][f] = crp(frecalls[:, :3], fsub, ll, lag_num=5)[0]
             stats['crp_late'][f] = crp(frecalls, fsub, ll, lag_num=5, skip_first_n=2)[0]
             stats['temp_fact'][f] = temp_fact(frecalls, fsub, ll, skip_first_n=2)[0]
+            stats['sem_fact'][f] = dist_fact(frecnos, fpresnos, fsub, w2v, skip_first_n=2)[0]
             stats['irt'][f] = irt_subj(frt, frecalls, ll)
 
             # SPCs by start position
@@ -240,7 +248,7 @@ def stats_for_subj(sub, condi, recalls, wasrec, ffr_wasrec, rt, recw, presw, int
 
 
 def calculate_avg_stats(s, filters, version_start=1, version_end=None, exclude_wrote_notes=False):
-    stats_to_run = ['spc', 'ffr_spc', 'pfr', 'psr', 'ptr', 'crp_early', 'crp_late', 'temp_fact', 'irt',
+    stats_to_run = ['spc', 'ffr_spc', 'pfr', 'psr', 'ptr', 'crp_early', 'crp_late', 'temp_fact', 'sem_fact', 'irt',
                     'spc_fr1', 'spc_frl4', 'irt_sp_excl', 'prec', 'pffr', 'pffr_rec', 'pffr_unrec',
                     'elis', 'reps', 'pli_recency', 'plis', 'pli_recency_2factor', 'plis_2factor',
                     'rec_per_trial', 'math_per_trial']
