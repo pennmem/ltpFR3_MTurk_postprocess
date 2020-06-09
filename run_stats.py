@@ -39,7 +39,7 @@ def run_stats(data_dir, stat_dir, force=False):
         version_starts = {int(v): version_starts[v] for v in version_starts}
     
     # Load wordpool and word2vec similarity
-    wordpool = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/wasnorm_wordpool.txt')
+    wordpool = np.loadtxt('/data/eeg/scalp/ltp/ltpFR3_MTurk/wasnorm_wordpool.txt', dtype=str)
     w2v = np.loadtxt('/data/eeg/scalp/ltp/w2v.txt')
 
     filters = {
